@@ -11,8 +11,7 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
-  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
-       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="../css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="../vendor/katex/katex.min.css">
@@ -37,10 +36,18 @@
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
       <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
         <a class="nav-link" href="../index.html">Home</a>
-        <a class="nav-link" href="charges.html">1 · Charges &amp; Fields</a>
-        <a class="nav-link" href="current.html">2 · Current</a>
-        <a class="nav-link" href="magnetism.html">3 · Magnetism</a>
-        <a class="nav-link" href="induction.html">4 · Induction</a>
+        <div class="nav-drop">
+          <button class="nav-link nav-drop-btn" id="topicsBtn" type="button"
+                  aria-expanded="false" aria-controls="topicsMenu">Topics
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-drop-menu" id="topicsMenu">
+            <a class="dd-link" href="charges.html"><b>1 · Charges &amp; Fields</b><small>Coulomb’s law · field lines · superposition</small></a>
+            <a class="dd-link" href="current.html"><b>2 · Current</b><small>Ohm’s law · series &amp; parallel</small></a>
+            <a class="dd-link" href="magnetism.html"><b>3 · Magnetism</b><small>field lines · F = qv × B</small></a>
+            <a class="dd-link" href="induction.html"><b>4 · Induction</b><small>Faraday · Lenz · generators</small></a>
+          </div>
+        </div>
         <a class="nav-link nav-cta" href="../quiz.html">Take the quiz</a>
       </nav>
     </div>
@@ -154,15 +161,17 @@
         <li>The <strong>tangent</strong> to a line is the direction a free north pole (or a compass needle’s north end) would point.</li>
       </ul>
 
-      <div class="callout callout-trap">
-        <div class="callout-title">A naming trap</div>
+      <details class="dig dig-trap">
+        <summary>A naming trap</summary>
+        <div class="dig-body">
         <p>
           The “north pole” of a compass needle points toward the geographic North Pole — which
           means the Earth’s <em>magnetic</em> pole near geographic north is actually a
           <strong>south</strong> magnetic pole. Opposite poles attract. Geomagnetic north is
           currently in the Canadian Arctic and drifts about 40 km per year.
         </p>
-      </div>
+        </div>
+      </details>
 
       <h2 class="h-sec" id="force">3.3 · Force on a moving charge</h2>
       <p>
@@ -249,8 +258,9 @@
         charge carriers.
       </p>
 
-      <div class="callout callout-real">
-        <div class="callout-title">Real world</div>
+      <details class="dig dig-real">
+        <summary>Real world</summary>
+        <div class="dig-body">
         <p>
           <strong>Mass spectrometers</strong> separate ions by m/q: ions are accelerated, then bent
           in a known field, and r = mv/(qB) tells you the mass. This is how we measure isotopes and
@@ -268,9 +278,9 @@
           bend beams around a 27 km ring; <strong>eddy-current brakes</strong> on trains and
           roller coasters use the same force with no friction and no wear.
         </p>
-      </div>
+        </div>
+      </details>
 
-      <!-- ============ SIM 5 ============ -->
       <h2 class="h-sec" id="sim-magnet-panel" style="scroll-margin-top:5rem">3.4 · Simulation — bar magnet field lab</h2>
       <p>
         Four visualisations of the same field: traced field lines, a grid of compass needles, a
@@ -343,7 +353,6 @@
       </div>
     </section>
 
-    <!-- ============ SIM 6 ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec" id="sim-lorentz-panel" style="scroll-margin-top:5rem">3.5 · Simulation — the Lorentz force</h2>
       <p>
@@ -459,7 +468,6 @@
       </div>
     </section>
 
-    <!-- ============ SELF-CHECK ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec">3.6 · Check your understanding</h2>
 

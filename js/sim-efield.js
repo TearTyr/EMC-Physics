@@ -1,19 +1,4 @@
-/* ==========================================================================
-   Simulation 2 — Electric Field Explorer
-   File: js/sim-efield.js   (used on topics/charges.html)
-
-   PHYSICS
-   -------
-   Point-charge field      E = k q / r^2  (radially outward for q > 0)
-   Superposition           E_total(P) = SUM_i E_i(P)   (vector sum)
-   Force on a test charge  F = q_test * E
-   Field lines start on positive charge and end on negative charge; their
-   density represents field strength, and the tangent to a line gives the
-   direction of E at that point.
-
-   The canvas maps pixels to metres with a fixed scale (PX_PER_M), so the
-   field magnitudes shown in the readout are real SI values.
-   ========================================================================== */
+/* Sim 2 - field explorer. E(P) = SUM k q (P-r)/|P-r|^3; field lines integrated along E from + charges, vector grid coloured by |E|, +1 nC test probe. */
 (function () {
   const canvas = document.getElementById('sim-efield');
   if (!canvas) return;
@@ -53,16 +38,13 @@
   }
 
   /* ---- field maths ----------------------------------------------------- */
-  /** Convert normalised charge coords to pixels for the current canvas size. */
+  /* Convert normalised charge coords to pixels for the current canvas size. */
   function px(c, w, h) { return { x: c.nx * w, y: c.ny * h }; }
 
-  /** Visual radius of a charge glyph (grows slowly with |q|). */
+  /* Visual radius of a charge glyph (grows slowly with |q|). */
   const chargeRadius = q => 12 + 8 * Math.cbrt(Math.abs(q) / 3);
 
-  /**
-   * Net electric field at a pixel position.
-   * @returns {{ex:number, ey:number, mag:number}} field in N/C
-   */
+  /* * Net electric field at a pixel position. * @returns {{ex:number, ey:number, mag:number}} field in N/C */
   function fieldAt(x, y, w, h) {
     let ex = 0, ey = 0;
     for (const c of state.charges) {
@@ -80,7 +62,7 @@
     return { ex, ey, mag: Math.hypot(ex, ey) };
   }
 
-  /** Colour ramp for field magnitude: deep blue -> cyan -> amber -> rose. */
+  /* Colour ramp for field magnitude: deep blue -> cyan -> amber -> rose. */
   function magColor(mag) {
     // Point-charge fields here span roughly 1e3 .. 1e8 N/C; map that window.
     const n = clamp((Math.log10(Math.max(mag, 1e-6)) - 3) / 5, 0, 1);
@@ -89,11 +71,7 @@
   }
 
   /* ---- field-line tracing --------------------------------------------- */
-  /**
-   * Integrate along the field direction with a fixed pixel step.
-   * Lines are seeded on positive charges (or negatives if there are none) so
-   * each line is drawn exactly once.
-   */
+  /* * Integrate along the field direction with a fixed pixel step. * Lines are seeded on positive charges (or negatives if there are none) so * each line is drawn exactly once. */
   function traceLines(ctx, w, h) {
     const seeds = state.charges.filter(c => c.q > 0);
     const sources = seeds.length ? seeds : state.charges.filter(c => c.q < 0);
@@ -157,7 +135,7 @@
     ctx.restore();
   }
 
-  /** Grid of field vectors, length/colour coded by magnitude (log scale). */
+  /* Grid of field vectors, length/colour coded by magnitude (log scale). */
   function drawVectorGrid(ctx, w, h) {
     const step = w < 520 ? 42 : 34;
     ctx.save();
@@ -180,7 +158,6 @@
     }
     ctx.restore();
   }
-
 
   /* ---- main render ----------------------------------------------------- */
   function render(ctx, w, h) {

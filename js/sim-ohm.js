@@ -1,20 +1,4 @@
-/* ==========================================================================
-   Simulation 3 — Ohm's Law bench  (V = I R)
-   File: js/sim-ohm.js   (used on topics/current.html)
-
-   PHYSICS
-   -------
-   Ohm's law            I = V / R            [A] = [V] / [ohm]
-   Power dissipated     P = V I = I^2 R = V^2 / R   [W]
-   For an ohmic resistor the I-V graph is a straight line through the
-   origin whose gradient is 1/R. The chart canvas draws that line plus two
-   ghost lines (R/2 and 2R) to make the "steeper = less resistance" idea
-   visible.
-
-   Two canvases:
-     #sim-ohm        the circuit (battery, resistor, bulb, analogue ammeter)
-     #sim-ohm-chart  the I-V characteristic
-   ========================================================================== */
+/* Sim 3 - Ohm bench. I = V/R, P = VI; auto-ranging ammeter, bulb brightness proportional to P, I-V characteristic with R/2 and 2R reference lines. */
 (function () {
   const canvas = document.getElementById('sim-ohm');
   if (!canvas) return;
@@ -56,7 +40,7 @@
     };
   }
 
-  /** Point at fractional distance s (0..1) along a closed polyline. */
+  /* Point at fractional distance s (0..1) along a closed polyline. */
   function pointOnLoop(loop, s) {
     const segs = [];
     let total = 0;
@@ -104,7 +88,7 @@
     ctx.restore();
   }
 
-  /** Zig-zag resistor symbol drawn horizontally, centred on (x,y). */
+  /* Zig-zag resistor symbol drawn horizontally, centred on (x,y). */
   function drawResistor(ctx, x, y, R, hot) {
     const w = 74, h = 15, lead = 20;
     ctx.save();
@@ -125,7 +109,7 @@
     label(ctx, `R = ${eng(R, 3)}\u03A9`, x, y - 30, { color: '#cfe9f2', size: 12.5, weight: '700' });
   }
 
-  /** Incandescent bulb: glow and filament colour scale with dissipated power. */
+  /* Incandescent bulb: glow and filament colour scale with dissipated power. */
   function drawBulb(ctx, x, y, P) {
     const b = clamp(P / 6, 0, 1);            // 6 W = "full brightness" reference
     const r = 17;
@@ -151,7 +135,7 @@
     label(ctx, 'bulb', x, y + r + 18, { color: '#a9bad6', size: 11, weight: '600' });
   }
 
-  /** Circular analogue ammeter with an auto-ranging scale. */
+  /* Circular analogue ammeter with an auto-ranging scale. */
   function drawAmmeter(ctx, x, y, r, I) {
     const range = pickRange(I);
     const frac = clamp(I / range.max, 0, 1);

@@ -1,25 +1,4 @@
-/* ==========================================================================
-   Simulation 5 — Bar Magnet Field Visualiser
-   File: js/sim-magnetfield.js   (used on topics/magnetism.html)
-
-   PHYSICS
-   -------
-   Outside a bar magnet the field is very well approximated by two opposite
-   "magnetic poles" +/- qm separated by the magnet length l, with dipole
-   moment m = qm * l:
-
-       B(P) = (mu0 / 4pi) * SUM_i  qm_i * (P - r_i) / |P - r_i|^3
-
-   * Field lines leave the NORTH pole and enter the SOUTH pole (outside the
-     magnet). Inside the magnet they run S -> N, so every line is a closed
-     loop -- there are no magnetic monopoles. The two-pole picture is a
-     MODEL used for drawing; the tutorial text says so explicitly.
-   * The tangent to a field line gives the direction a compass needle points.
-   * Line density (and arrow colour) represents field strength.
-
-   Coordinates: physics axes are x-right / y-up; the canvas y axis points
-   down, so every vector is drawn as (Bx, -By).
-   ========================================================================== */
+/* Sim 5 - bar magnet lab. Two-pole dipole model B = (mu0/4pi) SUM qm rhat/r^2 (a drawing model - magnetic monopoles do not exist); layers: field lines, compasses, vectors, iron filings; magnet draggable and rotatable. */
 (function () {
   const canvas = document.getElementById('sim-magnet');
   if (!canvas) return;
@@ -66,7 +45,7 @@
     };
   }
 
-  /** Magnetic flux density at canvas pixel (x,y). Returns physics-axis vector. */
+  /* Magnetic flux density at canvas pixel (x,y). Returns physics-axis vector. */
   function fieldAt(x, y, g) {
     const qm = state.m / L_MAG;                          // pole strength [A m]
     const poles = [{ p: g.N, q: +qm }, { p: g.S, q: -qm }];
@@ -83,7 +62,7 @@
     return { bx, by, mag: Math.hypot(bx, by) };
   }
 
-  /** Field expressed directly in canvas direction (y flipped) + magnitude. */
+  /* Field expressed directly in canvas direction (y flipped) + magnitude. */
   function fieldCanvas(x, y, g) {
     const f = fieldAt(x, y, g);
     return { dx: f.bx, dy: -f.by, mag: f.mag };

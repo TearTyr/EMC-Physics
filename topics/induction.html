@@ -11,8 +11,7 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
-  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
-       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="../css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="../vendor/katex/katex.min.css">
@@ -37,10 +36,18 @@
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
       <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
         <a class="nav-link" href="../index.html">Home</a>
-        <a class="nav-link" href="charges.html">1 · Charges &amp; Fields</a>
-        <a class="nav-link" href="current.html">2 · Current</a>
-        <a class="nav-link" href="magnetism.html">3 · Magnetism</a>
-        <a class="nav-link" href="induction.html">4 · Induction</a>
+        <div class="nav-drop">
+          <button class="nav-link nav-drop-btn" id="topicsBtn" type="button"
+                  aria-expanded="false" aria-controls="topicsMenu">Topics
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-drop-menu" id="topicsMenu">
+            <a class="dd-link" href="charges.html"><b>1 · Charges &amp; Fields</b><small>Coulomb’s law · field lines · superposition</small></a>
+            <a class="dd-link" href="current.html"><b>2 · Current</b><small>Ohm’s law · series &amp; parallel</small></a>
+            <a class="dd-link" href="magnetism.html"><b>3 · Magnetism</b><small>field lines · F = qv × B</small></a>
+            <a class="dd-link" href="induction.html"><b>4 · Induction</b><small>Faraday · Lenz · generators</small></a>
+          </div>
+        </div>
         <a class="nav-link nav-cta" href="../quiz.html">Take the quiz</a>
       </nav>
     </div>
@@ -205,7 +212,6 @@
                aria-label="Left: a magnet approaching a coil induces a current that repels it. Right: a magnet leaving induces a current that attracts it.">
             <defs><marker id="la" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="#fbbf24"/></marker></defs>
 
-            <!-- ============ approaching ============ -->
             <g transform="translate(0,0)">
               <!-- coil -->
               <ellipse cx="200" cy="80" rx="17" ry="46" fill="none" stroke="#cbd5e1" stroke-width="2.6"/>
@@ -227,7 +233,6 @@
               <text x="150" y="172" fill="#a9bad6" font-size="12.5" font-family="sans-serif" text-anchor="middle" font-weight="700">APPROACHING</text>
             </g>
 
-            <!-- ============ receding ============ -->
             <g transform="translate(330,0)">
               <ellipse cx="120" cy="80" rx="17" ry="46" fill="none" stroke="#cbd5e1" stroke-width="2.6"/>
               <ellipse cx="132" cy="80" rx="17" ry="46" fill="none" stroke="#cbd5e1" stroke-width="2.6"/>
@@ -271,8 +276,9 @@
         <p><strong>1.</strong> Is the flux through the loop increasing or decreasing? <strong>2.</strong> The induced field must oppose that change — so it points opposite to B if the flux is rising, and along B if it is falling. <strong>3.</strong> Curl your right-hand fingers around the loop in the current direction; your thumb then points along the induced field. That fixes the current direction.</p>
       </div>
 
-      <div class="callout callout-real">
-        <div class="callout-title">Real world</div>
+      <details class="dig dig-real">
+        <summary>Real world</summary>
+        <div class="dig-body">
         <p>
           <strong>Generators</strong> rotate a coil in a field (change θ) — a 1 GW turbine is
           Faraday’s law at industrial scale. <strong>Transformers</strong> use a changing current
@@ -289,9 +295,9 @@
           <strong>Airport security and metal detectors</strong> look for the eddy currents induced in
           metal objects.
         </p>
-      </div>
+        </div>
+      </details>
 
-      <!-- ============ SIM 7 ============ -->
       <h2 class="h-sec" id="sim-induction-panel" style="scroll-margin-top:5rem">4.4 · Simulation — a magnet through a coil</h2>
       <p>
         This is the experiment Faraday actually performed. The coil’s flux is computed from the
@@ -375,7 +381,6 @@
               </label>
             </div>
 
-
           </div>
 
         </div>
@@ -424,7 +429,6 @@
       </div>
     </section>
 
-    <!-- ============ BONUS: p5.js AC GENERATOR ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec" id="sim-generator-panel" style="scroll-margin-top:5rem">4.5 · Bonus lab — the AC generator (p5.js)</h2>
       <p>
@@ -495,7 +499,6 @@
       </div>
     </section>
 
-    <!-- ============ SELF-CHECK ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec">4.6 · Check your understanding</h2>
 
@@ -588,8 +591,6 @@
     </div>
   </footer>
 
-  <!-- p5.js via CDN for the bonus generator lab; the page degrades gracefully
-       (a notice replaces the canvas) when the CDN cannot be reached -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
   <script defer src="../vendor/katex/katex.min.js"></script>
   <script src="../js/common.js"></script>

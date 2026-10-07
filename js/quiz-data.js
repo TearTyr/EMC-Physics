@@ -1,24 +1,4 @@
-/* ==========================================================================
-   Quiz question bank
-   File: js/quiz-data.js   (loaded before js/quiz.js on quiz.html)
-
-   20 multiple-choice questions across the four EMC topics (5 charges,
-   6 current, 4 magnetism, 5 induction).
-   Every question carries a worked explanation so the quiz doubles as a
-   revision tool. Numerical answers were computed with k = 8.988e9 N m^2 C^-2.
-
-   Schema
-   ------
-   {
-     id       : number          stable identifier
-     topic    : 'charges' | 'current' | 'magnetism' | 'induction'
-     label    : string          human-readable topic name
-     q        : string          stem (HTML allowed)
-     options  : string[4]       choices
-     answer   : number          index of the correct choice (0-based)
-     explain  : string          feedback shown after grading (HTML allowed)
-   }
-   ========================================================================== */
+/* Quiz bank: 25 multiple-choice questions with worked explanations. Schema: { id, topic, label, q, options[4], answer (0-based), explain }. */
 window.EMC_QUIZ = [
 
   /* ---------------- Topic 1: electric charges and fields ---------------- */

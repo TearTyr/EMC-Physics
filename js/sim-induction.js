@@ -1,44 +1,4 @@
-/* ==========================================================================
-   Simulation 7 — Electromagnetic Induction: a magnet through a coil
-   File: js/sim-induction.js   (used on topics/induction.html)
-
-   PHYSICS (exact on-axis dipole result, no hand-waving)
-   ----------------------------------------------------
-   A coil of N turns and radius a sits in the y-z plane; its axis is x and
-   its area normal points along +x. A bar magnet modelled as a dipole of
-   moment m (pointing +x, i.e. its N pole faces +x) sits on the axis at a
-   signed distance z from the coil plane.
-
-   Flux through ONE turn (standard dipole result):
-       Phi(z) = mu0 * m * a^2 / ( 2 * (a^2 + z^2)^(3/2) )            [Wb]
-   Flux linkage:
-       lambda = N * Phi(z)
-   Faraday's law:
-       EMF = -d(lambda)/dt = -N * dPhi/dz * v
-       dPhi/dz = -3 * mu0 * m * a^2 * z / ( 2 * (a^2 + z^2)^(5/2) )
-       =>  EMF = 3 * N * mu0 * m * a^2 * z * v / ( 2 * (a^2 + z^2)^(5/2) )
-   Ohm's law for the coil circuit:
-       I = EMF / R            P = EMF^2 / R = I^2 R   (mechanical work in,
-                                                       heat out -- energy
-                                                       conservation / Lenz)
-
-   SIGN CONVENTION (and why the picture is right)
-   ----------------------------------------------
-   EMF > 0 drives current counter-clockwise seen from +x (right-hand rule
-   with the area normal +x). With the magnet's N pole leading:
-     * magnet APPROACHING  -> z*v < 0 -> EMF < 0 -> current CW from +x.
-       Flux is increasing, so the induced current makes a field that opposes
-       the increase: the coil's near face becomes a N pole and REPELS.
-     * magnet RECEDING     -> z*v > 0 -> EMF > 0 -> current CCW from +x.
-       Flux is decreasing, so the current tries to sustain it: the coil's
-       near face becomes a S pole and ATTRACTS, resisting the departure.
-     * at z = 0 the flux is at a maximum, dPhi/dt = 0, so EMF = 0. The EMF
-       trace therefore has two opposite peaks with a zero crossing in the
-       middle -- exactly what a real search coil shows on an oscilloscope.
-   On screen, "CCW seen from +x" means current comes OUT of the page at the
-   top of each turn (drawn as a dot) and goes INTO the page at the bottom
-   (drawn as a cross).
-   ========================================================================== */
+/* Sim 7 - magnet through a coil. Phi(z) = mu0 m a^2 / (2 (a^2+z^2)^{3/2}); EMF = -N dPhi/dz * v (analytic), I = EMF/R, P = EMF^2/R. Motion is sub-stepped at 2 ms so the narrow EMF peak is never undersampled. Sign convention: EMF > 0 = counter-clockwise seen from +x (dot at the top of each turn). */
 (function () {
   const canvas = document.getElementById('sim-induction');
   if (!canvas) return;
@@ -142,7 +102,7 @@
     return { x0, spacing };
   }
 
-  /** dot = current out of the page, cross = current into the page */
+  /* dot = current out of the page, cross = current into the page */
   function drawCurrentSymbol(ctx, x, y, s, out) {
     ctx.save();
     ctx.strokeStyle = 'rgba(232,238,251,.95)'; ctx.fillStyle = 'rgba(232,238,251,.95)';
@@ -261,11 +221,7 @@
     ctx.clearRect(0, 0, w, h);
     const G = geom(w, h);
 
-    /* --- advance the magnet ------------------------------------------------
-       The EMF peak is narrow (it sits at z = +/- a/2), so a single Euler step
-       per animation frame can jump straight over it on a slow device. The
-       motion is therefore integrated in sub-steps of at most 2 ms, which also
-       keeps the position accurate when the browser clamps dt.              */
+    /* --- advance the magnet ------------------------------------------------ The EMF peak is narrow (it sits at z = +/- a/2), so a single Euler step per animation frame can jump straight over it on a slow device. The motion is therefore integrated in sub-steps of at most 2 ms, which also keeps the position accurate when the browser clamps dt. */
     const subSteps = dt ? clamp(Math.ceil(dt / 0.002), 1, 40) : 1;
     const sdt = dt ? dt / subSteps : 0;
     if (dt && (state.mode === 'push' || state.mode === 'pull')) {

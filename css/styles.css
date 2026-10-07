@@ -1,25 +1,6 @@
-/* ==========================================================================
-   EMC Lab — stylesheet
-   File: css/styles.css
+/* EMC Lab stylesheet - flat dark "chiikawa-minimal" theme: warm charcoal base, candy-pastel accents, sticker cards, no blur/gradient/glow. Simulations and figures sit on flat near-black plates. Loaded after the Tailwind CDN so these class rules win over Preflight. Sections: tokens, base, type, header, controls, cards, sims, content, progress, quiz, footer, hero, motion, responsive, print. */
 
-   Aesthetic: "chiikawa-official, but dark and minimal".
-   Notes taken from chiikawaofficial.com and translated, not copied:
-     * one calm centred column, sections separated by SPACE, not rules
-     * rounded everything: sticker cards, pill buttons, thick soft outlines
-     * a neutral base with a few CANDY-PASTEL accents (the reference site's
-       own palette: pink #f8aebe, lilac #d5b8d8, green #b5d777, blue #a8d3e0,
-       yellow #f6d36b) used sparingly, never as gradients
-     * friendly rounded type (Nunito, falling back to system rounded faces)
-     * gentle motion only: a bobbing mascot, soft hover lifts. No blur, no
-       glass, no glow, no scroll-jacking. prefers-reduced-motion honoured.
-     * dark mode: warm charcoal base, cream text; the simulations and SVG
-       figures sit on slightly darker flat "plates", like lab instruments
-   Linked AFTER the Tailwind CDN so these class rules win over Preflight.
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   1. Tokens
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 1. Tokens -------------------------------------------------------------------------- */
 :root {
   --bg:        #17181c;
   --bg-soft:   #1b1d22;
@@ -35,12 +16,12 @@
   --text-faint: #9a988e;   /* >= 4.5:1 on panels */
 
   /* the candy-pastel accent set (the only colours on the page) */
-  --pk: #f8aebe;   /* pink   */
-  --li: #d5b8d8;   /* lilac  */
-  --mi: #b5d777;   /* green  */
-  --sk: #a8d3e0;   /* blue   */
+  --pk: #f8aebe;   /* pink */
+  --li: #d5b8d8;   /* lilac */
+  --mi: #b5d777;   /* green */
+  --sk: #a8d3e0;   /* blue */
   --ye: #f6d36b;   /* yellow */
-  --gr: #97a2a6;   /* grey   */
+  --gr: #97a2a6;   /* grey */
 
   /* semantic aliases kept so markup/JS class names stay stable */
   --cyan: var(--sk); --amber: var(--ye); --rose: var(--pk);
@@ -52,22 +33,9 @@
   --r-ctl:  12px;
   --header-h: 56px;
   --maxw: 1280px;
-  /* Cute anime / maru-gothic pairing: Mochiy Pop One for headings and the
-     brand (sticker-pop, already heavy at weight 400), M PLUS Rounded 1c for
-     body text. Both cover Latin; offline they fall back to system rounded
-     faces (ui-rounded / Hiragino Maru Gothic) so the vibe survives. */
-  /* FOT-Yuruka Std (Fontworks) is preferred everywhere. It is a COMMERCIAL
-     face: enable it legally via an Adobe Fonts kit (see the commented link in
-     each page head) or by self-hosting licensed woff2 in vendor/fonts/ (see
-     the @font-face template at the bottom of this file). Until then the
-     rounded fallbacks below keep the same maru-gothic personality. */
-  /* A three-family rounded system that stays coherent:
-       display  — Lilita One        : hero/topic titles, score grade (poster pop)
-       head/UI  — FOT-Yuruka Std    : headings, brand, panel titles, buttons
-       text     — FOT-Yuruka Std    : body prose (real 400/500/700 weights)
-       labels   — M PLUS Rounded 1c : eyebrows, tags, stat labels, seg controls
-       numbers  -- the mono stack    : readouts, tables, equations fallback
-     Every family degrades to the vendored open faces, then system rounded. */
+  /* Cute anime / maru-gothic pairing: Mochiy Pop One for headings and the brand (sticker-pop, already heavy at weight 400), M PLUS Rounded 1c for body text. Both cover Latin; offline they fall back to system rounded faces (ui-rounded / Hiragino Maru Gothic) so the vibe survives. */
+  /* FOT-Yuruka Std (Fontworks) is preferred everywhere. It is a COMMERCIAL face: enable it legally via an Adobe Fonts kit (see the commented link in each page head) or by self-hosting licensed woff2 in vendor/fonts/ (see the @font-face template at the bottom of this file). Until then the rounded fallbacks below keep the same maru-gothic personality. */
+  /* A three-family rounded system that stays coherent: display — Lilita One : hero/topic titles, score grade (poster pop) head/UI — FOT-Yuruka Std : headings, brand, panel titles, buttons text — FOT-Yuruka Std : body prose (real 400/500/700 weights) labels — M PLUS Rounded 1c : eyebrows, tags, stat labels, seg controls numbers -- the mono stack : readouts, tables, equations fallback Every family degrades to the vendored open faces, then system rounded. */
   --font: 'FOT-Yuruka Std', 'M PLUS Rounded 1c', ui-rounded,
           'Hiragino Maru Gothic ProN', 'Yu Gothic UI', 'Segoe UI', system-ui, sans-serif;
   --font-head: 'FOT-Yuruka Std', 'Mochiy Pop One', 'M PLUS Rounded 1c', ui-rounded,
@@ -82,16 +50,12 @@
 
 ::selection { background: var(--ye); color: #221d07; }
 
-/* sup/sub positioned by CSS, NOT by font metrics: vertical-align:super/sub
-   reads the face's OS/2 superscript values, and display faces (Yuruka) can
-   carry extremes that scatter exponents across the line box. */
+/* sup/sub positioned by CSS, NOT by font metrics: vertical-align:super/sub reads the face's OS/2 superscript values, and display faces (Yuruka) can carry extremes that scatter exponents across the line box. */
 sup, sub { vertical-align: baseline; position: relative; line-height: 0; font-size: .72em; }
 sup { top: -.55em; }
 sub { bottom: -.3em; }
 
-/* --------------------------------------------------------------------------
-   2. Base
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 2. Base -------------------------------------------------------------------------- */
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 14px); }
 [id] { scroll-margin-top: calc(var(--header-h) + 14px); }
 
@@ -110,11 +74,11 @@ body.emc {
 .emc-main { flex: 1 0 auto; }
 
 .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 1.25rem; }
-.wrap-narrow { max-width: 980px; }
+.wrap-narrow { max-width: 700px; }
 .wrap-narrow .lede { max-width: 100%; }
 
-.section { padding-block: 2rem; }
-.section-tight { padding-block: 1rem; }
+.section { padding-block: 2.6rem; }
+.section-tight { padding-block: 1.15rem; }
 
 .hr { height: 0; border: 0; margin: 0; }   /* sections breathe; no rules */
 
@@ -127,15 +91,13 @@ body.emc {
 
 :focus-visible { outline: 2px solid var(--sk); outline-offset: 2px; border-radius: 6px; }
 
-/* --------------------------------------------------------------------------
-   3. Typography
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 3. Typography -------------------------------------------------------------------------- */
 .emc h1, .emc h2, .emc h3, .emc h4 { line-height: 1.35; font-weight: 700; margin: 0; color: var(--text); font-family: var(--font-head); letter-spacing: .01em; }
 .emc .h-hero  { font-size: clamp(1.7rem, 4.4vw, 2.5rem); font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; }
 .emc .h-topic { font-size: clamp(1.45rem, 3.4vw, 2rem); font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; }
-.h-sec   { font-size: clamp(1.08rem, 2.1vw, 1.3rem); margin-bottom: .5rem; }
-.h-sub   { font-size: 1.05rem; margin: 1.2rem 0 .4rem; font-weight: 800; }
-.lede    { color: var(--text-dim); font-size: 1rem; max-width: 62ch; }
+.h-sec   { font-size: clamp(1.08rem, 2.1vw, 1.3rem); margin-bottom: .9rem; }
+.h-sub   { font-size: 1.05rem; margin: 1.8rem 0 .55rem; font-weight: 800; }
+.lede    { color: var(--text-dim); font-size: 1.03rem; line-height: 1.75; max-width: 58ch; }
 .muted   { color: var(--text-dim); }
 .faint   { color: var(--text-faint); }
 .small   { font-size: .89rem; line-height: 1.65; }
@@ -157,16 +119,12 @@ body.emc {
 a.link { color: var(--sk); text-decoration: underline; text-underline-offset: 3px; }
 a.link:hover { color: #cfe9f2; }
 
-/* --------------------------------------------------------------------------
-   4. Mascot & gentle motion
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 4. Mascot & gentle motion -------------------------------------------------------------------------- */
 .mascot { width: 108px; height: auto; display: block; animation: bob 3.4s ease-in-out infinite; }
 .mascot-sm { width: 60px; margin-bottom: .15rem; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 
-/* --------------------------------------------------------------------------
-   5. Header + navigation
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 5. Header + navigation -------------------------------------------------------------------------- */
 .site-header {
   position: sticky; top: 0; z-index: 60;
   background: var(--bg);
@@ -188,6 +146,25 @@ a.link:hover { color: #cfe9f2; }
 }
 .nav-link:hover { color: var(--text); background: var(--panel-2); }
 .nav-link.active { color: var(--text); background: var(--panel-2); font-weight: 800; }
+.nav-drop { position: relative; }
+.nav-drop-btn { display: inline-flex; align-items: center; gap: .4rem; }
+.nav-drop-btn svg { transition: transform .15s ease; }
+.nav-drop-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.nav-drop-menu {
+  position: absolute; top: calc(100% + 10px); left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  min-width: 250px; background: var(--panel); border: 1.5px solid var(--line);
+  border-radius: 14px; padding: .4rem; display: grid; gap: 2px;
+  opacity: 0; visibility: hidden; z-index: 70;
+  transition: opacity .15s ease, transform .15s ease;
+}
+.nav-drop-menu.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.dd-link { display: grid; gap: .1rem; padding: .5rem .75rem; border-radius: 10px; text-decoration: none; color: var(--text-dim); }
+.dd-link:hover { background: #262830; color: var(--text); }
+.dd-link b { font-size: .9rem; font-weight: 700; color: var(--text); }
+.dd-link small { font-size: .74rem; color: var(--text-faint); line-height: 1.4; }
+.dd-link.active { background: rgba(168,211,224,.1); }
+.dd-link.active b { color: var(--sk); }
 .nav-cta { background: var(--pk); color: #2b1418 !important; padding: .45rem 1rem; font-weight: 800; }
 .nav-cta:hover { background: #fac0cd; }
 
@@ -210,13 +187,17 @@ a.link:hover { color: #cfe9f2; }
     transition: max-height .25s ease, opacity .2s ease;
   }
   .nav-menu.open { max-height: 72vh; overflow-y: auto; opacity: 1; pointer-events: auto; padding: .4rem .9rem .8rem; }
+  .nav-drop-menu {
+    position: static; transform: none; min-width: 0; border: 0; background: transparent;
+    padding: 0 0 0 .8rem; display: none; opacity: 1; visibility: visible;
+  }
+  .nav-drop-menu.open { display: grid; transform: none; }
+  .dd-link { padding: .5rem .4rem; }
   .nav-link { padding: .7rem .6rem; border-radius: 10px; }
   .nav-cta { margin-top: .4rem; text-align: center; }
 }
 
-/* --------------------------------------------------------------------------
-   6. Buttons (stickers), segments, tags
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 6. Buttons (stickers), segments, tags -------------------------------------------------------------------------- */
 .btn {
   font-family: var(--font-label);
   display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
@@ -260,9 +241,7 @@ a.link:hover { color: #cfe9f2; }
 .tag-emerald { color: var(--mi); border-color: rgba(181,215,119,.45); background: rgba(181,215,119,.08); }
 .tag-rose { color: var(--pk); border-color: rgba(248,174,190,.45); background: rgba(248,174,190,.08); }
 
-/* --------------------------------------------------------------------------
-   7. Cards / panels (stickers on the dark page)
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 7. Cards / panels (stickers on the dark page) -------------------------------------------------------------------------- */
 .card {
   background: var(--panel);
   border: 1.5px solid var(--line); border-radius: var(--r-card);
@@ -301,9 +280,7 @@ a.link:hover { color: #cfe9f2; }
 }
 .topic-icon svg { width: 25px; height: 25px; stroke: var(--topic-accent, var(--sk)); }
 .topic-list { list-style: none; margin: .2rem 0 0; padding: 0; display: grid; gap: .55rem; }
-/* BULLET VIA ABSOLUTE MARKER: flex AND grid both promote every <sub>/<sup>
-   to its own item (that was the scattered-exponents bug). A positioned
-   ::before keeps the whole equation one flowing inline run. */
+/* BULLET VIA ABSOLUTE MARKER: flex AND grid both promote every <sub>/<sup> to its own item (that was the scattered-exponents bug). A positioned ::before keeps the whole equation one flowing inline run. */
 .topic-list li {
   position: relative; padding-left: 1.05rem;
   font-size: .9rem; line-height: 1.65; color: var(--text-dim);
@@ -313,9 +290,7 @@ a.link:hover { color: #cfe9f2; }
   color: var(--topic-accent, var(--sk)); font-weight: 800;
 }
 
-/* --------------------------------------------------------------------------
-   8. Simulation shell: flat dark plates + soft controls
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 8. Simulation shell: flat dark plates + soft controls -------------------------------------------------------------------------- */
 .sim-canvas {
   display: block; width: 100%; height: 380px; touch-action: none; cursor: crosshair;
   background: var(--plate);
@@ -411,19 +386,17 @@ table.data td { font-family: var(--mono); color: var(--text); }
 table.data tr:last-child td { border-bottom: 0; }
 table.data td.txt { font-family: var(--font); }
 
-/* --------------------------------------------------------------------------
-   9. Content blocks
-   -------------------------------------------------------------------------- */
-.prose p { margin: 0 0 .85rem; color: var(--text-dim); line-height: 1.75; }
+/* -------------------------------------------------------------------------- 9. Content blocks -------------------------------------------------------------------------- */
+.prose p { margin: 0 0 1.05rem; color: var(--text-dim); line-height: 1.8; }
 .prose strong { color: var(--text); font-weight: 700; }
 .prose ul, .prose ol { margin: 0 0 .85rem; padding-left: 1.3rem; color: var(--text-dim); }
-.prose li { margin-bottom: .35rem; }
+.prose li { margin-bottom: .5rem; }
 .prose li::marker { color: var(--pk); font-weight: 800; }
 
 .formula {
   display: flex; align-items: center; justify-content: center; gap: .8rem; flex-wrap: wrap;
   background: var(--panel-2); border: 1.5px solid var(--line); border-radius: var(--r-mid);
-  padding: 1.05rem 1.2rem; margin: .95rem 0 1.1rem; text-align: center;
+  padding: 1.1rem 1.25rem; margin: 1.1rem 0 1.25rem; text-align: center;
 }
 .formula .eq { font-family: var(--mono); font-size: clamp(1rem, 3vw, 1.22rem); font-weight: 700; color: #f4f1e8; }
 .formula .eq .katex { font-size: 1.22em; }
@@ -433,7 +406,7 @@ table.data td.txt { font-family: var(--font); }
 .eq .katex { color: #f4f1e8; }
 .formula .where { font-size: .78rem; color: var(--text-faint); width: 100%; }
 
-.callout { border-radius: var(--r-mid); padding: .9rem 1.05rem; margin: 1rem 0; border: 1.5px solid; font-size: .9rem; }
+.callout { border-radius: var(--r-mid); padding: .95rem 1.1rem; margin: 1.15rem 0; border: 1.5px solid; font-size: .9rem; }
 .callout-title { display: flex; align-items: center; gap: .45rem; font-weight: 800; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .35rem; }
 .callout p { margin: 0 0 .5rem; color: var(--text-dim); line-height: 1.7; }
 .callout p:last-child { margin-bottom: 0; }
@@ -443,6 +416,18 @@ table.data td.txt { font-family: var(--font); }
 .callout-trap { background: rgba(248,174,190,.06); border-color: rgba(248,174,190,.35); } .callout-trap .callout-title { color: var(--pk); }
 
 details.check { background: var(--panel-2); border: 1.5px solid var(--line); border-radius: var(--r-mid); padding: .75rem 1rem; margin-bottom: .6rem; transition: border-color .15s ease; }
+details.dig { margin: 1.15rem 0; border: 1.5px solid var(--line); border-radius: var(--r-mid); background: var(--bg-soft); }
+details.dig summary {
+  cursor: pointer; list-style: none; display: flex; align-items: center; gap: .5rem;
+  padding: .7rem 1rem; font-weight: 700; font-size: .9rem; color: var(--text-dim);
+}
+details.dig summary::-webkit-details-marker { display: none; }
+details.dig summary::before { content: "+"; font-family: var(--mono); font-weight: 700; color: var(--sk); width: 1em; }
+details.dig[open] summary::before { content: "\2212"; }
+details.dig[open] summary { border-bottom: 1.5px dashed var(--line); }
+details.dig .dig-body { padding: .35rem 1rem .85rem; }
+details.dig .dig-body p { margin: .7rem 0 0; color: var(--text-dim); line-height: 1.75; font-size: .92rem; }
+details.dig:hover { border-color: var(--edge); }
 details.check:hover { border-color: var(--edge); }
 details.check summary { cursor: pointer; font-weight: 700; font-size: .94rem; line-height: 1.55; color: var(--text); list-style: none; display: flex; gap: .55rem; align-items: flex-start; }
 details.check summary::-webkit-details-marker { display: none; }
@@ -471,9 +456,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .objectives li { display: flex; gap: .6rem; align-items: flex-start; font-size: .94rem; line-height: 1.6; color: var(--text-dim); }
 .objectives li svg { flex: none; width: 18px; height: 18px; margin-top: .22rem; stroke: var(--mi); }
 
-/* --------------------------------------------------------------------------
-   10. Progress
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 10. Progress -------------------------------------------------------------------------- */
 .progress-track { display: block; height: 9px; border-radius: 999px; background: #2c2f36; overflow: hidden; }
 .progress-fill { display: block; height: 100%; width: 0%; border-radius: 999px; background: var(--sk); transition: width .5s ease; }
 .ring-wrap { position: relative; width: 132px; height: 132px; flex: none; }
@@ -489,9 +472,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .check-pill.done { background: rgba(181,215,119,.1); border-color: var(--mi); color: var(--mi); }
 .check-pill.done::before { opacity: 1; }
 
-/* --------------------------------------------------------------------------
-   11. Quiz
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 11. Quiz -------------------------------------------------------------------------- */
 .quiz-meta { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
 .q-card { background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--r-card); padding: 1.15rem 1.25rem; margin-bottom: .85rem; }
 .q-card.answered-correct { border-color: var(--mi); }
@@ -557,9 +538,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .grade { font-size: 2.6rem; font-weight: 400; font-family: var(--font-display); line-height: 1.1; }
 .score-bar { flex: 1 1 220px; min-width: 200px; }
 
-/* --------------------------------------------------------------------------
-   12. Footer, breadcrumb, pager
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 12. Footer, breadcrumb, pager -------------------------------------------------------------------------- */
 .site-footer { border-top: 1.5px solid var(--line); background: #141519; padding-block: 2rem; margin-top: 2.5rem; }
 .footer-grid { display: grid; gap: 2rem; grid-template-columns: 1fr; }
 @media (min-width: 780px) { .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; } }
@@ -582,9 +561,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .pager .ttl { color: var(--text); font-weight: 700; }
 .pager .next { text-align: right; }
 
-/* --------------------------------------------------------------------------
-   13. Hero & home (centred stack, chiikawa-style)
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 13. Hero & home (centred stack, chiikawa-style) -------------------------------------------------------------------------- */
 .hero { padding-block: 2.4rem 1.6rem; }
 .hero-stack { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
 .hero-stack .lede { margin-inline: auto; }
@@ -610,9 +587,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
   letter-spacing: .12em; display: block; margin-bottom: .35rem;
 }
 
-/* --------------------------------------------------------------------------
-   14. Motion policy: bob + hover lifts only
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 14. Motion policy: bob + hover lifts only -------------------------------------------------------------------------- */
 .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 .reveal.in { opacity: 1; transform: none; }
 
@@ -622,9 +597,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
-/* --------------------------------------------------------------------------
-   15. Small screens
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 15. Small screens -------------------------------------------------------------------------- */
 @media (min-width: 1280px) {
   body.emc { font-size: 17px; }
   .h-hero { font-size: 2.6rem; }
@@ -632,7 +605,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 
 @media (max-width: 640px) {
   body.emc { font-size: 15.5px; }
-  .section { padding-block: 1.5rem; }
+  .section { padding-block: 1.9rem; }
   .hero { padding-block: 2rem 1.3rem; }
   .sim-canvas { height: 320px; }
   .sim-canvas.tall { height: 360px; }
@@ -676,9 +649,7 @@ body.emc { overflow-x: clip; }
 .is-hidden { display: none !important; }
 [hidden] { display: none !important; }
 
-/* --------------------------------------------------------------------------
-   16. Print
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- 16. Print -------------------------------------------------------------------------- */
 @media print {
   .site-header, .site-footer, .nav-toggle, .panel-actions, .btn, .sim-canvas,
   .scroll-progress, #p5-gen-host, .legend, .mascot { display: none !important; }
@@ -688,17 +659,4 @@ body.emc { overflow-x: clip; }
   figure.fig .fig-box { background: #fff; border-color: #bbb; }
 }
 
-/* ==========================================================================
-   FOT-Yuruka Std (your licensed .ttf) — how activation works
-   --------------------------------------------------------------------------
-   1. drop the file in   vendor/fonts/fot-yuruka-std.ttf   (Bold: -bold.ttf)
-   2. run                npm run font:scan        (writes manifest.json)
-   3. commit + push      vendor/fonts/
-   js/common.js reads vendor/fonts/manifest.json at boot and registers every
-   listed face through the FontFace API. 'FOT-Yuruka Std' is first in both
-   font stacks, so the whole site switches instantly. Without a manifest
-   entry the bundled open fonts (css/fonts.css) render and the console shows
-   one informational line - never an error, never a 404.
-   Serve over http(s) when testing locally: Chrome blocks custom fonts on
-   file:// URLs (python3 -m http.server works).
-   ========================================================================== */
+/* ========================================================================== FOT-Yuruka Std (your licensed .ttf) — how activation works -------------------------------------------------------------------------- 1. drop the file in vendor/fonts/fot-yuruka-std.ttf (Bold: -bold.ttf) 2. run npm run font:scan (writes manifest.json) 3. commit + push vendor/fonts/ js/common.js reads vendor/fonts/manifest.json at boot and registers every listed face through the FontFace API. 'FOT-Yuruka Std' is first in both font stacks, so the whole site switches instantly. Without a manifest entry the bundled open fonts (css/fonts.css) render and the console shows one informational line - never an error, never a 404. Serve over http(s) when testing locally: Chrome blocks custom fonts on file:// URLs (python3 -m http.server works). ========================================================================== */

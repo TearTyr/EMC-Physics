@@ -1,28 +1,4 @@
-/* ==========================================================================
-   EMC Lab — Tailwind utility fallback subset
-   File: css/tailwind-fallback.css
-
-   WHY THIS FILE EXISTS
-   --------------------
-   The project styles with Tailwind CSS loaded from the official CDN
-   (https://cdn.tailwindcss.com), as required by the brief. A CDN cannot be
-   reached when the site is opened:
-     * from the file system inside a sandboxed preview,
-     * on a machine with no internet connection,
-     * behind a Content-Security-Policy that blocks cdn.tailwindcss.com.
-
-   This file re-declares ONLY the utility classes the markup actually uses,
-   with values identical to Tailwind's default theme (spacing = 0.25rem steps,
-   the standard colour palette, the standard font-size scale). Behaviour:
-     * Tailwind available  -> the CDN's generated CSS is injected after this
-                              file, so Tailwind's identical declarations win.
-                              Zero visual difference.
-     * Tailwind blocked    -> this subset keeps the layout intact.
-
-   Maintenance rule: if you add a new Tailwind utility class to the HTML,
-   add its declaration here too (see tools/check-links.mjs --utilities for a
-   report of classes used vs. classes covered).
-   ========================================================================== */
+/* Offline mirror of exactly the Tailwind utilities the markup uses, with Tailwind's own values. If the CDN loads, its identical rules win; if it is blocked (offline, file://, strict CSP) this keeps the layout intact. When adding a utility class to the HTML, add it here too. */
 
 /* --- display ------------------------------------------------------------ */
 .block{display:block}.inline-block{display:inline-block}.flex{display:flex}

@@ -11,8 +11,7 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/tailwind-fallback.css">
-  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
-       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
@@ -37,10 +36,18 @@
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
       <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
         <a class="nav-link" href="index.html">Home</a>
-        <a class="nav-link" href="topics/charges.html">1 · Charges &amp; Fields</a>
-        <a class="nav-link" href="topics/current.html">2 · Current</a>
-        <a class="nav-link" href="topics/magnetism.html">3 · Magnetism</a>
-        <a class="nav-link" href="topics/induction.html">4 · Induction</a>
+        <div class="nav-drop">
+          <button class="nav-link nav-drop-btn" id="topicsBtn" type="button"
+                  aria-expanded="false" aria-controls="topicsMenu">Topics
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-drop-menu" id="topicsMenu">
+            <a class="dd-link" href="topics/charges.html"><b>1 · Charges &amp; Fields</b><small>Coulomb’s law · field lines · superposition</small></a>
+            <a class="dd-link" href="topics/current.html"><b>2 · Current</b><small>Ohm’s law · series &amp; parallel</small></a>
+            <a class="dd-link" href="topics/magnetism.html"><b>3 · Magnetism</b><small>field lines · F = qv × B</small></a>
+            <a class="dd-link" href="topics/induction.html"><b>4 · Induction</b><small>Faraday · Lenz · generators</small></a>
+          </div>
+        </div>
         <a class="nav-link nav-cta" href="quiz.html">Take the quiz</a>
       </nav>
     </div>
@@ -77,7 +84,6 @@
       </div>
     </div>
 
-    <!-- ============ TOOLBAR ============ -->
     <div class="wrap section-tight">
       <div class="panel">
         <div class="panel-body">
@@ -126,12 +132,10 @@
       </div>
     </div>
 
-    <!-- ============ SCORE (hidden until submitted) ============ -->
     <div class="wrap section-tight">
       <div class="card" id="quiz-score" role="status" aria-live="polite" hidden></div>
     </div>
 
-    <!-- ============ QUESTIONS ============ -->
     <div class="wrap section-tight" id="quiz-list">
       <div id="quiz-questions"><!-- questions injected by js/quiz.js --></div>
     </div>
@@ -195,8 +199,6 @@
     </div>
   </footer>
 
-  <!-- Chart.js via CDN for the score visualisation; js/quiz.js falls back to
-       dependency-free CSS bars when the CDN cannot be reached -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script defer src="vendor/katex/katex.min.js"></script>
   <script src="js/common.js"></script>

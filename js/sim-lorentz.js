@@ -1,35 +1,4 @@
-/* ==========================================================================
-   Simulation 6 — Force on a Moving Charge (magnetic Lorentz force)
-   File: js/sim-lorentz.js   (used on topics/magnetism.html)
-
-   PHYSICS
-   -------
-   F = q v x B      ->   |F| = |q| v B sin(theta)
-   With v perpendicular to B the force is always perpendicular to the
-   velocity, so it does NO WORK: speed and kinetic energy stay constant and
-   the particle moves in a circle.
-
-       radius   r = m v / (|q| B)
-       period   T = 2 pi m / (|q| B)      (independent of speed!)
-       omega    = |q| B / m
-
-   Sign conventions used here
-   --------------------------
-   * Physics axes: x right, y UP. The canvas y axis points DOWN, so any
-     vector (Fx, Fy) is drawn as (Fx, -Fy).
-   * B "out of the page" is +z (drawn as dots), "into the page" is -z
-     (drawn as crosses).
-   * The exact circular solution is used (no numerical integration error):
-         Omega = -q Bz / m        (signed rotation rate)
-         centre c = p0 - (1/Omega) * (v0y, -v0x)
-         p(t)   = c + Rot(Omega t)(p0 - c)
-
-   TIMING
-   ------
-   Real cyclotron periods are ~1e-7 s, far too fast to watch, so the
-   animation rotates the particle at a fixed visual rate while keeping the
-   physically correct DIRECTION. The slow-down factor is shown on screen.
-   ========================================================================== */
+/* Sim 6 - Lorentz force. F = qv x B; exact circular solution p(t) = c + Rot(Omega t)(p0 - c) with Omega = -q Bz/m; r = mv/|q|B, T = 2pi m/|q|B. Rotation direction is physical; the rate is slowed and the slow-down factor is printed on the canvas. */
 (function () {
   const canvas = document.getElementById('sim-lorentz');
   if (!canvas) return;
@@ -75,7 +44,7 @@
     return { q, m, F, r, T, omega, KE, Omega, v, B };
   }
 
-  /** Unit vector of the magnetic force at t = 0, in physics axes. */
+  /* Unit vector of the magnetic force at t = 0, in physics axes. */
   function forceDirection() {
     const th = DIRS[state.vdir] * Math.PI / 180;
     const vx = Math.cos(th), vy = Math.sin(th);

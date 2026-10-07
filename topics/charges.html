@@ -11,8 +11,7 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
-  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
-       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="../css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="../vendor/katex/katex.min.css">
@@ -37,10 +36,18 @@
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
       <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
         <a class="nav-link" href="../index.html">Home</a>
-        <a class="nav-link" href="charges.html">1 · Charges &amp; Fields</a>
-        <a class="nav-link" href="current.html">2 · Current</a>
-        <a class="nav-link" href="magnetism.html">3 · Magnetism</a>
-        <a class="nav-link" href="induction.html">4 · Induction</a>
+        <div class="nav-drop">
+          <button class="nav-link nav-drop-btn" id="topicsBtn" type="button"
+                  aria-expanded="false" aria-controls="topicsMenu">Topics
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-drop-menu" id="topicsMenu">
+            <a class="dd-link" href="charges.html"><b>1 · Charges &amp; Fields</b><small>Coulomb’s law · field lines · superposition</small></a>
+            <a class="dd-link" href="current.html"><b>2 · Current</b><small>Ohm’s law · series &amp; parallel</small></a>
+            <a class="dd-link" href="magnetism.html"><b>3 · Magnetism</b><small>field lines · F = qv × B</small></a>
+            <a class="dd-link" href="induction.html"><b>4 · Induction</b><small>Faraday · Lenz · generators</small></a>
+          </div>
+        </div>
         <a class="nav-link nav-cta" href="../quiz.html">Take the quiz</a>
       </nav>
     </div>
@@ -48,7 +55,6 @@
   </header>
 
   <main class="emc-main" id="main">
-    <!-- ============ TITLE BLOCK ============ -->
     <div class="wrap wrap-narrow section-tight">
       <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -86,7 +92,6 @@
 
     <hr class="hr">
 
-    <!-- ============ TUTORIAL ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec" id="charge">1.1 · Positive and negative charge</h2>
       <p>
@@ -114,8 +119,9 @@
         <div><dt>Charging by induction</dt><dd>Bringing a charged object <em>near</em> a conductor redistributes its charges without touching it. Earth the conductor and the redistribution becomes permanent.</dd></div>
       </dl>
 
-      <div class="callout callout-real">
-        <div class="callout-title">Real world</div>
+      <details class="dig dig-real">
+        <summary>Real world</summary>
+        <div class="dig-body">
         <p>
           The spark you get from a door handle after walking on carpet is a few thousand volts
           driving charge across a millimetre of air. Lightning is the same process at
@@ -123,7 +129,8 @@
           cloud until the field exceeds about <strong>3×10<sup>6</sup> V/m</strong>, the breakdown
           strength of air.
         </p>
-      </div>
+        </div>
+      </details>
 
       <h2 class="h-sec" id="coulomb">1.2 · Coulomb’s law</h2>
       <p>
@@ -162,15 +169,17 @@
         </p>
       </div>
 
-      <div class="callout callout-trap">
-        <div class="callout-title">Common mistake</div>
+      <details class="dig dig-trap">
+        <summary>Common mistake</summary>
+        <div class="dig-body">
         <p>
           Coulomb’s law in this form applies to <strong>point charges</strong> (or to uniform
           spheres, where r is measured centre to centre). For an extended, irregular charged
           object you must integrate over its charge distribution — that is where calculus
           enters this topic.
         </p>
-      </div>
+        </div>
+      </details>
 
       <h3 class="h-sub">Superposition</h3>
       <p>
@@ -265,8 +274,9 @@
         the projectile motion you already know — with qE/m in place of g.
       </p>
 
-      <div class="callout callout-real">
-        <div class="callout-title">Real world</div>
+      <details class="dig dig-real">
+        <summary>Real world</summary>
+        <div class="dig-body">
         <p>
           <strong>Laser printers and photocopiers</strong> steer charged toner with electric
           fields. <strong>Inkjet printers</strong> charge each droplet and deflect it between
@@ -275,16 +285,18 @@
           <strong>cathode-ray tube</strong> in an old television is a pure demonstration of
           F = qE deflecting electrons.
         </p>
-      </div>
+        </div>
+      </details>
 
-      <div class="callout callout-trap">
-        <div class="callout-title">Three misconceptions to avoid</div>
+      <details class="dig dig-trap">
+        <summary>Three misconceptions to avoid</summary>
+        <div class="dig-body">
         <p>1. “A bigger charge feels a bigger force, so it accelerates more.” No — a = F/m; the field is a property of space, independent of the test charge.</p>
         <p>2. “Field lines are the paths charges follow.” They are not. A charge released in a curved field moves along a trajectory determined by its velocity <em>and</em> the force, which generally is not the field line.</p>
         <p>3. “E = 0 means no charge is there.” It means the vector sum cancels — between two like charges there is a null point where the fields are equal and opposite.</p>
-      </div>
+        </div>
+      </details>
 
-      <!-- ============ SIMULATION 1 ============ -->
       <h2 class="h-sec" id="sim-coulomb-panel" style="scroll-margin-top:5rem">1.4 · Simulation — Coulomb’s law bench</h2>
       <p>
         Change either charge or drag them apart. The arrows show the force on each charge:
@@ -352,7 +364,6 @@
       </div>
     </section>
 
-    <!-- ============ SIMULATION 2 ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec" id="sim-efield-panel" style="scroll-margin-top:5rem">1.5 · Simulation — electric field explorer</h2>
       <p>
@@ -435,7 +446,6 @@
       </div>
     </section>
 
-    <!-- ============ SELF-CHECK ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec">1.6 · Check your understanding</h2>
       <p>Think first, then click to reveal the answer.</p>

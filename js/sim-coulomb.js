@@ -1,22 +1,4 @@
-/* ==========================================================================
-   Simulation 1 — Coulomb's Law bench
-   File: js/sim-coulomb.js   (used on topics/charges.html)
-
-   PHYSICS
-   -------
-   F = k * |q1 * q2| / r^2        k = 8.988e9 N m^2 C^-2
-   Like charges repel; opposite charges attract. The two force arrows are
-   always equal in length and opposite in direction (Newton's third law).
-   The field at the midpoint is found by vector superposition:
-       E(P) = sum_i  k q_i (P - r_i) / |P - r_i|^3
-
-   RENDERING / COORDINATES
-   -----------------------
-   Charge positions are stored as NORMALISED coordinates (0..1 of canvas
-   width) and the canvas always represents the same physical width
-   (SPAN_M metres). That way the computed physics never changes when the
-   window is resized, and dragging a charge is stable (no feedback loop).
-   ========================================================================== */
+/* Sim 1 - Coulomb bench (topics/charges.html). F = k|q1q2|/r^2; charges stored in normalised coords so the physics is resolution-independent; midpoint field by superposition; drag either charge to change r. */
 (function () {
   const canvas = document.getElementById('sim-coulomb');
   if (!canvas) return;                     // guard: page does not contain this sim
@@ -44,7 +26,7 @@
     const r = Math.max(separation(), 1e-4);
     return k * Math.abs((state.q1 * 1e-6) * (state.q2 * 1e-6)) / (r * r);
   }
-  /** Signed net field at the midpoint; positive = pointing right (+x). [N/C] */
+  /* Signed net field at the midpoint; positive = pointing right (+x). [N/C] */
   function fieldAtMidpoint() {
     const r = Math.max(separation(), 1e-4);
     const d = r / 2;
@@ -57,9 +39,7 @@
   }
   const chargeRadius = q => 13 + 9 * Math.cbrt(Math.abs(q) / 3);
 
-  /**
-   * Forces here can span 10^-9 N to 10^3 N, so arrow length uses a log scale.
-   */
+  /* * Forces here can span 10^-9 N to 10^3 N, so arrow length uses a log scale. */
   function arrowLength(F, maxLen) {
     if (!(F > 0)) return 0;
     const n = clamp((Math.log10(F) + 9) / 12, 0, 1);
@@ -164,7 +144,7 @@
     if (out.rv) out.rv.textContent = `${r.toFixed(3)} m`;
   }
 
-  /** Keep the r slider in sync when the user drags a charge. */
+  /* Keep the r slider in sync when the user drags a charge. */
   function syncSlider() {
     const s = document.getElementById('coul-r');
     if (s) s.value = String(clamp(separation(), R_MIN, R_MAX).toFixed(3));

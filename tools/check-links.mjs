@@ -152,7 +152,7 @@ for (const file of htmlFiles) {
         /^(sm|md|lg|xl|2xl|hover|focus|focus-visible|group|dark|motion-safe|motion-reduce):/.test(cls) ||
         VALUELESS.has(cls) ||
         /^[a-z][a-z0-9-]*-(\d+|px|full|screen|auto|none|min|max|fit|xs|sm|md|lg|xl|\d+\/\d+)(\/\d+)?$/.test(cls) &&
-        !/^(h|ring|row|table|defs|stat|topic|sim|ctl|q|opt|btn|card|panel|check|fig|legend|swatch)-[a-z]/.test(cls);
+        !/^(h|ring|row|table|defs|stat|topic|sim|ctl|q|opt|btn|card|panel|check|fig|legend|swatch|mascot|hero|brand|nav|site|scroll|wrap|footer|pager|score|grade|ring)-[a-z]/.test(cls);
       if (!looksTailwind) continue;
       if (!usedUtilities.has(cls)) usedUtilities.set(cls, []);
       usedUtilities.get(cls).push(rel(file));

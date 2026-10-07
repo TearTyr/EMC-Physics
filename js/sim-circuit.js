@@ -1,26 +1,4 @@
-/* ==========================================================================
-   Simulation 4 — Simple Circuit Builder (series / parallel / combination)
-   File: js/sim-circuit.js   (used on topics/current.html)
-
-   PHYSICS
-   -------
-   Series bank      R_eq = R1 + R2 + ... + Rn      same CURRENT through each
-   Parallel bank    1/R_eq = 1/R1 + 1/R2 + ...     same VOLTAGE across each
-   Combination      R_eq = R1 + (R2*R3)/(R2+R3)
-   Whole circuit    I_total = V / (R_eq + R_bulb)  (Kirchhoff + Ohm)
-   Power            P = I^2 R = V I                bulb brightness ~ P
-
-   The bulb is modelled as an ohmic resistor in series with the bank. (A real
-   filament is non-ohmic: its resistance rises as it heats up. That caveat is
-   stated in the tutorial text next to the simulation.)
-
-   INTERACTION
-   -----------
-   * choose a topology, add/remove resistors, edit every value by slider
-   * click a resistor on the canvas to select and edit it
-   * animated charge flow: dot density and speed in each branch are
-     proportional to the current in that branch
-   ========================================================================== */
+/* Sim 4 - circuit builder. Exact series/parallel/combination solve with per element V, I, P; animated charge flow whose density tracks branch current; resistors clickable on canvas. */
 (function () {
   const canvas = document.getElementById('sim-circuit');
   if (!canvas) return;
@@ -83,12 +61,7 @@
   }
 
   /* ---- layout ---------------------------------------------------------- */
-  /**
-   * Builds the geometry for the current topology.
-   * @returns {{frame:Object, comps:Array, paths:Array, hits:Array}}
-   *   comps: components to draw; paths: {points, current} for charge animation;
-   *   hits:  clickable rectangles mapped to resistor indices.
-   */
+  /* * Builds the geometry for the current topology. * @returns {{frame:Object, comps:Array, paths:Array, hits:Array}} * comps: components to draw; paths: {points, current} for charge animation; * hits: clickable rectangles mapped to resistor indices. */
   function buildLayout(w, h, A) {
     const bx = Math.max(40, w * 0.075), rx = w - Math.max(40, w * 0.075);
     const ty = Math.max(38, h * 0.16), by = h - Math.max(40, h * 0.17);
@@ -220,7 +193,7 @@
     ctx.beginPath(); ctx.arc(x, y, 3.6, 0, Math.PI * 2); ctx.fill(); ctx.restore();
   }
 
-  /** Animated charge flow along a polyline. Density + speed scale with current. */
+  /* Animated charge flow along a polyline. Density + speed scale with current. */
   function drawFlow(ctx, points, current, Imax, t) {
     if (!(current > 0)) return;
     const lens = []; let total = 0;
@@ -434,10 +407,7 @@
     canvas.style.cursor = over ? 'pointer' : 'default';
   });
 
-  /* ---- predict-then-run challenge --------------------------------------
-     Each challenge is answered by the SIMULATOR itself: we snapshot the
-     state, apply a hypothetical change, re-run analyze(), and compare total
-     currents. So the "correct" answer can never drift from the physics.   */
+  /* ---- predict-then-run challenge -------------------------------------- Each challenge is answered by the SIMULATOR itself: we snapshot the state, apply a hypothetical change, re-run analyze(), and compare total currents. So the "correct" answer can never drift from the physics. */
   const chal = { text: el('circ-chal-text'), opts: el('circ-chal-opts'),
                  fb: el('circ-chal-fb'), tryBtn: el('circ-chal-try'),
                  current: null };

@@ -9,14 +9,11 @@
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%2317181c'/%3E%3Cellipse cx='24' cy='27' rx='15' ry='14' fill='%23f6f1e5'/%3E%3Cpath d='M15 16 C13 8 19 6 21 12' fill='%23f6f1e5'/%3E%3Cpath d='M33 16 C35 8 29 6 27 12' fill='%23f6f1e5'/%3E%3Ccircle cx='19' cy='26' r='1.8' fill='%232b2d33'/%3E%3Ccircle cx='29' cy='26' r='1.8' fill='%232b2d33'/%3E%3Cpath d='M22 31 q2 2 4 0' stroke='%232b2d33' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 
-  <!-- Tailwind CSS via CDN (required by the project brief) -->
-  <!-- Component styles first, then the offline utility fallback -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/tailwind-fallback.css">
-  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
-       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
@@ -25,7 +22,6 @@
 <body class="emc">
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <!-- ======================= HEADER ======================= -->
   <header class="site-header">
     <div class="wrap nav-inner">
       <a class="brand" href="index.html" aria-label="EMC Lab — home">
@@ -45,10 +41,18 @@
 
       <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
         <a class="nav-link" href="index.html">Home</a>
-        <a class="nav-link" href="topics/charges.html">1 · Charges &amp; Fields</a>
-        <a class="nav-link" href="topics/current.html">2 · Current</a>
-        <a class="nav-link" href="topics/magnetism.html">3 · Magnetism</a>
-        <a class="nav-link" href="topics/induction.html">4 · Induction</a>
+        <div class="nav-drop">
+          <button class="nav-link nav-drop-btn" id="topicsBtn" type="button"
+                  aria-expanded="false" aria-controls="topicsMenu">Topics
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-drop-menu" id="topicsMenu">
+            <a class="dd-link" href="topics/charges.html"><b>1 · Charges &amp; Fields</b><small>Coulomb’s law · field lines · superposition</small></a>
+            <a class="dd-link" href="topics/current.html"><b>2 · Current</b><small>Ohm’s law · series &amp; parallel</small></a>
+            <a class="dd-link" href="topics/magnetism.html"><b>3 · Magnetism</b><small>field lines · F = qv × B</small></a>
+            <a class="dd-link" href="topics/induction.html"><b>4 · Induction</b><small>Faraday · Lenz · generators</small></a>
+          </div>
+        </div>
         <a class="nav-link nav-cta" href="quiz.html">Take the quiz</a>
       </nav>
     </div>
@@ -60,7 +64,6 @@
       <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
     </div>
 
-    <!-- ======================= HERO ======================= -->
     <section class="hero">
       <div class="wrap hero-stack">
         <svg class="mascot" viewBox="0 0 120 112" role="img" aria-label="Denki-chan, the module mascot">
@@ -101,7 +104,6 @@
       </div>
     </section>
 
-    <!-- ======================= HOW TO USE ======================= -->
     <section class="section wrap">
       <h2 class="h-sec reveal">How to use this module</h2>
       <div class="steps mt-4">
@@ -131,7 +133,6 @@
 
     <hr class="hr">
 
-    <!-- ======================= TOPICS ======================= -->
     <section class="section wrap">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-4 reveal">
         <h2 class="h-sec" style="margin:0">The four topics</h2>
@@ -226,7 +227,6 @@
       </div>
     </section>
 
-    <!-- ======================= SIMULATIONS ======================= -->
     <section class="section wrap">
       <h2 class="h-sec reveal">Eight simulations, all driven by real equations</h2>
       <p class="lede reveal" style="margin-bottom:1.2rem">
@@ -297,7 +297,6 @@
 
     <hr class="hr">
 
-    <!-- ======================= FORMULA SHEET ======================= -->
     <section class="section wrap">
       <h2 class="h-sec reveal">Quick formula reference</h2>
       <div class="panel reveal">
@@ -327,7 +326,6 @@
       </p>
     </section>
 
-    <!-- ======================= PROGRESS ======================= -->
     <section class="section wrap">
       <div class="panel reveal">
         <div class="panel-head">
@@ -371,7 +369,6 @@
       </div>
     </section>
 
-    <!-- ======================= QUIZ CTA ======================= -->
     <section class="section wrap">
       <div class="card reveal">
         <div class="flex flex-wrap items-center justify-between gap-4">
@@ -388,7 +385,6 @@
     </section>
   </main>
 
-  <!-- ======================= FOOTER ======================= -->
   <footer class="site-footer">
     <div class="wrap footer-grid">
       <div>

@@ -98,7 +98,7 @@ Total: ~8,000 lines across 6 pages, 2 stylesheets and 11 scripts. No framework, 
 
 | Requirement | Where it lives |
 |---|---|
-| Clean landing page with navigation to each topic | `index.html` — hero, 4 topic cards, simulation index, formula reference |
+| Clean landing page with navigation to each topic | `index.html` — centred hero with mascot, 4 topic cards, simulation index, formula reference; the header carries a **Topics dropdown** (with one-line descriptions) so the nav stays three items wide |
 | Responsive UI, desktop + mobile | Fluid `clamp()` type, `md:`/`lg:` grids, hamburger nav < 900 px, canvases resize via `ResizeObserver` |
 | Sim 1 — Ohm's law calculator | `js/sim-ohm.js`: V and R sliders (R on a log scale), live I, P, auto-ranging ammeter, bulb brightness ∝ P, I–V characteristic plot, power-rating safety warning |
 | Sim 2 — circuit builder (battery + bulb, series/parallel) | `js/sim-circuit.js`: add/remove/edit resistors, three topologies, exact per-element V/I/P table, animated charge flow whose density ∝ branch current, clickable resistors |
@@ -213,6 +213,9 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   rather than font metrics, so no activated face can ever scatter exponents. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
+  Readability rules: prose lives in a ~700 px measure (~79 characters per line) at line-height
+  1.8, and every supplementary block (real-world connections, common traps) is collapsed
+  behind a "+" disclosure so the main flow stays short; worked examples and rules stay open.
 * **Equations are real LaTeX, with zero network risk.** **KaTeX is vendored locally**
   (`vendor/katex/`: js, css and woff2 fonts, ~600 kB), so typesetting works offline, on
   `file://`, and on any host including Vercel. Every displayed equation carries its source in a

@@ -11,8 +11,7 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
-  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
-       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="../css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="../vendor/katex/katex.min.css">
@@ -37,10 +36,18 @@
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
       <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
         <a class="nav-link" href="../index.html">Home</a>
-        <a class="nav-link" href="charges.html">1 · Charges &amp; Fields</a>
-        <a class="nav-link" href="current.html">2 · Current</a>
-        <a class="nav-link" href="magnetism.html">3 · Magnetism</a>
-        <a class="nav-link" href="induction.html">4 · Induction</a>
+        <div class="nav-drop">
+          <button class="nav-link nav-drop-btn" id="topicsBtn" type="button"
+                  aria-expanded="false" aria-controls="topicsMenu">Topics
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-drop-menu" id="topicsMenu">
+            <a class="dd-link" href="charges.html"><b>1 · Charges &amp; Fields</b><small>Coulomb’s law · field lines · superposition</small></a>
+            <a class="dd-link" href="current.html"><b>2 · Current</b><small>Ohm’s law · series &amp; parallel</small></a>
+            <a class="dd-link" href="magnetism.html"><b>3 · Magnetism</b><small>field lines · F = qv × B</small></a>
+            <a class="dd-link" href="induction.html"><b>4 · Induction</b><small>Faraday · Lenz · generators</small></a>
+          </div>
+        </div>
         <a class="nav-link nav-cta" href="../quiz.html">Take the quiz</a>
       </nav>
     </div>
@@ -91,8 +98,9 @@
         <div><dt>Resistance R — how much a component opposes current</dt><dd>R = V/I, measured in <strong>ohms</strong> (Ω). For a uniform wire R = ρL/A: longer and thinner wires resist more.</dd></div>
       </dl>
 
-      <div class="callout callout-trap">
-        <div class="callout-title">Conventional current vs electron flow</div>
+      <details class="dig dig-trap">
+        <summary>Conventional current vs electron flow</summary>
+        <div class="dig-body">
         <p>
           Electrons in a metal drift from the negative terminal to the positive one — and very
           slowly, typically fractions of a millimetre per second. <strong>Conventional current</strong>
@@ -102,7 +110,8 @@
           speed of light, which is why a lamp lights instantly even though no individual
           electron travels from the switch.
         </p>
-      </div>
+        </div>
+      </details>
 
       <h2 class="h-sec" id="ohm">2.2 · Ohm’s law</h2>
       <div class="formula">
@@ -212,8 +221,9 @@
         <li><strong>Work back outwards</strong>, splitting the current and voltage at each step you undid.</li>
       </ol>
 
-      <div class="callout callout-real">
-        <div class="callout-title">Real world</div>
+      <details class="dig dig-real">
+        <summary>Real world</summary>
+        <div class="dig-body">
         <p>
           <strong>House wiring is parallel.</strong> Every socket and lamp sees the full mains
           voltage, and switching one appliance on does not dim the others. If your home were
@@ -229,16 +239,18 @@
           the whole string, and each bulb saw only a fraction of the mains voltage. Modern strings
           are parallel or use shunted bulbs for exactly this reason.
         </p>
-      </div>
+        </div>
+      </details>
 
-      <div class="callout callout-trap">
-        <div class="callout-title">Common misconceptions</div>
+      <details class="dig dig-trap">
+        <summary>Common misconceptions</summary>
+        <div class="dig-body">
         <p>1. “Current is used up by the bulb.” No — the same current flows out as in; what is used up is <em>energy</em> (the charge loses potential energy, which becomes light and heat).</p>
         <p>2. “A bigger resistor takes more current.” In series the current is the same everywhere; a bigger resistor takes a bigger <em>voltage</em>. In parallel a bigger resistor takes <em>less</em> current.</p>
         <p>3. “Adding a resistor always increases the resistance.” True in series, false in parallel — an extra parallel path always lowers R<sub>eq</sub>.</p>
-      </div>
+        </div>
+      </details>
 
-      <!-- ============ SIM 3: OHM ============ -->
       <h2 class="h-sec" id="sim-ohm-panel" style="scroll-margin-top:5rem">2.4 · Simulation — Ohm’s law bench</h2>
       <p>
         Move the voltage and resistance sliders and watch the current respond. The ammeter
@@ -312,7 +324,6 @@
       </div>
     </section>
 
-    <!-- ============ SIM 4: CIRCUIT BUILDER ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec" id="sim-circuit-panel" style="scroll-margin-top:5rem">2.5 · Simulation — circuit builder</h2>
       <p>
@@ -421,7 +432,6 @@
       </div>
     </section>
 
-    <!-- ============ SELF-CHECK ============ -->
     <section class="section wrap wrap-narrow prose">
       <h2 class="h-sec">2.6 · Check your understanding</h2>
 

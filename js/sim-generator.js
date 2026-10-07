@@ -1,34 +1,4 @@
-/* ==========================================================================
-   Bonus simulation — the AC generator, drawn with p5.js
-   File: js/sim-generator.js   (used on topics/induction.html)
-
-   WHY p5.js HERE
-   --------------
-   The six core simulations use the native Canvas 2D engine in common.js so
-   that the module runs with zero dependencies. This bonus lab deliberately
-   uses p5.js (loaded from a CDN on the page) to show the same physics in a
-   second rendering style: a coil spinning in a uniform field, i.e. the
-   "change theta" lever of Faraday's law.
-
-   PHYSICS
-   -------
-   A coil of N turns and area A spins at angular frequency omega = 2*pi*f in
-   a uniform field B, with theta = omega*t measured from the position where
-   the flux is maximum:
-
-       Phi(t)  = N B A cos(theta)
-       EMF(t)  = -dPhi/dt = N B A omega sin(theta)      (a sine wave!)
-       peak    = N B A omega
-
-   This is every power station on Earth in one equation: mechanical rotation
-   in, sinusoidal voltage out. With N=120, B=0.4 T, A=0.02 m^2, f=1.2 Hz the
-   peak is about 7.2 V; real turbines simply use bigger N, B and f (50/60 Hz).
-
-   DEGRADATION
-   -----------
-   If the p5 CDN is unreachable (offline, file://, strict CSP) the host shows
-   a notice instead of a blank box; the rest of the page is unaffected.
-   ========================================================================== */
+/* Sim 8 (bonus, p5.js) - AC generator: Phi = NBA cos(wt), EMF = NBAw sin(wt). Shows a notice instead of a blank box when the p5 CDN is unreachable. */
 (function () {
   const host = document.getElementById('p5-gen-host');
   if (!host) return;
@@ -83,7 +53,7 @@
       p.resizeCanvas(Math.max(320, host.clientWidth), H);
     };
 
-    /** circle-with-dot / circle-with-cross drawn as vectors (font-safe). */
+    /* circle-with-dot / circle-with-cross drawn as vectors (font-safe). */
     function currentSymbol(x, y, r, out) {
       p.push();
       p.noFill(); p.stroke(232, 238, 251, 230); p.strokeWeight(1.3);

@@ -1,19 +1,4 @@
-/* ==========================================================================
-   Quiz engine
-   File: js/quiz.js   (used on quiz.html, after js/quiz-data.js)
-
-   Features
-   --------
-   * 20 multiple-choice questions, filterable by topic
-   * two marking modes:
-       - "Exam mode"    nothing is marked until you press Submit
-       - "Instant mode" each answer is marked the moment you choose it
-   * automatic scoring with a per-topic breakdown and letter band
-   * worked explanations for every question (right or wrong)
-   * shuffle, review-only-wrong, retake
-   * best score + attempt count persisted with EMC.Progress (localStorage)
-   * fully keyboard operable: options are buttons in a role="radiogroup"
-   ========================================================================== */
+/* Quiz engine: exam/instant marking, automatic scoring with per-topic breakdown and grade bands, timer + per-question splits, streak counter, keyboard flow, Chart.js analytics with a CSS-bar fallback when the CDN is absent, progress persisted through EMC.Progress. */
 (function () {
   const host = document.getElementById('quiz-questions');
   if (!host || !window.EMC_QUIZ) return;
@@ -113,7 +98,7 @@
     renderMeta();
   }
 
-  /** Answered-count bar, counters in the sticky panel. */
+  /* Answered-count bar, counters in the sticky panel. */
   function renderMeta() {
     const list = visible();
     const answered = list.filter(q => S.answers.has(q.id)).length;

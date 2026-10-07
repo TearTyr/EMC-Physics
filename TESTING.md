@@ -55,6 +55,11 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 ### 2.1 Navigation & layout
 - [ ] Home → each topic → quiz links all navigate; the active nav item is highlighted
 - [ ] Under 900 px the nav collapses to a hamburger; it opens, closes on selection, and closes on `Esc`
+- [ ] Header **Topics** dropdown: opens on click, closes on outside click / Escape / choosing a
+      topic; highlights the current topic; on mobile it expands as an inline sub-list
+- [ ] Topic prose measures ~700 px (about 75-80 characters per line) at every viewport
+- [ ] "Real world" and misconceptions blocks start collapsed behind `+` disclosures and open
+      without shifting the layout jumpily
 - [ ] Reading-progress bar under the header fills as you scroll
 - [ ] At 1440 px, 1024 px, 768 px and 390 px every page has no horizontal scrollbar
 - [ ] Equations render as typeset maths (KaTeX fractions/integrals) — KaTeX is vendored in

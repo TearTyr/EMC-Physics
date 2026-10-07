@@ -1,14 +1,4 @@
-/* ==========================================================================
-   Home page controller
-   File: js/home.js   (used on index.html)
-
-   1. Hero canvas: an animated electric dipole. The field lines are computed
-      ONCE per resize (they are expensive to trace) and then simply animated
-      with a moving dash offset, so the hero stays at 60 fps on a laptop.
-   2. Progress dashboard: reads EMC.Progress (localStorage) and renders the
-      completion ring, the per-topic checklist and the best quiz score. It
-      re-renders whenever an 'emc:progress' event fires.
-   ========================================================================== */
+/* Home page: animated dipole hero (field lines traced once per resize, dashed flow per frame) + progress dashboard driven by EMC.Progress. */
 (function () {
   const { CONST, clamp, chargeGlyph, label, Progress } = EMC;
   const k = CONST.K;
@@ -37,7 +27,7 @@
       return { ex, ey, mag: Math.hypot(ex, ey) };
     }
 
-    /** Trace the field lines once so the animation loop only has to stroke them. */
+    /* Trace the field lines once so the animation loop only has to stroke them. */
     function buildLines(w, h) {
       lines = [];
       const seeds = dipole.filter(c => c.q > 0);
