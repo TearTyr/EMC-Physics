@@ -1,0 +1,21 @@
+# --- dependencies & tooling (never commit these) ---
+node_modules/
+package-lock.json.bak
+.vercel/                 # local Vercel CLI project link
+.DS_Store
+Thumbs.db
+
+# --- runtime data from the optional sync server ---
+server/data/             # JSON-driver records (local dev only)
+
+# --- editors / logs ---
+*.log
+.idea/
+.vscode/
+.history/
+
+# NOTE on purposeful NON-ignores:
+#  * css/tailwind.generated.css  -> kept trackable so you can commit the
+#    "built" Tailwind mode if you deploy that way (see README §8).
+#  * package-lock.json           -> commit it: Vercel's install step then uses
+#    exactly the versions you tested.

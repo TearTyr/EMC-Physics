@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="EMC Lab — an interactive, browser-based electromagnetics tutorial for Calculus-based Physics II: electric fields, circuits, magnetism and electromagnetic induction, with live simulations and a scored quiz.">
+  <meta name="theme-color" content="#060b16">
+  <title>EMC Lab · Interactive Electromagnetics Tutorial</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='13' fill='%230e1a2e'/%3E%3Cpath d='M27 7 13 27h9l-3 14L35 20h-9z' fill='%2322d3ee'/%3E%3C/svg%3E">
+
+  <!-- Tailwind CSS via CDN (required by the project brief) -->
+  <!-- Component styles first, then the offline utility fallback -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/tailwind-fallback.css">
+</head>
+
+<body class="emc">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ======================= HEADER ======================= -->
+  <header class="site-header">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html" aria-label="EMC Lab — home">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+          <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="url(#bm)" stroke-width="2"/>
+          <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="url(#bm)"/>
+        </svg>
+        <span class="brand-name">EMC<em>Lab</em><span class="brand-sub">Electromagnetics</span></span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu"
+              aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+
+      <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="topics/charges.html">1 · Charges &amp; Fields</a>
+        <a class="nav-link" href="topics/current.html">2 · Current</a>
+        <a class="nav-link" href="topics/magnetism.html">3 · Magnetism</a>
+        <a class="nav-link" href="topics/induction.html">4 · Induction</a>
+        <a class="nav-link nav-cta" href="quiz.html">Take the quiz</a>
+      </nav>
+    </div>
+    <div class="scroll-progress"><i id="readingProgress"></i></div>
+  </header>
+
+  <main class="emc-main" id="main">
+    <div class="wrap section-tight">
+      <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
+    </div>
+
+    <!-- ======================= HERO ======================= -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">Calculus-based Physics II · Module EMC</span>
+          <h1 class="h-hero" style="margin:.85rem 0 .7rem">
+            See <span class="accent-cyan">electricity</span> and
+            <span class="accent-violet">magnetism</span> move.
+          </h1>
+          <p class="lede">
+            Four tutorial chapters, eight live simulations and a 20-question scored quiz.
+            Drag a charge, build a circuit, push a magnet through a coil and watch the
+            induced EMF appear on the graph — every number on screen is computed from the
+            real equations, not faked.
+          </p>
+
+          <div class="flex flex-wrap gap-3 mt-6">
+            <a class="btn btn-primary" href="topics/charges.html">
+              Start with Topic 1
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn" href="topics/induction.html">Jump to the induction sim</a>
+            <a class="btn btn-ghost" href="quiz.html">Take the quiz</a>
+          </div>
+
+          <div class="stat-strip">
+            <div class="stat"><span class="stat-label">Topics</span><span class="stat-value hl-cyan">4</span></div>
+            <div class="stat"><span class="stat-label">Simulations</span><span class="stat-value hl-amber">8</span></div>
+            <div class="stat"><span class="stat-label">Quiz questions</span><span class="stat-value hl-emerald">20</span></div>
+            <div class="stat"><span class="stat-label">Dependencies</span><span class="stat-value">0</span><span class="stat-sub">no build step</span></div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <canvas id="heroCanvas" aria-label="Animated electric dipole field lines"></canvas>
+          <p class="tiny faint center" style="margin-top:.5rem">
+            An electric dipole: field lines run from the positive to the negative charge.
+            (Topic 1 simulation lets you build your own.)
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= HOW TO USE ======================= -->
+    <section class="section wrap">
+      <h2 class="h-sec reveal">How to use this module</h2>
+      <div class="steps mt-4">
+        <div class="card step reveal">
+          <h3 class="font-bold">Read the tutorial</h3>
+          <p class="small muted" style="margin:.35rem 0 0">
+            Each topic opens with learning objectives, then explains the idea with a diagram,
+            the governing equation, a worked example and a real-world application.
+          </p>
+        </div>
+        <div class="card step reveal">
+          <h3 class="font-bold">Play with the simulation</h3>
+          <p class="small muted" style="margin:.35rem 0 0">
+            Move the sliders and drag the objects on the canvas. Predict what will happen
+            first, then check — the readouts update live and show the working.
+          </p>
+        </div>
+        <div class="card step reveal">
+          <h3 class="font-bold">Prove it in the quiz</h3>
+          <p class="small muted" style="margin:.35rem 0 0">
+            Twenty multiple-choice questions with worked explanations. Your best score is
+            saved in this browser so you can track improvement.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="hr">
+
+    <!-- ======================= TOPICS ======================= -->
+    <section class="section wrap">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 reveal">
+        <h2 class="h-sec" style="margin:0">The four topics</h2>
+        <span class="tag tag-cyan" id="dashTopicsChip">0 of 4 topics studied</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Topic 1 -->
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#fb7185">
+          <span class="topic-num" aria-hidden="true">01</span>
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>
+            </svg>
+          </span>
+          <h3 class="text-xl font-bold">Electric charges &amp; fields</h3>
+          <p class="small muted">What charge is, how it creates a field, and how to predict the direction of that field.</p>
+          <ul class="topic-list">
+            <li>Coulomb’s law: F = k·q<sub>1</sub>q<sub>2</sub>/r<sup>2</sup></li>
+            <li>Field direction and field-line rules</li>
+            <li>Positive vs negative charge, superposition</li>
+          </ul>
+          <div class="flex items-center gap-2 mt-3">
+            <a class="btn btn-sm btn-primary" href="topics/charges.html" data-topic-link="charges">Open topic</a>
+            <span class="check-pill" data-topic-check="charges">not started</span>
+          </div>
+        </article>
+
+        <!-- Topic 2 -->
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#fbbf24">
+          <span class="topic-num" aria-hidden="true">02</span>
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h3l2-5 3 10 2-5h6"/><circle cx="4" cy="12" r="1.4"/>
+            </svg>
+          </span>
+          <h3 class="text-xl font-bold">Current electricity</h3>
+          <p class="small muted">Voltage, current and resistance — and how to reduce any resistor network to one value.</p>
+          <ul class="topic-list">
+            <li>Ohm’s law: V = IR and P = IV</li>
+            <li>Series and parallel circuits</li>
+            <li>Equivalent resistance, step by step</li>
+          </ul>
+          <div class="flex items-center gap-2 mt-3">
+            <a class="btn btn-sm btn-primary" href="topics/current.html" data-topic-link="current">Open topic</a>
+            <span class="check-pill" data-topic-check="current">not started</span>
+          </div>
+        </article>
+
+        <!-- Topic 3 -->
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#a78bfa">
+          <span class="topic-num" aria-hidden="true">03</span>
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 4v9a6 6 0 0 0 12 0V4"/><path d="M6 4H3v6h3zM18 4h3v6h-3z"/>
+            </svg>
+          </span>
+          <h3 class="text-xl font-bold">Magnetism</h3>
+          <p class="small muted">Where field lines go, how a compass behaves, and why a moving charge curves.</p>
+          <ul class="topic-list">
+            <li>Magnetic field lines and bar magnets</li>
+            <li>F = qv × B on a moving charge</li>
+            <li>The right-hand rule, practised interactively</li>
+          </ul>
+          <div class="flex items-center gap-2 mt-3">
+            <a class="btn btn-sm btn-primary" href="topics/magnetism.html" data-topic-link="magnetism">Open topic</a>
+            <span class="check-pill" data-topic-check="magnetism">not started</span>
+          </div>
+        </article>
+
+        <!-- Topic 4 -->
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#22d3ee">
+          <span class="topic-num" aria-hidden="true">04</span>
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="9" cy="12" rx="3" ry="7"/><ellipse cx="14" cy="12" rx="3" ry="7"/><path d="M19 8h3M19 12h3M19 16h3"/>
+            </svg>
+          </span>
+          <h3 class="text-xl font-bold">Electromagnetic induction</h3>
+          <p class="small muted">A changing magnetic flux creates a voltage. This is how every generator on Earth works.</p>
+          <ul class="topic-list">
+            <li>Faraday’s law: EMF = −N·dΦ/dt</li>
+            <li>Lenz’s law and the minus sign</li>
+            <li>Magnet through a coil, simulated exactly</li>
+          </ul>
+          <div class="flex items-center gap-2 mt-3">
+            <a class="btn btn-sm btn-primary" href="topics/induction.html" data-topic-link="induction">Open topic</a>
+            <span class="check-pill" data-topic-check="induction">not started</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ======================= SIMULATIONS ======================= -->
+    <section class="section wrap">
+      <h2 class="h-sec reveal">Eight simulations, all driven by real equations</h2>
+      <p class="lede reveal" style="margin-bottom:1.2rem">
+        Nothing is animated by hand: every frame is computed from Coulomb’s law, Ohm’s law,
+        the Biot–Savart-style dipole field or Faraday’s law. Change an input and the physics
+        re-solves.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a class="card card-hover reveal" href="topics/charges.html#sim-coulomb-panel">
+          <span class="tag tag-rose">Topic 1</span>
+          <h3 class="font-bold mt-2">Coulomb force bench</h3>
+          <p class="small muted">Drag two charges apart and watch the inverse-square force arrows grow and shrink.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/charges.html#sim-efield-panel">
+          <span class="tag tag-rose">Topic 1</span>
+          <h3 class="font-bold mt-2">Electric field explorer</h3>
+          <p class="small muted">Place any number of charges; field lines, vector grids and a test-charge probe update live.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/current.html#sim-ohm-panel">
+          <span class="tag tag-amber">Topic 2</span>
+          <h3 class="font-bold mt-2">Ohm’s law simulator</h3>
+          <p class="small muted">Auto-ranging ammeter, a bulb that brightens with power, and an I–V characteristic plot.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/current.html#sim-circuit-panel">
+          <span class="tag tag-amber">Topic 2</span>
+          <h3 class="font-bold mt-2">Circuit builder</h3>
+          <p class="small muted">Add resistors in series, parallel or a combination; animated current splits correctly between branches.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/magnetism.html#sim-magnet-panel">
+          <span class="tag tag-violet">Topic 3</span>
+          <h3 class="font-bold mt-2">Bar magnet field lab</h3>
+          <p class="small muted">Field lines, compass needles, vector grids and iron filings around a magnet you can rotate and drag.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/magnetism.html#sim-lorentz-panel">
+          <span class="tag tag-violet">Topic 3</span>
+          <h3 class="font-bold mt-2">Lorentz force &amp; circular motion</h3>
+          <p class="small muted">Protons, electrons and alpha particles curving in a field — plus a right-hand-rule challenge.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/induction.html#sim-induction-panel">
+          <span class="tag tag-cyan">Topic 4</span>
+          <h3 class="font-bold mt-2">Magnet through a coil</h3>
+          <p class="small muted">Exact dipole flux, Faraday’s law, a centre-zero galvanometer and a scrolling Φ/EMF chart.</p>
+        </a>
+        <a class="card card-hover reveal" href="topics/induction.html#sim-generator-panel">
+          <span class="tag tag-emerald">Topic 4 · p5.js</span>
+          <h3 class="font-bold mt-2">AC generator (bonus lab)</h3>
+          <p class="small muted">A coil spinning in a uniform field: Φ = NBA·cos(2πft) drawn live with p5.js, producing the mains sine wave.</p>
+        </a>
+        <div class="card card-flat reveal">
+          <span class="tag">Physics inside the code</span>
+          <ul class="topic-list mt-2">
+            <li>E = kq/r<sup>2</sup>, superposition by vector sum</li>
+            <li>R<sub>eq</sub> for series, parallel and mixed</li>
+            <li>Φ = μ<sub>0</sub>ma<sup>2</sup>/[2(a<sup>2</sup>+z<sup>2</sup>)<sup>3/2</sup>]</li>
+            <li>r = mv/(|q|B), T = 2πm/(|q|B)</li>
+          </ul>
+        </div>
+        <div class="card card-flat reveal">
+          <span class="tag tag-emerald">Works everywhere</span>
+          <p class="small muted mt-2">
+            Pure HTML, CSS and JavaScript. Tested in Chrome, Firefox and Edge on desktop,
+            and on touch screens down to 320 px wide. Progress is stored locally — no
+            account, no server, no tracking.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="hr">
+
+    <!-- ======================= FORMULA SHEET ======================= -->
+    <section class="section wrap">
+      <h2 class="h-sec reveal">Quick formula reference</h2>
+      <div class="panel reveal">
+        <div class="table-scroll">
+          <table class="data">
+            <thead>
+              <tr><th>Concept</th><th>Equation</th><th>Units</th><th>What it tells you</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="txt">Coulomb force</td><td>F = k·q<sub>1</sub>q<sub>2</sub> / r<sup>2</sup></td><td>N</td><td class="txt">Inverse square: 2× the distance → ¼ the force</td></tr>
+              <tr><td class="txt">Electric field</td><td>E = F/q = k·q / r<sup>2</sup></td><td>N/C = V/m</td><td class="txt">Force per unit positive test charge</td></tr>
+              <tr><td class="txt">Ohm’s law</td><td>V = I·R</td><td>V, A, Ω</td><td class="txt">Voltage drives current against resistance</td></tr>
+              <tr><td class="txt">Electrical power</td><td>P = VI = I<sup>2</sup>R = V<sup>2</sup>/R</td><td>W</td><td class="txt">Rate of energy conversion to heat/light</td></tr>
+              <tr><td class="txt">Series resistance</td><td>R<sub>eq</sub> = ΣR<sub>i</sub></td><td>Ω</td><td class="txt">Always bigger than the largest resistor</td></tr>
+              <tr><td class="txt">Parallel resistance</td><td>1/R<sub>eq</sub> = Σ1/R<sub>i</sub></td><td>Ω</td><td class="txt">Always smaller than the smallest branch</td></tr>
+              <tr><td class="txt">Magnetic force</td><td>F = q·v × B</td><td>N</td><td class="txt">Perpendicular to both v and B → does no work</td></tr>
+              <tr><td class="txt">Radius of orbit</td><td>r = mv / (|q|B)</td><td>m</td><td class="txt">Faster or heavier → wider circle</td></tr>
+              <tr><td class="txt">Magnetic flux</td><td>Φ = B·A·cosθ</td><td>Wb = T·m<sup>2</sup></td><td class="txt">How much field threads the loop</td></tr>
+              <tr><td class="txt">Faraday’s law</td><td>EMF = −N·dΦ/dt</td><td>V</td><td class="txt">Only a <em>changing</em> flux induces a voltage</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="tiny faint mt-3">
+        Constants used throughout: k = 8.988×10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>, μ<sub>0</sub> = 4π×10<sup>−7</sup> T·m/A,
+        e = 1.602×10<sup>−19</sup> C.
+      </p>
+    </section>
+
+    <!-- ======================= PROGRESS ======================= -->
+    <section class="section wrap">
+      <div class="panel reveal">
+        <div class="panel-head">
+          <h2 class="panel-title"><span class="dot"></span> Your progress</h2>
+          <p class="panel-sub">Saved in this browser only (localStorage)</p>
+          <div class="panel-actions">
+            <button class="btn btn-sm btn-danger" id="resetProgress" type="button">Reset progress</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="flex flex-wrap gap-6 items-center">
+            <div class="ring-wrap">
+              <svg width="132" height="132" viewBox="0 0 132 132" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#34d399"/>
+                  </linearGradient>
+                </defs>
+                <circle class="ring-bg" cx="66" cy="66" r="58"/>
+                <circle class="ring-fg" id="ringFg" cx="66" cy="66" r="58"/>
+              </svg>
+              <div class="ring-label"><b id="ringPct">0%</b><span>complete</span></div>
+            </div>
+
+            <div class="flex-1 min-w-0" style="flex:1 1 260px">
+              <p class="muted small" id="dashPct" style="margin:0 0 .8rem">0% complete</p>
+              <dl class="defs">
+                <div><dt>Topics studied</dt><dd id="dashTopicsDone">0 of 4 topics studied</dd></div>
+                <div><dt>Best quiz score</dt><dd id="dashQuizBest">not attempted</dd></div>
+                <div><dt>Quiz attempts</dt><dd id="dashQuizAttempts">0</dd></div>
+                <div><dt>Last saved</dt><dd id="dashUpdated">—</dd></div>
+              </dl>
+              <p class="tiny faint" style="margin-top:.8rem">
+                Tick a topic with the <em>Mark topic as complete</em> button at the end of each page.
+                Scoring 70% or more in the quiz counts as having studied the whole module.
+              </p>
+            </div>
+          </div>
+
+          <!-- optional backend mirror; the site is complete without it -->
+          <div class="card card-flat mt-4" id="syncCard">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div style="flex:1 1 300px">
+                <h3 class="font-bold" style="font-size:.95rem">Cloud sync <span class="tag">optional</span></h3>
+                <p class="small muted" style="margin:.3rem 0 0">
+                  Progress lives in this browser by default. If your course runs the bundled
+                  Express + MySQL server (<span class="mono">npm run server</span>), connect to
+                  mirror progress to an anonymous id so it follows you between machines.
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-sm" type="button" id="syncConnect">Connect…</button>
+                <button class="btn btn-sm btn-ghost" type="button" id="syncDisconnect">Disconnect</button>
+              </div>
+            </div>
+            <p class="tiny faint" style="margin:.55rem 0 0" id="syncStatus">Checking…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= QUIZ CTA ======================= -->
+    <section class="section wrap">
+      <div class="card reveal" style="border-color:rgba(34,211,238,.35);background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(167,139,250,.08))">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div style="flex:1 1 320px">
+            <h2 class="h-sec" style="margin:0">Ready to test yourself?</h2>
+            <p class="muted small" style="margin:.3rem 0 0">
+              20 questions, instant or exam marking, worked explanations for every answer,
+              and a per-topic breakdown so you know exactly what to revise.
+            </p>
+          </div>
+          <a class="btn btn-primary" href="quiz.html">Open the quiz →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <span class="brand" style="pointer-events:none">
+          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="#22d3ee" stroke-width="2"/>
+            <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="#22d3ee"/>
+          </svg>
+          <span class="brand-name">EMC<em>Lab</em></span>
+        </span>
+        <p class="small muted" style="margin-top:.6rem">
+          An interactive electromagnetics module for Calculus-based Physics II.
+          Built with plain HTML, CSS and JavaScript — no build step, no backend,
+          no data leaves your browser.
+        </p>
+        <p class="tiny faint">Local storage: <span id="storageStatus">checking…</span></p>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Topics</h3>
+        <ul class="footer-links">
+          <li><a href="topics/charges.html">1 · Electric charges &amp; fields</a></li>
+          <li><a href="topics/current.html">2 · Current electricity</a></li>
+          <li><a href="topics/magnetism.html">3 · Magnetism</a></li>
+          <li><a href="topics/induction.html">4 · Electromagnetic induction</a></li>
+          <li><a href="quiz.html">Quiz (20 questions)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Project files</h3>
+        <ul class="footer-links">
+          <li><a href="README.md">README &amp; setup</a></li>
+          <li><a href="TESTING.md">Testing checklist</a></li>
+          <li><a href="PRESENTATION-NOTES.md">Presentation notes</a></li>
+        </ul>
+        <h3 class="small uppercase tracking-widest faint" style="margin:1rem 0 .4rem">Browser support</h3>
+        <p class="tiny faint" style="margin:0">Chrome 100+ · Firefox 100+ · Edge 100+ · Safari 15.4+</p>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:1.6rem">
+      <hr class="hr">
+      <p class="tiny faint center" style="margin-top:1rem">
+        © <span data-year>2026</span> EMC Lab · Educational use. Physics content follows
+        standard calculus-based texts (Halliday/Resnick/Walker, Serway, Young &amp; Freedman).
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Electric charge, Coulomb's law and electric field direction — interactive tutorial with a Coulomb force bench and an electric field line explorer.">
+  <meta name="theme-color" content="#060b16">
+  <title>Topic 1 · Electric charges &amp; fields — EMC Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='13' fill='%230e1a2e'/%3E%3Cpath d='M27 7 13 27h9l-3 14L35 20h-9z' fill='%2322d3ee'/%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/tailwind-fallback.css">
+</head>
+
+<body class="emc">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap nav-inner">
+      <a class="brand" href="../index.html" aria-label="EMC Lab — home">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+          <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="url(#bm)" stroke-width="2"/>
+          <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="url(#bm)"/>
+        </svg>
+        <span class="brand-name">EMC<em>Lab</em><span class="brand-sub">Electromagnetics</span></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+      <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
+        <a class="nav-link" href="../index.html">Home</a>
+        <a class="nav-link" href="charges.html">1 · Charges &amp; Fields</a>
+        <a class="nav-link" href="current.html">2 · Current</a>
+        <a class="nav-link" href="magnetism.html">3 · Magnetism</a>
+        <a class="nav-link" href="induction.html">4 · Induction</a>
+        <a class="nav-link nav-cta" href="../quiz.html">Take the quiz</a>
+      </nav>
+    </div>
+    <div class="scroll-progress"><i id="readingProgress"></i></div>
+  </header>
+
+  <main class="emc-main" id="main">
+    <!-- ============ TITLE BLOCK ============ -->
+    <div class="wrap section-tight">
+      <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span aria-hidden="true">/</span><span>Topic 1</span>
+      </nav>
+      <span class="eyebrow" style="margin-top:.7rem">Topic 1 of 4</span>
+      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Electric charges &amp; electric fields</h1>
+      <p class="lede">
+        Charge is the property of matter that makes it feel the electromagnetic force.
+        Charges create <strong>electric fields</strong> in the space around them, and those
+        fields push on every other charge. Everything in this module — circuits, motors,
+        generators — follows from that one idea.
+      </p>
+
+      <div class="card mt-6">
+        <h2 class="h-sub" style="margin-top:0">Learning objectives</h2>
+        <ul class="objectives">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>State Coulomb’s law and calculate the force between two point charges.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Predict whether a force is attractive or repulsive from the signs of the charges.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Define the electric field as force per unit charge and give its units.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Draw and interpret electric field lines for single charges, dipoles and like charges.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Apply superposition to find the net field of several charges.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <!-- ============ TUTORIAL ============ -->
+    <section class="section wrap wrap-narrow prose">
+      <h2 class="h-sec" id="charge">1.1 · Positive and negative charge</h2>
+      <p>
+        Matter contains two kinds of charge, named <strong>positive</strong> and
+        <strong>negative</strong> by Benjamin Franklin. The rule that governs everything is
+        simple:
+      </p>
+      <div class="callout callout-key">
+        <div class="callout-title">The fundamental rule</div>
+        <p><strong>Like charges repel. Unlike charges attract.</strong></p>
+      </div>
+      <p>
+        Charge is carried by particles. The <strong>proton</strong> carries
+        +e = +1.602×10<sup>−19</sup> C and the <strong>electron</strong> carries −e. Charge is
+        <strong>quantised</strong> — every observable charge is an integer multiple of e —
+        and it is <strong>conserved</strong>: rubbing a glass rod with silk does not create
+        charge, it moves electrons from the glass to the silk, leaving equal and opposite
+        amounts behind.
+      </p>
+
+      <dl class="defs">
+        <div><dt>Conductor</dt><dd>A material with charges free to move (metals, salt water, your body). Excess charge on a conductor spreads out over its surface.</dd></div>
+        <div><dt>Insulator</dt><dd>A material whose charges are bound in place (rubber, glass, dry air, plastic). Charge stays where you put it.</dd></div>
+        <div><dt>Charging by friction</dt><dd>Contact plus rubbing transfers electrons; the material higher on the triboelectric series loses them and ends up positive.</dd></div>
+        <div><dt>Charging by induction</dt><dd>Bringing a charged object <em>near</em> a conductor redistributes its charges without touching it. Earth the conductor and the redistribution becomes permanent.</dd></div>
+      </dl>
+
+      <div class="callout callout-real">
+        <div class="callout-title">Real world</div>
+        <p>
+          The spark you get from a door handle after walking on carpet is a few thousand volts
+          driving charge across a millimetre of air. Lightning is the same process at
+          kilometre scale: collisions between ice particles separate charge inside a storm
+          cloud until the field exceeds about <strong>3×10<sup>6</sup> V/m</strong>, the breakdown
+          strength of air.
+        </p>
+      </div>
+
+      <h2 class="h-sec" id="coulomb">1.2 · Coulomb’s law</h2>
+      <p>
+        In 1785 Charles-Augustin de Coulomb measured the force between small charged spheres
+        with a torsion balance and found an inverse-square law that looks exactly like
+        Newton’s law of gravitation — but roughly 10<sup>36</sup> times stronger, and able to repel as
+        well as attract.
+      </p>
+
+      <div class="formula">
+        <span class="eq">F = k · |q<sub>1</sub> q<sub>2</sub>| / r<sup>2</sup></span>
+        <span class="eq" style="font-size:.95rem">k = 1/(4πε<sub>0</sub>) = 8.988×10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup></span>
+        <span class="where">F in newtons · q in coulombs · r = centre-to-centre separation in metres</span>
+      </div>
+
+      <p>Three things to notice about this equation:</p>
+      <ol>
+        <li><strong>It is an inverse-square law.</strong> Double r and F drops to a quarter; triple r and it drops to a ninth.</li>
+        <li><strong>The magnitude uses |q<sub>1</sub>q<sub>2</sub>|</strong>, so F is never negative. The <em>signs</em> of the charges only tell you the direction: like signs repel, unlike signs attract.</li>
+        <li><strong>The two forces are a Newton’s-third-law pair.</strong> The force q<sub>1</sub> exerts on q<sub>2</sub> is equal in magnitude and opposite in direction to the force q<sub>2</sub> exerts on q<sub>1</sub> — even if one charge is a thousand times bigger.</li>
+      </ol>
+
+      <div class="callout callout-key">
+        <div class="callout-title">Worked example</div>
+        <p>
+          Charges q<sub>1</sub> = +3 µC and q<sub>2</sub> = −2 µC sit 0.30 m apart in air. Find the force.
+        </p>
+        <p class="mono small">
+          F = (8.988×10<sup>9</sup>)(3×10<sup>−6</sup>)(2×10<sup>−6</sup>) / (0.30)<sup>2</sup><br>
+          &nbsp;&nbsp;= (8.988×10<sup>9</sup>)(6×10<sup>−12</sup>) / 0.09 = 5.39×10<sup>−2</sup> / 0.09 = <b>0.60 N</b>
+        </p>
+        <p>
+          The signs are opposite, so the force is <strong>attractive</strong>: each charge is
+          pulled toward the other with 0.60 N. Notice how large that is — 0.60 N is the weight
+          of a 60 g apple, produced by charges you could never hold in your hand.
+        </p>
+      </div>
+
+      <div class="callout callout-trap">
+        <div class="callout-title">Common mistake</div>
+        <p>
+          Coulomb’s law in this form applies to <strong>point charges</strong> (or to uniform
+          spheres, where r is measured centre to centre). For an extended, irregular charged
+          object you must integrate over its charge distribution — that is where calculus
+          enters this topic.
+        </p>
+      </div>
+
+      <h3 class="h-sub">Superposition</h3>
+      <p>
+        With three or more charges, each pair interacts independently. The net force on any
+        one charge is the <strong>vector sum</strong> of the individual forces:
+      </p>
+      <div class="formula"><span class="eq">F<sub>net</sub> = F<sub>1</sub> + F<sub>2</sub> + F<sub>3</sub> + …</span><span class="where">add as vectors (components), not as magnitudes</span></div>
+
+      <h2 class="h-sec" id="field">1.3 · The electric field and its direction</h2>
+      <p>
+        Rather than thinking of charges reaching across empty space, physics says each charge
+        modifies the space around it, creating an <strong>electric field E</strong>. A second
+        charge then feels a force because of the field <em>at its own location</em>. The field
+        is defined operationally by the force on a small positive test charge q<sub>0</sub>:
+      </p>
+      <div class="formula">
+        <span class="eq">E = F / q<sub>0</sub></span>
+        <span class="eq" style="font-size:1rem">point charge:&nbsp; E = k·q / r<sup>2</sup></span>
+        <span class="where">Units: N/C, which is identical to V/m</span>
+      </div>
+
+      <div class="callout callout-key">
+        <div class="callout-title">The direction rule</div>
+        <p>
+          <strong>E points in the direction a positive test charge would be pushed.</strong>
+          So the field of a positive charge points <strong>radially outward</strong>, and the
+          field of a negative charge points <strong>radially inward</strong>.
+        </p>
+      </div>
+
+      <figure class="fig">
+        <div class="fig-box">
+          <svg viewBox="0 0 460 200" width="460" height="200" role="img"
+               aria-label="Field arrows radiate outward from a positive charge and inward toward a negative charge">
+            <defs>
+              <marker id="arw" markerWidth="7" markerHeight="7" refX="5.4" refY="3" orient="auto">
+                <path d="M0 0 L6 3 L0 6 z" fill="#22d3ee"/>
+              </marker>
+            </defs>
+            <g stroke="#22d3ee" stroke-width="1.9" fill="none" marker-end="url(#arw)">
+              <line x1="139" y1="100" x2="171" y2="100"/><line x1="132" y1="117" x2="154" y2="139"/>
+              <line x1="115" y1="124" x2="115" y2="156"/><line x1="98" y1="117" x2="76" y2="139"/>
+              <line x1="91" y1="100" x2="59" y2="100"/><line x1="98" y1="83" x2="76" y2="61"/>
+              <line x1="115" y1="76" x2="115" y2="44"/><line x1="132" y1="83" x2="154" y2="61"/>
+            </g>
+            <circle cx="115" cy="100" r="19" fill="#fb7185" stroke="#fff" stroke-opacity=".5"/>
+            <path d="M106 100h18M115 91v18" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <text x="115" y="185" fill="#fda4af" font-size="13" font-family="monospace" text-anchor="middle">+q : field points OUT</text>
+
+            <g stroke="#22d3ee" stroke-width="1.9" fill="none" marker-end="url(#arw)">
+              <line x1="403" y1="100" x2="371" y2="100"/><line x1="386" y1="139" x2="364" y2="117"/>
+              <line x1="345" y1="156" x2="345" y2="124"/><line x1="304" y1="139" x2="326" y2="117"/>
+              <line x1="287" y1="100" x2="319" y2="100"/><line x1="304" y1="61" x2="326" y2="83"/>
+              <line x1="345" y1="44" x2="345" y2="76"/><line x1="386" y1="61" x2="364" y2="83"/>
+            </g>
+            <circle cx="345" cy="100" r="19" fill="#38bdf8" stroke="#fff" stroke-opacity=".5"/>
+            <path d="M336 100h18" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <text x="345" y="185" fill="#7dd3fc" font-size="13" font-family="monospace" text-anchor="middle">−q : field points IN</text>
+          </svg>
+        </div>
+        <figcaption>Figure 1 — The direction convention: arrows show the force on a positive test charge.</figcaption>
+      </figure>
+
+      <h3 class="h-sub">Field-line rules</h3>
+      <ul>
+        <li>Lines <strong>start on positive</strong> charge and <strong>end on negative</strong> charge (or go off to infinity).</li>
+        <li>Lines <strong>never cross</strong> — if they did, the field at that point would have two directions.</li>
+        <li>The <strong>density</strong> of lines represents field strength: closer together means stronger.</li>
+        <li>The <strong>tangent</strong> to a line at any point is the direction of E there.</li>
+        <li>The number of lines leaving a charge is <strong>proportional to |q|</strong>, which is why a +2q charge gets twice as many lines as a +q charge.</li>
+      </ul>
+
+      <div class="callout callout-key">
+        <div class="callout-title">Worked example — field of a point charge</div>
+        <p>Find E at a point 0.20 m from a +5 µC charge, and the force on an electron placed there.</p>
+        <p class="mono small">
+          E = kq/r<sup>2</sup> = (8.988×10<sup>9</sup>)(5×10<sup>−6</sup>)/(0.20)<sup>2</sup> = 4.49×10<sup>4</sup> / 0.04 = <b>1.12×10<sup>6</sup> N/C</b>, directed away from the charge.<br>
+          F = qE = (1.602×10<sup>−19</sup>)(1.12×10<sup>6</sup>) = <b>1.80×10<sup>−13</sup> N</b> — toward the charge, because the electron is negative.
+        </p>
+      </div>
+
+      <h3 class="h-sub">The uniform field: parallel plates</h3>
+      <p>
+        Between two large oppositely charged parallel plates the field is essentially uniform
+        — same magnitude and direction everywhere — which makes it the workhorse of
+        electrostatics:
+      </p>
+      <div class="formula"><span class="eq">E = V / d</span><span class="where">V = potential difference between the plates, d = their separation</span></div>
+      <p>
+        A 5000 V supply across plates 2 cm apart gives E = 5000/0.02 = 2.5×10<sup>5</sup> V/m. Inside a
+        uniform field a charge experiences a <em>constant</em> force, so its motion is exactly
+        the projectile motion you already know — with qE/m in place of g.
+      </p>
+
+      <div class="callout callout-real">
+        <div class="callout-title">Real world</div>
+        <p>
+          <strong>Laser printers and photocopiers</strong> steer charged toner with electric
+          fields. <strong>Inkjet printers</strong> charge each droplet and deflect it between
+          charged plates. <strong>Electrostatic precipitators</strong> in power stations charge
+          smoke particles and collect them on plates, removing over 99% of the ash. The
+          <strong>cathode-ray tube</strong> in an old television is a pure demonstration of
+          F = qE deflecting electrons.
+        </p>
+      </div>
+
+      <div class="callout callout-trap">
+        <div class="callout-title">Three misconceptions to avoid</div>
+        <p>1. “A bigger charge feels a bigger force, so it accelerates more.” No — a = F/m; the field is a property of space, independent of the test charge.</p>
+        <p>2. “Field lines are the paths charges follow.” They are not. A charge released in a curved field moves along a trajectory determined by its velocity <em>and</em> the force, which generally is not the field line.</p>
+        <p>3. “E = 0 means no charge is there.” It means the vector sum cancels — between two like charges there is a null point where the fields are equal and opposite.</p>
+      </div>
+
+      <!-- ============ SIMULATION 1 ============ -->
+      <h2 class="h-sec" id="sim-coulomb-panel" style="scroll-margin-top:5rem">1.4 · Simulation — Coulomb’s law bench</h2>
+      <p>
+        Change either charge or drag them apart. The arrows show the force on each charge:
+        notice that they are always equal and opposite, and that doubling the separation makes
+        them visibly shorter by the inverse-square rule.
+      </p>
+    </section>
+
+    <section class="section-tight wrap">
+      <div class="panel reveal">
+        <div class="panel-head">
+          <h3 class="panel-title"><span class="dot"></span> Coulomb’s law bench</h3>
+          <p class="panel-sub">F = k·|q<sub>1</sub>q<sub>2</sub>|/r<sup>2</sup> · drag the charges</p>
+          <div class="panel-actions">
+            <button class="btn btn-sm" type="button" data-coul-preset="1,1,0.30">+1 µC / +1 µC</button>
+            <button class="btn btn-sm" type="button" data-coul-preset="3,-2,0.30">Dipole</button>
+            <button class="btn btn-sm" type="button" data-coul-preset="5,5,0.10">Strong repulsion</button>
+            <button class="btn btn-sm" type="button" data-coul-preset="1,-1,1.00">Far apart</button>
+          </div>
+        </div>
+        <div class="sim-grid">
+          <div>
+            <canvas id="sim-coulomb" class="sim-canvas grab" role="img"
+                    aria-label="Two draggable point charges showing the Coulomb force between them"></canvas>
+            <div class="legend">
+              <span><i class="swatch" style="background:#fb7185"></i> positive charge</span>
+              <span><i class="swatch" style="background:#38bdf8"></i> negative charge</span>
+              <span><i class="swatch" style="background:#34d399"></i> attractive force</span>
+              <span><i class="swatch" style="background:#fb7185"></i> repulsive force</span>
+              <span><i class="swatch" style="background:#fbbf24"></i> net field at the midpoint</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="ctl-stack">
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">q<sub>1</sub></span> first charge</span>
+                <span class="ctl-value" id="coul-q1v">+3.0 µC</span>
+                <input class="range ctl-range" type="range" id="coul-q1" min="-20" max="20" step="0.5" value="3" aria-label="Charge q1 in microcoulombs">
+              </div>
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">q<sub>2</sub></span> second charge</span>
+                <span class="ctl-value" id="coul-q2v">−2.0 µC</span>
+                <input class="range ctl-range" type="range" id="coul-q2" min="-20" max="20" step="0.5" value="-2" aria-label="Charge q2 in microcoulombs">
+              </div>
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">r</span> separation</span>
+                <span class="ctl-value" id="coul-rv">0.300 m</span>
+                <input class="range ctl-range" type="range" id="coul-r" min="0.02" max="1" step="0.001" value="0.3" aria-label="Separation in metres">
+                <span class="ctl-hint">Tip: drag a charge on the canvas instead of using this slider.</span>
+              </div>
+              <label class="ctl" style="grid-template-columns:auto 1fr;cursor:pointer">
+                <input type="checkbox" id="coul-showE" checked style="accent-color:#22d3ee">
+                <span class="ctl-label" style="font-size:.86rem">Show the net field at the midpoint</span>
+              </label>
+            </div>
+
+            <div class="readouts mt-4">
+              <div class="stat"><span class="stat-label">|F| on each charge</span><span class="stat-value hl-cyan" id="coul-force">—</span></div>
+              <div class="stat"><span class="stat-label">Nature of the force</span><span class="stat-value" id="coul-nature">—</span><span class="stat-sub" id="coul-nature-sub"></span></div>
+              <div class="stat"><span class="stat-label">|E| at midpoint</span><span class="stat-value hl-amber" id="coul-emid">—</span></div>
+            </div>
+            <p class="sim-note mt-3 mono" id="coul-substitution" style="overflow-wrap:anywhere">—</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SIMULATION 2 ============ -->
+    <section class="section wrap wrap-narrow prose">
+      <h2 class="h-sec" id="sim-efield-panel" style="scroll-margin-top:5rem">1.5 · Simulation — electric field explorer</h2>
+      <p>
+        Build any charge configuration you like. The canvas traces real field lines by
+        integrating <strong>a small step ds along Ê(P)</strong> from each positive charge, and can also show a
+        vector grid coloured by field strength. Hover anywhere to read the field magnitude and
+        the force on a +1 nC test charge at that point.
+      </p>
+      <p>
+        Try the <strong>dipole</strong> preset and look for the curved lines that sweep from the
+        positive to the negative charge. Then try <strong>two like charges</strong> and hunt for
+        the null point exactly between them, where the field is zero and no line can pass.
+      </p>
+    </section>
+
+    <section class="section-tight wrap">
+      <div class="panel reveal">
+        <div class="panel-head">
+          <h3 class="panel-title"><span class="dot" style="background:#fb7185;box-shadow:0 0 10px #fb7185"></span> Electric field explorer</h3>
+          <p class="panel-sub">superposition of point-charge fields</p>
+          <div class="panel-actions">
+            <div class="seg" id="ef-brush" role="group" aria-label="Tool">
+              <button class="seg-btn" type="button" data-value="move" aria-pressed="true">Move</button>
+              <button class="seg-btn" type="button" data-value="add+" aria-pressed="false">+ charge</button>
+              <button class="seg-btn" type="button" data-value="add-" aria-pressed="false">− charge</button>
+              <button class="seg-btn" type="button" data-value="erase" aria-pressed="false">Erase</button>
+            </div>
+            <button class="btn btn-sm btn-danger" type="button" id="ef-clear">Clear all</button>
+          </div>
+        </div>
+        <div class="sim-grid">
+          <div>
+            <canvas id="sim-efield" class="sim-canvas tall" role="img"
+                    aria-label="Interactive electric field lines and vectors for user-placed charges"></canvas>
+            <div class="legend">
+              <span><i class="swatch" style="background:#fb7185"></i> positive</span>
+              <span><i class="swatch" style="background:#38bdf8"></i> negative</span>
+              <span><i class="swatch" style="background:#a5f3fc"></i> field line / vector</span>
+              <span><i class="swatch" style="background:#fbbf24"></i> force on the +1 nC probe</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="ctl-stack">
+              <div>
+                <span class="ctl-label" style="margin-bottom:.35rem">Display mode</span>
+                <div class="seg" id="ef-mode" role="group" aria-label="Display mode">
+                  <button class="seg-btn" type="button" data-value="lines" aria-pressed="false">Lines</button>
+                  <button class="seg-btn" type="button" data-value="vectors" aria-pressed="false">Vectors</button>
+                  <button class="seg-btn" type="button" data-value="both" aria-pressed="true">Both</button>
+                </div>
+              </div>
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">|q|</span> size of a new charge</span>
+                <span class="ctl-value" id="ef-sizev">3.0 µC</span>
+                <input class="range ctl-range" type="range" id="ef-size" min="1" max="10" step="0.5" value="3" aria-label="Magnitude of newly placed charges">
+              </div>
+              <div>
+                <span class="ctl-label" style="margin-bottom:.35rem">Presets</span>
+                <div class="btn-group">
+                  <button class="btn btn-sm" type="button" data-ef-preset="single-pos">Single +</button>
+                  <button class="btn btn-sm" type="button" data-ef-preset="single-neg">Single −</button>
+                  <button class="btn btn-sm" type="button" data-ef-preset="dipole">Dipole</button>
+                  <button class="btn btn-sm" type="button" data-ef-preset="like">Two like</button>
+                  <button class="btn btn-sm" type="button" data-ef-preset="unequal">+8 / −2 µC</button>
+                  <button class="btn btn-sm" type="button" data-ef-preset="quad">Quadrupole</button>
+                </div>
+              </div>
+              <p class="sim-note" id="ef-hint">Drag charges to move them. The field updates live.</p>
+            </div>
+
+            <div class="readouts mt-4">
+              <div class="stat"><span class="stat-label">Charges</span><span class="stat-value" id="ef-count">2</span></div>
+              <div class="stat"><span class="stat-label">Net charge</span><span class="stat-value" id="ef-net">0.0 µC</span></div>
+              <div class="stat"><span class="stat-label">|E| at probe</span><span class="stat-value hl-cyan" id="ef-emag">hover the field</span></div>
+              <div class="stat"><span class="stat-label">Direction</span><span class="stat-value" id="ef-edir">hover the field</span></div>
+              <div class="stat"><span class="stat-label">F on +1 nC</span><span class="stat-value hl-amber" id="ef-force">hover the field</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SELF-CHECK ============ -->
+    <section class="section wrap wrap-narrow prose">
+      <h2 class="h-sec">1.6 · Check your understanding</h2>
+      <p>Think first, then click to reveal the answer.</p>
+
+      <details class="check">
+        <summary>Two identical spheres carry +6 µC and −2 µC. They are touched together and then separated. What does each carry afterwards?</summary>
+        <div class="answer"><b>+2 µC each.</b> Charge is conserved and, because the spheres are identical, it shares equally: (6 − 2)/2 = +2 µC. The force between them afterwards is repulsive.</div>
+      </details>
+      <details class="check">
+        <summary>The separation between two point charges is tripled. By what factor does the force change?</summary>
+        <div class="answer"><b>It becomes 1/9 of the original.</b> F is proportional to 1/r<sup>2</sup>, so 3<sup>2</sup> = 9 in the denominator.</div>
+      </details>
+      <details class="check">
+        <summary>Can an electric field line ever form a closed loop?</summary>
+        <div class="answer"><b>No — not for electrostatic fields.</b> Field lines begin on positive charge and end on negative charge. (Magnetic field lines <em>do</em> form closed loops, because there are no magnetic monopoles — that contrast is the subject of Topic 3.)</div>
+      </details>
+      <details class="check">
+        <summary>An electron is released from rest in a uniform field of 2.0×10<sup>4</sup> N/C pointing to the right. Which way does it accelerate, and how fast?</summary>
+        <div class="answer"><b>To the left, at 3.5×10<sup>15</sup> m/s<sup>2</sup>.</b> F = |q|E = (1.602×10<sup>−19</sup>)(2.0×10<sup>4</sup>) = 3.2×10<sup>−15</sup> N, opposite to E because the charge is negative. a = F/m = 3.2×10<sup>−15</sup> / 9.109×10<sup>−31</sup> = 3.5×10<sup>15</sup> m/s<sup>2</sup>.</div>
+      </details>
+      <details class="check">
+        <summary>Why does a charged balloon stick to a neutral wall?</summary>
+        <div class="answer"><b>Polarisation (charging by induction).</b> The balloon’s charge pushes like charges in the wall’s surface atoms slightly away and pulls opposite charges slightly closer. The nearer opposite charge wins because the field is stronger at shorter distance, giving a net attraction.</div>
+      </details>
+
+      <div class="card mt-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold">Finished with Topic 1?</h3>
+            <p class="small muted" style="margin:.25rem 0 0">Mark it complete to update your progress ring on the home page.</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-primary" type="button" data-complete-topic="charges" aria-pressed="false">Mark topic as complete</button>
+            <a class="btn" href="../quiz.html">Quiz this topic</a>
+          </div>
+        </div>
+      </div>
+
+      <nav class="pager" aria-label="Topic navigation">
+        <a href="../index.html"><span class="dir">← Back</span><span class="ttl">Module home</span></a>
+        <a class="next" href="current.html"><span class="dir">Next topic →</span><span class="ttl">2 · Current electricity</span></a>
+      </nav>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <span class="brand" style="pointer-events:none">
+          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="#22d3ee" stroke-width="2"/>
+            <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="#22d3ee"/>
+          </svg>
+          <span class="brand-name">EMC<em>Lab</em></span>
+        </span>
+        <p class="small muted" style="margin-top:.6rem">Topic 1 of the EMC interactive electromagnetics module.</p>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Topics</h3>
+        <ul class="footer-links">
+          <li><a href="charges.html">1 · Charges &amp; fields</a></li>
+          <li><a href="current.html">2 · Current electricity</a></li>
+          <li><a href="magnetism.html">3 · Magnetism</a></li>
+          <li><a href="induction.html">4 · Electromagnetic induction</a></li>
+          <li><a href="../quiz.html">Quiz</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">On this page</h3>
+        <ul class="footer-links">
+          <li><a href="#charge">1.1 Charge</a></li>
+          <li><a href="#coulomb">1.2 Coulomb’s law</a></li>
+          <li><a href="#field">1.3 Electric field</a></li>
+          <li><a href="#sim-coulomb-panel">1.4 Coulomb bench</a></li>
+          <li><a href="#sim-efield-panel">1.5 Field explorer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:1.6rem">
+      <hr class="hr">
+      <p class="tiny faint center" style="margin-top:1rem">© <span data-year>2026</span> EMC Lab · Calculus-based Physics II</p>
+    </div>
+  </footer>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/sync.js"></script>
+  <script src="../js/sim-coulomb.js"></script>
+  <script src="../js/sim-efield.js"></script>
+</body>
+</html>

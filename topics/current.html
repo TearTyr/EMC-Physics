@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ohm's law, series and parallel circuits and equivalent resistance — with an interactive Ohm's law simulator and a circuit builder.">
+  <meta name="theme-color" content="#060b16">
+  <title>Topic 2 · Current electricity — EMC Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='13' fill='%230e1a2e'/%3E%3Cpath d='M27 7 13 27h9l-3 14L35 20h-9z' fill='%2322d3ee'/%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/tailwind-fallback.css">
+</head>
+
+<body class="emc">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap nav-inner">
+      <a class="brand" href="../index.html" aria-label="EMC Lab — home">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+          <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="url(#bm)" stroke-width="2"/>
+          <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="url(#bm)"/>
+        </svg>
+        <span class="brand-name">EMC<em>Lab</em><span class="brand-sub">Electromagnetics</span></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+      <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
+        <a class="nav-link" href="../index.html">Home</a>
+        <a class="nav-link" href="charges.html">1 · Charges &amp; Fields</a>
+        <a class="nav-link" href="current.html">2 · Current</a>
+        <a class="nav-link" href="magnetism.html">3 · Magnetism</a>
+        <a class="nav-link" href="induction.html">4 · Induction</a>
+        <a class="nav-link nav-cta" href="../quiz.html">Take the quiz</a>
+      </nav>
+    </div>
+    <div class="scroll-progress"><i id="readingProgress"></i></div>
+  </header>
+
+  <main class="emc-main" id="main">
+    <div class="wrap section-tight">
+      <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span aria-hidden="true">/</span><span>Topic 2</span>
+      </nav>
+      <span class="eyebrow eyebrow-amber" style="margin-top:.7rem">Topic 2 of 4</span>
+      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Current electricity</h1>
+      <p class="lede">
+        Topic 1 dealt with charges at rest. Now let them move. A steady flow of charge is a
+        <strong>current</strong>, and the three quantities that describe any simple circuit —
+        voltage, current and resistance — are tied together by the most useful equation in
+        electrical engineering.
+      </p>
+
+      <div class="card mt-6">
+        <h2 class="h-sub" style="margin-top:0">Learning objectives</h2>
+        <ul class="objectives">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Define current, potential difference and resistance, and state their SI units.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Apply V = IR and P = IV to find any unknown in a component.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Reduce a series, parallel or combination network to a single equivalent resistance.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>State which quantity is shared in series and which in parallel, and why.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Calculate the current in, voltage across and power of every element in a circuit.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <section class="section wrap wrap-narrow prose">
+      <h2 class="h-sec" id="quantities">2.1 · Current, voltage and resistance</h2>
+      <dl class="defs">
+        <div><dt>Current I — the rate of flow of charge</dt><dd>I = ΔQ/Δt, measured in <strong>amperes</strong> (A). One ampere is one coulomb passing a point every second, about 6.24×10<sup>18</sup> electrons per second.</dd></div>
+        <div><dt>Potential difference V — energy per unit charge</dt><dd>V = W/Q, measured in <strong>volts</strong> (V). One volt means one joule of energy transferred per coulomb that passes. A battery is a charge pump that gives each coulomb a fixed amount of energy.</dd></div>
+        <div><dt>Resistance R — how much a component opposes current</dt><dd>R = V/I, measured in <strong>ohms</strong> (Ω). For a uniform wire R = ρL/A: longer and thinner wires resist more.</dd></div>
+      </dl>
+
+      <div class="callout callout-trap">
+        <div class="callout-title">Conventional current vs electron flow</div>
+        <p>
+          Electrons in a metal drift from the negative terminal to the positive one — and very
+          slowly, typically fractions of a millimetre per second. <strong>Conventional current</strong>
+          is defined the other way round (positive charge moving + → −), a convention that
+          predates the discovery of the electron. All circuit analysis uses conventional
+          current. The <em>signal</em>, by contrast, travels at a substantial fraction of the
+          speed of light, which is why a lamp lights instantly even though no individual
+          electron travels from the switch.
+        </p>
+      </div>
+
+      <h2 class="h-sec" id="ohm">2.2 · Ohm’s law</h2>
+      <div class="formula">
+        <span class="eq">V = I · R</span>
+        <span class="eq" style="font-size:1.05rem">I = V/R &nbsp;·&nbsp; R = V/I</span>
+        <span class="where">V in volts · I in amperes · R in ohms</span>
+      </div>
+      <p>
+        Strictly, <strong>Ohm’s law is a property of some materials, not a universal law</strong>.
+        An <em>ohmic</em> conductor (a metal resistor at constant temperature) keeps R constant,
+        so its I–V graph is a straight line through the origin with gradient 1/R. A filament lamp,
+        a diode and a transistor are <em>non-ohmic</em>: their I–V graphs curve. V = IR still
+        defines the resistance at any one point, but R is no longer a constant.
+      </p>
+
+      <h3 class="h-sub">Electrical power</h3>
+      <div class="formula">
+        <span class="eq">P = V·I = I<sup>2</sup>R = V<sup>2</sup>/R</span>
+        <span class="where">P in watts (W) = joules per second</span>
+      </div>
+      <p>
+        The three forms are the same equation with V = IR substituted in. Choose whichever uses
+        the quantities you know: <strong>I<sup>2</sup>R</strong> is best for series circuits (same current),
+        <strong>V<sup>2</sup>/R</strong> for parallel ones (same voltage).
+      </p>
+
+      <div class="callout callout-key">
+        <div class="callout-title">Worked example</div>
+        <p>A 12 V battery drives 3 A through a resistor. Find R and the power dissipated.</p>
+        <p class="mono small">R = V/I = 12/3 = <b>4 Ω</b> &nbsp;&nbsp; P = VI = 12 × 3 = <b>36 W</b> &nbsp;&nbsp; check: I<sup>2</sup>R = 9 × 4 = 36 W ✓</p>
+      </div>
+
+      <h2 class="h-sec" id="networks">2.3 · Series and parallel circuits</h2>
+      <figure class="fig">
+        <div class="fig-box">
+          <svg viewBox="0 0 560 210" width="560" height="210" role="img"
+               aria-label="Left: two resistors in series on one path. Right: two resistors in parallel on separate branches.">
+            <g stroke="#5b7299" stroke-width="2.5" fill="none">
+              <!-- SERIES -->
+              <path d="M40 40 H250 V170 H40 Z"/>
+              <!-- PARALLEL -->
+              <path d="M310 40 H520 V170 H310 Z"/>
+            </g>
+            <!-- batteries -->
+            <g stroke="#e8eefb" stroke-width="2.5" stroke-linecap="round">
+              <path d="M26 90h28M33 102h14"/><path d="M296 90h28M303 102h14"/>
+            </g>
+            <text x="14" y="130" fill="#fcd34d" font-size="12" font-family="monospace">V</text>
+            <text x="284" y="130" fill="#fcd34d" font-size="12" font-family="monospace">V</text>
+
+            <!-- series resistors -->
+            <g stroke="#e2e8f0" stroke-width="2.4" fill="none">
+              <path d="M85 40h6l5-11 10 22 10-22 10 22 10-22 5 11h6"/>
+              <path d="M185 40h6l5-11 10 22 10-22 10 22 10-22 5 11h6"/>
+            </g>
+            <text x="110" y="18" fill="#a5f3fc" font-size="12" font-family="monospace" text-anchor="middle">R1</text>
+            <text x="210" y="18" fill="#a5f3fc" font-size="12" font-family="monospace" text-anchor="middle">R2</text>
+            <text x="145" y="196" fill="#a9bad6" font-size="12.5" font-family="sans-serif" text-anchor="middle" font-weight="700">SERIES — one path, same current</text>
+
+            <!-- parallel resistors -->
+            <g stroke="#e2e8f0" stroke-width="2.4" fill="none">
+              <path d="M380 60v6l-11 5 22 10-22 10 22 10-22 10 11 5v6"/>
+              <path d="M460 60v6l-11 5 22 10-22 10 22 10-22 10 11 5v6"/>
+            </g>
+            <text x="352" y="108" fill="#a5f3fc" font-size="12" font-family="monospace" text-anchor="middle">R1</text>
+            <text x="492" y="108" fill="#a5f3fc" font-size="12" font-family="monospace" text-anchor="middle">R2</text>
+            <circle cx="380" cy="40" r="3.4" fill="#93a7c8"/><circle cx="460" cy="40" r="3.4" fill="#93a7c8"/>
+            <circle cx="380" cy="170" r="3.4" fill="#93a7c8"/><circle cx="460" cy="170" r="3.4" fill="#93a7c8"/>
+            <text x="415" y="196" fill="#a9bad6" font-size="12.5" font-family="sans-serif" text-anchor="middle" font-weight="700">PARALLEL — many paths, same voltage</text>
+          </svg>
+        </div>
+        <figcaption>Figure 1 — Series shares the current; parallel shares the voltage.</figcaption>
+      </figure>
+
+      <h3 class="h-sub">Series rules</h3>
+      <ul>
+        <li>The <strong>same current</strong> flows through every component — there is nowhere else for the charge to go (Kirchhoff’s current law).</li>
+        <li>Voltages <strong>add up</strong> to the supply: V = V<sub>1</sub> + V<sub>2</sub> + … (Kirchhoff’s voltage law).</li>
+        <li>Resistances add: <strong>R<sub>eq</sub> = R<sub>1</sub> + R<sub>2</sub> + …</strong> — always bigger than the largest resistor.</li>
+        <li>The voltage divides in proportion to R: the biggest resistor takes the biggest share.</li>
+      </ul>
+
+      <h3 class="h-sub">Parallel rules</h3>
+      <ul>
+        <li>Every branch is connected directly across the supply, so the <strong>same voltage</strong> appears across each.</li>
+        <li>Currents <strong>add up</strong>: I = I<sub>1</sub> + I<sub>2</sub> + …</li>
+        <li>Conductances add: <strong>1/R<sub>eq</sub> = 1/R<sub>1</sub> + 1/R<sub>2</sub> + …</strong> — always smaller than the smallest branch.</li>
+        <li>For just two resistors the shortcut <strong>R<sub>eq</sub> = R<sub>1</sub>R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>)</strong> is faster. Equal resistors in parallel give R/n.</li>
+        <li>Current divides <em>inversely</em> with R: the smallest resistor carries the most current.</li>
+      </ul>
+
+      <div class="callout callout-key">
+        <div class="callout-title">Worked examples</div>
+        <p><strong>Series.</strong> 4 Ω, 6 Ω and 10 Ω in series across 20 V.</p>
+        <p class="mono small">R<sub>eq</sub> = 4+6+10 = 20 Ω · I = 20/20 = <b>1 A</b> · V drops = 4 V, 6 V, 10 V (sum = 20 V ✓) · P = 20 W</p>
+        <p><strong>Parallel.</strong> 6 Ω and 3 Ω across 12 V.</p>
+        <p class="mono small">R<sub>eq</sub> = (6×3)/(6+3) = 2 Ω · I = 12/2 = <b>6 A</b> · branch currents 12/6 = 2 A and 12/3 = 4 A (sum = 6 A ✓)</p>
+        <p><strong>Combination.</strong> 4 Ω in series with (6 Ω ∥ 12 Ω), across 24 V.</p>
+        <p class="mono small">R<sub>p</sub> = (6×12)/(6+12) = 4 Ω · R<sub>eq</sub> = 4+4 = 8 Ω · I = 24/8 = <b>3 A</b> · V across the 4 Ω = 12 V, V across the pair = 12 V · branch currents 2 A and 1 A ✓</p>
+      </div>
+
+      <h3 class="h-sub">The general strategy</h3>
+      <ol>
+        <li>Find the parts of the network that are purely series or purely parallel and reduce them.</li>
+        <li>Redraw the simpler circuit and repeat until one equivalent resistance remains.</li>
+        <li>Use I = V/R<sub>eq</sub> to get the total current from the supply.</li>
+        <li><strong>Work back outwards</strong>, splitting the current and voltage at each step you undid.</li>
+      </ol>
+
+      <div class="callout callout-real">
+        <div class="callout-title">Real world</div>
+        <p>
+          <strong>House wiring is parallel.</strong> Every socket and lamp sees the full mains
+          voltage, and switching one appliance on does not dim the others. If your home were
+          wired in series, turning off one lamp would break the circuit for the whole house.
+        </p>
+        <p>
+          <strong>Fuses and breakers</strong> exploit the fact that adding parallel loads lowers
+          R<sub>eq</sub> and therefore raises the total current. P = I<sup>2</sup>R heating in the cables
+          grows with I<sup>2</sup>, so a 13 A fuse protects a ring main from the fire that 40 A would cause.
+        </p>
+        <p>
+          <strong>Old-style Christmas lights</strong> were wired in series: one failed bulb broke
+          the whole string, and each bulb saw only a fraction of the mains voltage. Modern strings
+          are parallel or use shunted bulbs for exactly this reason.
+        </p>
+      </div>
+
+      <div class="callout callout-trap">
+        <div class="callout-title">Common misconceptions</div>
+        <p>1. “Current is used up by the bulb.” No — the same current flows out as in; what is used up is <em>energy</em> (the charge loses potential energy, which becomes light and heat).</p>
+        <p>2. “A bigger resistor takes more current.” In series the current is the same everywhere; a bigger resistor takes a bigger <em>voltage</em>. In parallel a bigger resistor takes <em>less</em> current.</p>
+        <p>3. “Adding a resistor always increases the resistance.” True in series, false in parallel — an extra parallel path always lowers R<sub>eq</sub>.</p>
+      </div>
+
+      <!-- ============ SIM 3: OHM ============ -->
+      <h2 class="h-sec" id="sim-ohm-panel" style="scroll-margin-top:5rem">2.4 · Simulation — Ohm’s law bench</h2>
+      <p>
+        Move the voltage and resistance sliders and watch the current respond. The ammeter
+        auto-ranges like a real meter, the bulb brightens with dissipated power, and the chart
+        plots the I–V characteristic — the straight line whose gradient is 1/R. Push the power
+        past the resistor’s rating to see the safety warning that real engineers have to respect.
+      </p>
+    </section>
+
+    <section class="section-tight wrap">
+      <div class="panel reveal">
+        <div class="panel-head">
+          <h3 class="panel-title"><span class="dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24"></span> Ohm’s law simulator</h3>
+          <p class="panel-sub">I = V / R · P = VI</p>
+          <div class="panel-actions">
+            <button class="btn btn-sm" type="button" data-ohm-preset="9,22">9 V · 22 Ω</button>
+            <button class="btn btn-sm" type="button" data-ohm-preset="12,4">12 V · 4 Ω</button>
+            <button class="btn btn-sm" type="button" data-ohm-preset="5,1000">5 V · 1 kΩ</button>
+            <button class="btn btn-sm" type="button" data-ohm-preset="24,2">24 V · 2 Ω</button>
+          </div>
+        </div>
+        <div class="sim-grid">
+          <div>
+            <canvas id="sim-ohm" class="sim-canvas" role="img"
+                    aria-label="Circuit with a battery, resistor, bulb and analogue ammeter showing Ohm's law"></canvas>
+            <canvas id="sim-ohm-chart" class="sim-canvas chart" role="img"
+                    aria-label="Current against voltage characteristic, a straight line with gradient 1 over R"></canvas>
+            <div class="legend">
+              <span><i class="swatch" style="background:#fbbf24"></i> conventional current</span>
+              <span><i class="swatch" style="background:#38bdf8"></i> electron flow</span>
+              <span><i class="swatch" style="background:#22d3ee"></i> I–V line (gradient 1/R)</span>
+              <span><i class="swatch" style="background:#a78bfa"></i> 2R reference</span>
+              <span><i class="swatch" style="background:#34d399"></i> R/2 reference</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="ctl-stack">
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">V</span> supply voltage</span>
+                <span class="ctl-value" id="ohm-Vv">9.0 V</span>
+                <input class="range ctl-range" type="range" id="ohm-V" min="0" max="24" step="0.1" value="9" aria-label="Voltage in volts">
+              </div>
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">R</span> resistance <span class="tiny faint">(log scale)</span></span>
+                <span class="ctl-value" id="ohm-Rv">22.0 Ω</span>
+                <input class="range ctl-range" type="range" id="ohm-R" min="0" max="1000" step="0.1" value="447.5" aria-label="Resistance, logarithmic scale">
+                <span class="ctl-hint">or type an exact value:
+                  <input class="inp" type="number" id="ohm-Rnum" min="0.1" step="0.1" value="22" style="width:7rem;display:inline-block;margin-left:.35rem" aria-label="Exact resistance in ohms"> Ω
+                </span>
+              </div>
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">P<sub>rated</sub></span> resistor rating</span>
+                <span class="ctl-value" id="ohm-ratedv">0.50 W</span>
+                <input class="range ctl-range" type="range" id="ohm-rated" min="0.05" max="5" step="0.05" value="0.5" aria-label="Resistor power rating in watts">
+              </div>
+              <label class="ctl" style="grid-template-columns:auto 1fr;cursor:pointer">
+                <input type="checkbox" id="ohm-electrons" style="accent-color:#38bdf8">
+                <span class="ctl-label" style="font-size:.86rem">Show electron flow instead of conventional current</span>
+              </label>
+            </div>
+
+            <div class="readouts mt-4">
+              <div class="stat"><span class="stat-label">Current I</span><span class="stat-value hl-cyan" id="ohm-I">—</span><span class="stat-sub" id="ohm-ImA">—</span></div>
+              <div class="stat"><span class="stat-label">Power P</span><span class="stat-value hl-amber" id="ohm-P">—</span></div>
+              <div class="stat"><span class="stat-label">Meter range</span><span class="stat-value" id="ohm-range">—</span></div>
+            </div>
+            <p class="sim-note mt-3 mono" id="ohm-sub" style="overflow-wrap:anywhere">—</p>
+            <div class="callout callout-warn" id="ohm-warn" hidden style="margin-top:.75rem"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SIM 4: CIRCUIT BUILDER ============ -->
+    <section class="section wrap wrap-narrow prose">
+      <h2 class="h-sec" id="sim-circuit-panel" style="scroll-margin-top:5rem">2.5 · Simulation — circuit builder</h2>
+      <p>
+        Build a real circuit. Choose a topology, add or delete resistors, and change any value.
+        The simulator solves the network exactly, prints the equivalent-resistance working, and
+        animates charge flow with a dot density proportional to the current in each branch — so
+        you can <em>see</em> the current splitting unevenly in a parallel bank.
+      </p>
+      <p>
+        Click any resistor on the canvas to select and edit it. The bulb is modelled as an
+        ordinary resistor in series with the bank; switch it off to study the resistor network
+        on its own.
+      </p>
+    </section>
+
+    <section class="section-tight wrap">
+      <div class="panel reveal">
+        <div class="panel-head">
+          <h3 class="panel-title"><span class="dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24"></span> Circuit builder</h3>
+          <p class="panel-sub">series · parallel · combination</p>
+          <div class="panel-actions">
+            <div class="seg" id="circ-topology" role="group" aria-label="Circuit topology">
+              <button class="seg-btn" type="button" data-value="series" aria-pressed="true">Series</button>
+              <button class="seg-btn" type="button" data-value="parallel" aria-pressed="false">Parallel</button>
+              <button class="seg-btn" type="button" data-value="combo" aria-pressed="false">Series–parallel</button>
+            </div>
+            <button class="btn btn-sm" type="button" id="circ-add">+ Add resistor</button>
+          </div>
+        </div>
+        <div class="sim-grid">
+          <div>
+            <canvas id="sim-circuit" class="sim-canvas tall" role="img"
+                    aria-label="Interactive circuit with a battery, bulb and resistors arranged in the selected topology"></canvas>
+            <div class="legend">
+              <span><i class="swatch" style="background:#fbbf24"></i> moving charge (density scales with current)</span>
+              <span><i class="swatch" style="background:#e2e8f0"></i> resistor</span>
+              <span><i class="swatch" style="background:#fde68a"></i> bulb (glow scales with power)</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="ctl-stack">
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">V</span> battery</span>
+                <span class="ctl-value" id="circ-Vv">12.0 V</span>
+                <input class="range ctl-range" type="range" id="circ-V" min="1" max="24" step="0.5" value="12" aria-label="Battery voltage">
+              </div>
+              <div class="ctl">
+                <span class="ctl-label"><span class="sym">R<sub>bulb</sub></span> bulb resistance</span>
+                <span class="ctl-value" id="circ-bulbv">15 Ω</span>
+                <input class="range ctl-range" type="range" id="circ-bulbR" min="1" max="100" step="1" value="15" aria-label="Bulb resistance in ohms">
+              </div>
+              <label class="ctl" style="grid-template-columns:auto 1fr;cursor:pointer">
+                <input type="checkbox" id="circ-includeBulb" checked style="accent-color:#fbbf24">
+                <span class="ctl-label" style="font-size:.86rem">Include the bulb in the circuit</span>
+              </label>
+              <div>
+                <span class="ctl-label" style="margin-bottom:.4rem">Resistors <span class="tiny faint">(click one on the canvas to select it)</span></span>
+                <div class="row-list" id="circ-rows"><!-- rows injected by js/sim-circuit.js --></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- full-width instrument row: keeps the two columns balanced -->
+        <div class="panel-body" style="border-top:1px solid var(--line)">
+          <div class="readouts">
+            <div class="stat"><span class="stat-label">R of the bank</span><span class="stat-value hl-emerald" id="circ-req">—</span></div>
+            <div class="stat"><span class="stat-label">R total</span><span class="stat-value" id="circ-rtotal">—</span></div>
+            <div class="stat"><span class="stat-label">Total current</span><span class="stat-value hl-cyan" id="circ-itotal">—</span></div>
+            <div class="stat"><span class="stat-label">V across bank</span><span class="stat-value hl-amber" id="circ-vbank">—</span></div>
+            <div class="stat"><span class="stat-label">V across bulb</span><span class="stat-value" id="circ-vbulb">—</span></div>
+            <div class="stat"><span class="stat-label">Bulb power</span><span class="stat-value" id="circ-pbulb">—</span></div>
+            <div class="stat"><span class="stat-label">Supply power</span><span class="stat-value" id="circ-ptotal">—</span></div>
+          </div>
+
+          <p class="sim-note mt-3 mono" id="circ-breakdown" style="overflow-wrap:anywhere">—</p>
+          <p class="sim-note mt-2" id="circ-rule" style="border-left-color:#fbbf24;background:rgba(251,191,36,.07)">—</p>
+
+          <div class="table-scroll mt-4">
+            <table class="data">
+              <caption class="tiny faint" style="caption-side:top;text-align:left;padding:.4rem .2rem">Every element solved for V, I and P</caption>
+              <thead><tr><th>Element</th><th>R (Ω)</th><th>V (V)</th><th>I (A)</th><th>P (W)</th></tr></thead>
+              <tbody id="circ-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SELF-CHECK ============ -->
+    <section class="section wrap wrap-narrow prose">
+      <h2 class="h-sec">2.6 · Check your understanding</h2>
+
+      <details class="check">
+        <summary>Three 9 Ω resistors are available. What is the largest and the smallest equivalent resistance you can make using all three?</summary>
+        <div class="answer"><b>Largest 27 Ω</b> (all in series: 9+9+9). <b>Smallest 3 Ω</b> (all in parallel: 9/3). Any combination lies between those two limits.</div>
+      </details>
+      <details class="check">
+        <summary>A 60 W lamp is rated for 230 V. What is its operating resistance and current?</summary>
+        <div class="answer"><b>I = P/V = 60/230 = 0.26 A</b> and <b>R = V<sup>2</sup>/P = 230<sup>2</sup>/60 = 882 Ω</b>. Measured cold with a multimeter it reads only about 60 Ω — the filament’s resistance rises more than tenfold as it heats up, which is why lamps usually fail at switch-on.</div>
+      </details>
+      <details class="check">
+        <summary>Two resistors, 20 Ω and 30 Ω, are in parallel across a 12 V battery. Find the total current.</summary>
+        <div class="answer"><b>1.0 A.</b> R<sub>eq</sub> = (20×30)/(20+30) = 600/50 = 12 Ω, so I = 12/12 = 1.0 A. Check by branches: 12/20 = 0.6 A and 12/30 = 0.4 A, total 1.0 A ✓.</div>
+      </details>
+      <details class="check">
+        <summary>In the circuit builder, switch from series to parallel without changing any resistor. What happens to the bulb?</summary>
+        <div class="answer"><b>It gets much brighter.</b> Parallel reduces R<sub>eq</sub>, which increases the total current, and the bulb’s power P = I<sup>2</sup>R<sub>bulb</sub> grows with the square of that current.</div>
+      </details>
+      <details class="check">
+        <summary>Why does a voltmeter have a very high resistance while an ammeter has a very low one?</summary>
+        <div class="answer">A <b>voltmeter is connected in parallel</b> and must draw almost no current, or it would change the voltage it is measuring. An <b>ammeter is connected in series</b> and must add almost no resistance, or it would reduce the current it is measuring. Both are about not disturbing the circuit under test.</div>
+      </details>
+
+      <div class="card mt-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold">Finished with Topic 2?</h3>
+            <p class="small muted" style="margin:.25rem 0 0">Next: magnetic fields and the force on a moving charge.</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-primary" type="button" data-complete-topic="current" aria-pressed="false">Mark topic as complete</button>
+            <a class="btn" href="../quiz.html">Quiz this topic</a>
+          </div>
+        </div>
+      </div>
+
+      <nav class="pager" aria-label="Topic navigation">
+        <a href="charges.html"><span class="dir">← Previous</span><span class="ttl">1 · Electric charges &amp; fields</span></a>
+        <a class="next" href="magnetism.html"><span class="dir">Next topic →</span><span class="ttl">3 · Magnetism</span></a>
+      </nav>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <span class="brand" style="pointer-events:none">
+          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="#22d3ee" stroke-width="2"/>
+            <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="#22d3ee"/>
+          </svg>
+          <span class="brand-name">EMC<em>Lab</em></span>
+        </span>
+        <p class="small muted" style="margin-top:.6rem">Topic 2 of the EMC interactive electromagnetics module.</p>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Topics</h3>
+        <ul class="footer-links">
+          <li><a href="charges.html">1 · Charges &amp; fields</a></li>
+          <li><a href="current.html">2 · Current electricity</a></li>
+          <li><a href="magnetism.html">3 · Magnetism</a></li>
+          <li><a href="induction.html">4 · Electromagnetic induction</a></li>
+          <li><a href="../quiz.html">Quiz</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">On this page</h3>
+        <ul class="footer-links">
+          <li><a href="#quantities">2.1 Current, voltage, resistance</a></li>
+          <li><a href="#ohm">2.2 Ohm’s law and power</a></li>
+          <li><a href="#networks">2.3 Series and parallel</a></li>
+          <li><a href="#sim-ohm-panel">2.4 Ohm’s law simulator</a></li>
+          <li><a href="#sim-circuit-panel">2.5 Circuit builder</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:1.6rem">
+      <hr class="hr">
+      <p class="tiny faint center" style="margin-top:1rem">© <span data-year>2026</span> EMC Lab · Calculus-based Physics II</p>
+    </div>
+  </footer>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/sync.js"></script>
+  <script src="../js/sim-ohm.js"></script>
+  <script src="../js/sim-circuit.js"></script>
+</body>
+</html>

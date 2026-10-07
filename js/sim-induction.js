@@ -1,0 +1,496 @@
+/* ==========================================================================
+   Simulation 7 — Electromagnetic Induction: a magnet through a coil
+   File: js/sim-induction.js   (used on topics/induction.html)
+
+   PHYSICS (exact on-axis dipole result, no hand-waving)
+   ----------------------------------------------------
+   A coil of N turns and radius a sits in the y-z plane; its axis is x and
+   its area normal points along +x. A bar magnet modelled as a dipole of
+   moment m (pointing +x, i.e. its N pole faces +x) sits on the axis at a
+   signed distance z from the coil plane.
+
+   Flux through ONE turn (standard dipole result):
+       Phi(z) = mu0 * m * a^2 / ( 2 * (a^2 + z^2)^(3/2) )            [Wb]
+   Flux linkage:
+       lambda = N * Phi(z)
+   Faraday's law:
+       EMF = -d(lambda)/dt = -N * dPhi/dz * v
+       dPhi/dz = -3 * mu0 * m * a^2 * z / ( 2 * (a^2 + z^2)^(5/2) )
+       =>  EMF = 3 * N * mu0 * m * a^2 * z * v / ( 2 * (a^2 + z^2)^(5/2) )
+   Ohm's law for the coil circuit:
+       I = EMF / R            P = EMF^2 / R = I^2 R   (mechanical work in,
+                                                       heat out -- energy
+                                                       conservation / Lenz)
+
+   SIGN CONVENTION (and why the picture is right)
+   ----------------------------------------------
+   EMF > 0 drives current counter-clockwise seen from +x (right-hand rule
+   with the area normal +x). With the magnet's N pole leading:
+     * magnet APPROACHING  -> z*v < 0 -> EMF < 0 -> current CW from +x.
+       Flux is increasing, so the induced current makes a field that opposes
+       the increase: the coil's near face becomes a N pole and REPELS.
+     * magnet RECEDING     -> z*v > 0 -> EMF > 0 -> current CCW from +x.
+       Flux is decreasing, so the current tries to sustain it: the coil's
+       near face becomes a S pole and ATTRACTS, resisting the departure.
+     * at z = 0 the flux is at a maximum, dPhi/dt = 0, so EMF = 0. The EMF
+       trace therefore has two opposite peaks with a zero crossing in the
+       middle -- exactly what a real search coil shows on an oscilloscope.
+   On screen, "CCW seen from +x" means current comes OUT of the page at the
+   top of each turn (drawn as a dot) and goes INTO the page at the bottom
+   (drawn as a cross).
+   ========================================================================== */
+(function () {
+  const canvas = document.getElementById('sim-induction');
+  if (!canvas) return;
+
+  const { CONST, clamp, lerp, damp, label, roundRect, eng, unit, fixed } = EMC;
+  const MU0 = CONST.MU0;
+
+  const state = {
+    N: 800,            // turns
+    a: 0.020,          // coil radius [m]
+    m: 0.80,           // magnet dipole moment [A m^2]
+    R: 10,             // total circuit resistance [ohm]
+    z: -0.075,         // magnet position [m] (+ = right of the coil)
+    v: 0,              // magnet velocity [m/s]
+    speed: 0.8,        // auto-move speed [m/s]
+    mode: 'manual',    // 'manual' | 'push' | 'pull' | 'oscillate'
+    oscAmp: 0.075,     // oscillation amplitude [m]
+    oscFreq: 1.6,      // oscillation frequency [Hz]
+    oscPhase: 0,
+    showSymbols: true,
+    iScale: 1e-4,      // galvanometer auto-range [A]
+    history: []        // {t, lambda, emf} for the strip chart
+  };
+  const Z_MAX = 0.11;   // magnet travel limit [m]
+  let chart = null;     // strip-chart Stage (constructed below the main stage)
+
+  /* ---- core physics ---------------------------------------------------- */
+  function fluxPerTurn(z) {
+    const a2 = state.a * state.a;
+    return MU0 * state.m * a2 / (2 * Math.pow(a2 + z * z, 1.5));
+  }
+  function dFluxdz(z) {
+    const a2 = state.a * state.a;
+    return -3 * MU0 * state.m * a2 * z / (2 * Math.pow(a2 + z * z, 2.5));
+  }
+  function compute() {
+    const phi = fluxPerTurn(state.z);
+    const lambda = state.N * phi;
+    const dphidt = dFluxdz(state.z) * state.v;         // Wb/s per turn
+    const emf = -state.N * dphidt;                     // Faraday + Lenz sign
+    const I = emf / state.R;
+    const P = emf * emf / state.R;
+    return { phi, lambda, dlambda_dt: state.N * dphidt, emf, I, P };
+  }
+
+  /* ---- geometry -------------------------------------------------------- */
+  function geom(w, h) {
+    const cy = h * 0.42;
+    const pxPerM = (w * 0.40) / Z_MAX;
+    const coilX = w / 2;
+    const aPx = clamp(state.a * pxPerM, 16, h * 0.30);
+    const turns = clamp(Math.round(state.N / 120), 5, 14);
+    const coilLen = clamp(w * 0.16, 60, 150);
+    const galv = { x: w / 2, y: h - Math.max(40, h * 0.14), r: clamp(Math.min(w, h) * 0.075, 20, 30) };
+    return { cy, pxPerM, coilX, aPx, turns, coilLen, galv,
+             magnetX: coilX + state.z * pxPerM,
+             magLen: clamp(0.05 * pxPerM, 46, w * 0.24), magThick: clamp(aPx * 0.42, 14, 30) };
+  }
+
+  /* ---- painters -------------------------------------------------------- */
+  function drawCoil(ctx, G, phys) {
+    const x0 = G.coilX - G.coilLen / 2;
+    const spacing = G.coilLen / G.turns;
+    // determine current direction symbol: emf > 0 => CCW seen from +x
+    const ccw = phys.emf >= 0;
+    const glow = clamp(Math.abs(phys.I) / state.iScale, 0, 1);
+    const wireColor = glow > 0.02
+      ? `rgba(${ccw ? '52,211,153' : '251,191,36'},${0.55 + glow * 0.45})`
+      : 'rgba(148,163,184,.85)';
+
+    ctx.save();
+    ctx.lineWidth = 2.6;
+    for (let i = 0; i < G.turns; i++) {
+      const x = x0 + i * spacing;
+      const rx = Math.max(4.5, spacing * 0.62);
+      // far half of the loop (dimmer) ...
+      ctx.strokeStyle = 'rgba(148,163,184,.35)';
+      ctx.beginPath();
+      ctx.ellipse(x, G.cy, rx, G.aPx, 0, Math.PI * 0.5, Math.PI * 1.5);
+      ctx.stroke();
+      // ... then the near half in the live wire colour (glows with current)
+      ctx.strokeStyle = wireColor;
+      if (glow > 0.05) { ctx.shadowColor = wireColor; ctx.shadowBlur = 10 * glow; }
+      ctx.beginPath();
+      ctx.ellipse(x, G.cy, rx, G.aPx, 0, Math.PI * 1.5, Math.PI * 0.5);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+    ctx.restore();
+
+    // current-direction symbols at the top and bottom of the winding
+    if (state.showSymbols && glow > 0.03) {
+      const size = 4 + glow * 3.5;
+      const topOut = ccw;                       // CCW from +x => out of page at top
+      for (let i = 0; i < G.turns; i++) {
+        const x = x0 + i * spacing;
+        drawCurrentSymbol(ctx, x, G.cy - G.aPx, size, topOut);
+        drawCurrentSymbol(ctx, x, G.cy + G.aPx, size, !topOut);
+      }
+    }
+    label(ctx, `${G.turns} turns shown (N = ${state.N})`, G.coilX, G.cy - G.aPx - 18,
+      { color: 'rgba(169,186,214,.8)', size: 10.5, weight: '600' });
+    return { x0, spacing };
+  }
+
+  /** dot = current out of the page, cross = current into the page */
+  function drawCurrentSymbol(ctx, x, y, s, out) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(232,238,251,.95)'; ctx.fillStyle = 'rgba(232,238,251,.95)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(x, y, s, 0, Math.PI * 2); ctx.stroke();
+    if (out) { ctx.beginPath(); ctx.arc(x, y, Math.max(1.4, s * 0.34), 0, Math.PI * 2); ctx.fill(); }
+    else {
+      const d = s * 0.72;
+      ctx.beginPath(); ctx.moveTo(x - d, y - d); ctx.lineTo(x + d, y + d);
+      ctx.moveTo(x + d, y - d); ctx.lineTo(x - d, y + d); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawMagnet(ctx, G) {
+    const x = G.magnetX, y = G.cy, L = G.magLen, T = G.magThick;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = 14;
+    // S half (left, blue)
+    roundRect(ctx, x - L / 2, y - T / 2, L / 2, T, 4);
+    let g = ctx.createLinearGradient(x - L / 2, y - T / 2, x, y + T / 2);
+    g.addColorStop(0, '#0ea5e9'); g.addColorStop(1, '#0369a1');
+    ctx.fillStyle = g; ctx.fill();
+    // N half (right, red) — the N pole leads when the magnet moves right
+    roundRect(ctx, x, y - T / 2, L / 2, T, 4);
+    g = ctx.createLinearGradient(x, y - T / 2, x + L / 2, y + T / 2);
+    g.addColorStop(0, '#f43f5e'); g.addColorStop(1, '#be123c');
+    ctx.fillStyle = g; ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.2;
+    roundRect(ctx, x - L / 2, y - T / 2, L, T, 4); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = `800 ${Math.max(11, T * 0.5)}px ui-sans-serif, system-ui, sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('S', x - L / 4, y + 1);
+    ctx.fillText('N', x + L / 4, y + 1);
+    ctx.restore();
+    label(ctx, 'drag me \u2194', x, y - T / 2 - 13, { color: 'rgba(232,238,251,.8)', size: 10.5, weight: '600' });
+  }
+
+  function drawLeads(ctx, G, coil, phys, stageRef) {
+    const g = G.galv;
+    const leftX = coil.x0, rightX = coil.x0 + G.coilLen;
+    const yTop = G.cy + G.aPx;
+    ctx.save();
+    ctx.strokeStyle = '#5b7299'; ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(leftX, yTop); ctx.lineTo(leftX, g.y); ctx.lineTo(g.x - g.r, g.y);
+    ctx.moveTo(rightX, yTop); ctx.lineTo(rightX, g.y); ctx.lineTo(g.x + g.r, g.y);
+    ctx.stroke();
+    ctx.restore();
+
+    // animated charge flow: direction flips with the sign of the current
+    const mag = clamp(Math.abs(phys.I) / state.iScale, 0, 1);
+    if (mag > 0.02) {
+      const dir = phys.I >= 0 ? 1 : -1;    // + => CCW seen from +x
+      const speed = 40 + 260 * mag;
+      const phase = (stageRef.t * speed) % 60;
+      ctx.save();
+      ctx.fillStyle = 'rgba(251,191,36,.95)';
+      [[leftX, dir], [rightX, -dir]].forEach(([x, d]) => {
+        const n = 5;
+        for (let i = 0; i < n; i++) {
+          const s = (((i / n) + (phase * d) / 60) % 1 + 1) % 1;
+          const yy = lerp(yTop, g.y, s);
+          ctx.beginPath(); ctx.arc(x, yy, 2.8, 0, Math.PI * 2); ctx.fill();
+        }
+      });
+      ctx.restore();
+    }
+  }
+
+  function drawGalvanometer(ctx, G, phys) {
+    const { x, y, r } = G.galv;
+    const frac = clamp(phys.I / state.iScale, -1, 1);
+    ctx.save();
+    ctx.fillStyle = 'rgba(8,15,28,.95)';
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#5b7299'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+    // centre-zero scale
+    ctx.strokeStyle = 'rgba(148,163,184,.6)'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(x, y, r * 0.72, Math.PI * 1.18, Math.PI * 1.82); ctx.stroke();
+    [-1, -0.5, 0, 0.5, 1].forEach(f => {
+      const a = Math.PI * 1.5 + f * Math.PI * 0.32;
+      ctx.beginPath();
+      ctx.moveTo(x + Math.cos(a) * r * 0.64, y + Math.sin(a) * r * 0.64);
+      ctx.lineTo(x + Math.cos(a) * r * 0.8, y + Math.sin(a) * r * 0.8);
+      ctx.stroke();
+    });
+    const na = Math.PI * 1.5 + frac * Math.PI * 0.32;
+    ctx.strokeStyle = frac >= 0 ? '#34d399' : '#fbbf24'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(na) * r * 0.66, y + Math.sin(na) * r * 0.66); ctx.stroke();
+    ctx.fillStyle = '#e8eefb'; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    label(ctx, 'G', x, y + r * 0.5, { color: '#e8eefb', size: Math.max(10, r * 0.32), weight: '800' });
+    label(ctx, `\u00B1${eng(state.iScale, 1)} A full scale`, x, y + r + 15,
+      { color: '#7b8db0', size: 10, weight: '600' });
+  }
+
+  function drawAxis(ctx, G, w) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(148,163,184,.22)'; ctx.setLineDash([4, 6]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(10, G.cy); ctx.lineTo(w - 10, G.cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(G.coilX, G.cy - G.aPx - 30); ctx.lineTo(G.coilX, G.cy + G.aPx + 12); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    label(ctx, 'coil plane', G.coilX, G.cy + G.aPx + 24, { color: 'rgba(148,163,184,.75)', size: 10, weight: '600' });
+    // z dimension
+    const y = G.cy + G.aPx + 44;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(148,163,184,.45)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(G.coilX, y); ctx.lineTo(G.magnetX, y); ctx.stroke();
+    ctx.restore();
+    label(ctx, `z = ${(state.z * 100).toFixed(1)} cm`, (G.coilX + G.magnetX) / 2, y - 10,
+      { color: '#cbd5e1', size: 11, weight: '700' });
+  }
+
+  /* ---- main render ----------------------------------------------------- */
+  let dragging = false, lastZ = 0;
+  function render(ctx, w, h, stageRef, dt) {
+    ctx.clearRect(0, 0, w, h);
+    const G = geom(w, h);
+
+    /* --- advance the magnet ------------------------------------------------
+       The EMF peak is narrow (it sits at z = +/- a/2), so a single Euler step
+       per animation frame can jump straight over it on a slow device. The
+       motion is therefore integrated in sub-steps of at most 2 ms, which also
+       keeps the position accurate when the browser clamps dt.              */
+    const subSteps = dt ? clamp(Math.ceil(dt / 0.002), 1, 40) : 1;
+    const sdt = dt ? dt / subSteps : 0;
+    if (dt && (state.mode === 'push' || state.mode === 'pull')) {
+      state.v = (state.mode === 'push' ? 1 : -1) * state.speed;
+      for (let i = 0; i < subSteps; i++) {
+        state.z = clamp(state.z + state.v * sdt, -Z_MAX, Z_MAX);
+        if (Math.abs(state.z) >= Z_MAX) { state.v = 0; setMode('manual'); break; }
+      }
+    } else if (dt && state.mode === 'oscillate') {
+      for (let i = 0; i < subSteps; i++) state.oscPhase += 2 * Math.PI * state.oscFreq * sdt;
+      state.z = state.oscAmp * Math.sin(state.oscPhase);
+      // exact derivative of the prescribed motion -> no numerical noise
+      state.v = state.oscAmp * 2 * Math.PI * state.oscFreq * Math.cos(state.oscPhase);
+    } else if (dt && dragging) {
+      // manual drag: finite-difference velocity, low-pass filtered
+      const raw = dt > 0 ? (state.z - lastZ) / dt : 0;
+      state.v = damp(state.v, clamp(raw, -25, 25), 18, dt);
+      lastZ = state.z;
+    } else if (dt) {
+      state.v = damp(state.v, 0, 12, dt);     // released: velocity decays to 0
+    }
+
+    const phys = compute();
+
+    /* --- galvanometer auto-range: track a slowly decaying peak --- */
+    const target = Math.max(Math.abs(phys.I), 1e-7);
+    state.iScale = target > state.iScale ? target * 1.15 : damp(state.iScale, target * 1.25, 1.2, dt || 0.016);
+    state.iScale = clamp(state.iScale, 1e-7, 10);
+
+    /* --- draw --- */
+    drawAxis(ctx, G, w);
+    const coil = drawCoil(ctx, G, phys);
+    drawLeads(ctx, G, coil, phys, stageRef);
+    drawMagnet(ctx, G);
+    drawGalvanometer(ctx, G, phys);
+
+    // live headline numbers on the canvas
+    label(ctx, `EMF = ${unit(phys.emf, 'V', 3)}`, 12, 18,
+      { color: '#fcd34d', size: 13, align: 'left', weight: '800' });
+    label(ctx, `I = ${unit(phys.I, 'A', 3)}`, 12, 38,
+      { color: '#67e8f9', size: 13, align: 'left', weight: '800' });
+    label(ctx, `v = ${fixed(state.v, 2)} m/s`, w - 12, 18,
+      { color: '#a7f3d0', size: 12, align: 'right', weight: '700' });
+
+    /* --- record history for the strip chart --- */
+    if (dt) {
+      state.history.push({ t: stageRef.t, lambda: phys.lambda, emf: phys.emf });
+      const cutoff = stageRef.t - 7;
+      while (state.history.length && state.history[0].t < cutoff) state.history.shift();
+      if (state.history.length > 1400) state.history.splice(0, state.history.length - 1400);
+    }
+    updateReadouts(phys);
+    if (chart) chart.draw();
+  }
+
+  const stage = new EMC.Stage(canvas, render, { animate: true });
+
+  /* ---- strip chart: flux linkage and EMF vs time ----------------------- */
+  const chartCanvas = document.getElementById('sim-induction-chart');
+  if (chartCanvas) {
+    chart = new EMC.Stage(chartCanvas, (ctx, w, h) => {
+      ctx.clearRect(0, 0, w, h);
+      const pad = { l: 44, r: 12, t: 12, b: 20 };
+      const pw = w - pad.l - pad.r, ph = h - pad.t - pad.b;
+      const midY = pad.t + ph / 2;
+
+      // frame + zero line
+      ctx.save();
+      ctx.strokeStyle = 'rgba(148,163,184,.35)'; ctx.lineWidth = 1;
+      ctx.strokeRect(pad.l, pad.t, pw, ph);
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(148,163,184,.4)';
+      ctx.beginPath(); ctx.moveTo(pad.l, midY); ctx.lineTo(pad.l + pw, midY); ctx.stroke();
+      ctx.restore();
+
+      const H = state.history;
+      if (H.length > 1) {
+        const t1 = H[H.length - 1].t, t0 = t1 - 7;
+        let maxL = 1e-9, maxE = 1e-9;
+        for (const s of H) { maxL = Math.max(maxL, Math.abs(s.lambda)); maxE = Math.max(maxE, Math.abs(s.emf)); }
+        const X = t => pad.l + ((t - t0) / 7) * pw;
+        const trace = (key, max, color, half) => {
+          ctx.save();
+          ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+          ctx.beginPath();
+          let started = false;
+          for (const s of H) {
+            const x = X(s.t);
+            if (x < pad.l - 1) continue;
+            const y = half
+              ? midY - (s[key] / max) * (ph / 2 - 4)
+              : pad.t + ph - (s[key] / max) * (ph - 8) - 4;
+            if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        };
+        trace('lambda', maxL, 'rgba(34,211,238,.95)', false);   // always positive -> bottom baseline
+        trace('emf', maxE, 'rgba(251,191,36,.95)', true);       // bipolar -> centre baseline
+        label(ctx, `\u03BB max ${eng(maxL, 2)}Wb`, pad.l + 6, pad.t + 10,
+          { color: '#67e8f9', size: 10, align: 'left', weight: '700' });
+        label(ctx, `EMF max \u00B1${eng(maxE, 2)}V`, pad.l + pw - 6, pad.t + 10,
+          { color: '#fcd34d', size: 10, align: 'right', weight: '700' });
+      }
+      label(ctx, 'time \u2192 (last 7 s)', pad.l + pw / 2, h - 7,
+        { color: '#7b8db0', size: 10, weight: '600' });
+      label(ctx, '\u03BB', pad.l - 8, pad.t + 12, { color: '#67e8f9', size: 11, align: 'right', weight: '800' });
+      label(ctx, 'EMF', pad.l - 8, midY, { color: '#fcd34d', size: 11, align: 'right', weight: '800' });
+    });
+  }
+
+  /* ---- readouts -------------------------------------------------------- */
+  const el = id => document.getElementById(id);
+  let lastLenzHTML = '';
+  function updateReadouts(phys) {
+    const set = (id, v) => { if (el(id)) el(id).textContent = v; };
+    set('ind-z', `${(state.z * 100).toFixed(1)} cm`);
+    // Base SI units in, one SI prefix out — never stack prefixes ("µmWb").
+    set('ind-phi', unit(phys.phi, 'Wb', 3));
+    set('ind-lambda', unit(phys.lambda, 'Wb', 3));
+    set('ind-dphi', unit(phys.dlambda_dt, 'Wb/s', 3));
+    set('ind-emf', unit(phys.emf, 'V', 3));
+    set('ind-I', unit(phys.I, 'A', 3));
+    set('ind-P', unit(phys.P, 'W', 3));
+    set('ind-v', `${fixed(state.v, 2)} m/s`);
+
+    // direction + Lenz explanation
+    const dirEl = el('ind-dir'), lenzEl = el('ind-lenz');
+    const tiny = Math.abs(phys.emf) < state.iScale * state.R * 0.004;
+    let dir = '\u2014', lenz = '';
+    if (tiny || Math.abs(state.v) < 1e-4) {
+      dir = 'no induced current';
+      lenz = Math.abs(state.z) < 1e-3
+        ? 'The magnet is at the centre of the coil: the flux is at its maximum, so d\u03A6/dt = 0 and the EMF passes through zero. (This is why a real search coil gives two opposite peaks.)'
+        : 'The flux through the coil is not changing, so by Faraday\u2019s law the induced EMF is zero. Move the magnet to generate a current.';
+    } else {
+      const approaching = state.z * state.v < 0;
+      dir = phys.emf > 0 ? 'CCW from the right' : 'CW from the right';
+      lenz = approaching
+        ? 'Flux is <b>increasing</b>. Lenz\u2019s law: the induced current flows so as to <b>oppose the increase</b> \u2014 it makes the coil\u2019s near face a <b>north</b> pole, which <b>repels</b> the approaching magnet. You must push harder; that extra mechanical work is exactly the electrical power I\u00B2R being dissipated.'
+        : 'Flux is <b>decreasing</b>. Lenz\u2019s law: the induced current flows to <b>sustain the flux</b> \u2014 it makes the coil\u2019s near face a <b>south</b> pole, which <b>attracts</b> the departing magnet and resists its motion. Again, energy is conserved.';
+    }
+    if (dirEl && dirEl.textContent !== dir) dirEl.textContent = dir;
+    if (lenzEl && lenz !== lastLenzHTML) { lenzEl.innerHTML = lenz; lastLenzHTML = lenz; }
+  }
+
+  /* ---- mode buttons ---------------------------------------------------- */
+  function setMode(mode) {
+    state.mode = mode;
+    document.querySelectorAll('[data-ind-mode]').forEach(b => {
+      const on = b.dataset.indMode === mode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    if (mode === 'oscillate') {
+      // start the oscillation from wherever the magnet currently is
+      state.oscPhase = Math.asin(clamp(state.z / state.oscAmp, -1, 1));
+    }
+  }
+  document.querySelectorAll('[data-ind-mode]').forEach(b => {
+    b.addEventListener('click', () => {
+      const mode = b.dataset.indMode;
+      if (mode === 'push') { state.z = -Z_MAX; state.v = 0; setMode('push'); }
+      else if (mode === 'pull') { state.z = Z_MAX; state.v = 0; setMode('pull'); }
+      else if (mode === 'oscillate') setMode('oscillate');
+      else { state.v = 0; setMode('manual'); }
+      stage.draw();
+    });
+  });
+
+  /* ---- controls -------------------------------------------------------- */
+  EMC.bindRange('ind-N', 'ind-Nv', v => { state.N = Math.round(v); stage.draw(); }, v => `${Math.round(v)} turns`);
+  EMC.bindRange('ind-a', 'ind-av', v => { state.a = v / 100; stage.draw(); }, v => `${v.toFixed(1)} cm`);
+  EMC.bindRange('ind-R', 'ind-Rv', v => { state.R = v; stage.draw(); }, v => `${v.toFixed(0)} \u03A9`);
+  EMC.bindRange('ind-speed', 'ind-speedv', v => { state.speed = v; }, v => `${v.toFixed(2)} m/s`);
+  EMC.bindRange('ind-osc', 'ind-oscv', v => { state.oscFreq = v; }, v => `${v.toFixed(1)} Hz`);
+
+  // magnet strength: log slider 0.05 .. 2.0 A m^2
+  const mSlider = el('ind-m');
+  if (mSlider) {
+    const fromS = s => Math.pow(10, -1.3 + (s / 1000) * (Math.log10(2) + 1.3));
+    const toS = m => clamp((Math.log10(clamp(m, 0.05, 2)) + 1.3) / (Math.log10(2) + 1.3) * 1000, 0, 1000);
+    mSlider.addEventListener('input', () => {
+      state.m = fromS(parseFloat(mSlider.value));
+      if (el('ind-mv')) el('ind-mv').textContent = `${state.m.toFixed(2)} A\u00B7m\u00B2`;
+      stage.draw();
+    });
+    mSlider.value = String(toS(state.m));
+    if (el('ind-mv')) el('ind-mv').textContent = `${state.m.toFixed(2)} A\u00B7m\u00B2`;
+  }
+
+  const symToggle = el('ind-symbols');
+  if (symToggle) symToggle.addEventListener('change', () => { state.showSymbols = symToggle.checked; stage.draw(); });
+
+  const resetBtn = el('ind-reset');
+  if (resetBtn) resetBtn.addEventListener('click', () => {
+    state.z = -0.075; state.v = 0; state.history = []; state.oscPhase = 0;
+    setMode('manual'); stage.draw();
+  });
+
+  /* ---- drag the magnet ------------------------------------------------- */
+  stage.onPointer(p => {
+    const G = geom(stage.w, stage.h);
+    if (p.type === 'down') {
+      const hit = Math.abs(p.x - G.magnetX) < G.magLen / 2 + 14 && Math.abs(p.y - G.cy) < G.magThick + 16;
+      if (hit) {
+        dragging = true; setMode('manual');
+        canvas.classList.add('grabbing');
+        lastZ = state.z;
+      }
+    } else if (p.type === 'move' && dragging) {
+      state.z = clamp((p.x - G.coilX) / G.pxPerM, -Z_MAX, Z_MAX);
+    } else if (p.type === 'up' || p.type === 'leave' || p.type === 'cancel') {
+      dragging = false;
+      canvas.classList.remove('grabbing');
+    }
+  });
+
+  setMode('manual');
+  stage.draw();
+})();

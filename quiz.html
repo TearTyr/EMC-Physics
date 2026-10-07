@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Twenty multiple-choice questions on electromagnetics with automatic scoring, worked explanations and a per-topic breakdown.">
+  <meta name="theme-color" content="#060b16">
+  <title>Quiz · EMC Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='13' fill='%230e1a2e'/%3E%3Cpath d='M27 7 13 27h9l-3 14L35 20h-9z' fill='%2322d3ee'/%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/tailwind-fallback.css">
+</head>
+
+<body class="emc">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html" aria-label="EMC Lab — home">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+          <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="url(#bm)" stroke-width="2"/>
+          <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="url(#bm)"/>
+        </svg>
+        <span class="brand-name">EMC<em>Lab</em><span class="brand-sub">Electromagnetics</span></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+      <nav id="navMenu" class="nav-menu" aria-label="Main navigation">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="topics/charges.html">1 · Charges &amp; Fields</a>
+        <a class="nav-link" href="topics/current.html">2 · Current</a>
+        <a class="nav-link" href="topics/magnetism.html">3 · Magnetism</a>
+        <a class="nav-link" href="topics/induction.html">4 · Induction</a>
+        <a class="nav-link nav-cta" href="quiz.html">Take the quiz</a>
+      </nav>
+    </div>
+    <div class="scroll-progress"><i id="readingProgress"></i></div>
+  </header>
+
+  <main class="emc-main" id="main">
+    <div class="wrap section-tight">
+      <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a><span aria-hidden="true">/</span><span>Quiz</span>
+      </nav>
+      <span class="eyebrow eyebrow-amber" style="margin-top:.7rem">Assessment</span>
+      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Electromagnetics quiz</h1>
+      <p class="lede">
+        <span id="quiz-total">20</span> multiple-choice questions covering all four topics, each
+        with a worked explanation. Scoring is automatic; your best result is saved in this browser.
+      </p>
+
+      <div class="stat-strip" style="max-width:640px">
+        <div class="stat"><span class="stat-label">Questions</span><span class="stat-value hl-cyan" id="quiz-count">20</span></div>
+        <div class="stat"><span class="stat-label">Best score</span><span class="stat-value hl-emerald" id="quiz-best">—</span></div>
+        <div class="stat"><span class="stat-label">Attempts</span><span class="stat-value" id="quiz-attempts">0</span></div>
+        <div class="stat"><span class="stat-label">Pass mark</span><span class="stat-value hl-amber">70%</span></div>
+      </div>
+    </div>
+
+    <!-- ============ TOOLBAR ============ -->
+    <div class="wrap section-tight">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="flex flex-wrap items-center gap-3 justify-between">
+            <div>
+              <span class="ctl-label" style="margin-bottom:.4rem">Filter by topic</span>
+              <div class="btn-group" role="group" aria-label="Filter questions by topic">
+                <button class="btn btn-sm active" type="button" data-quiz-filter="all" aria-pressed="true">All</button>
+                <button class="btn btn-sm" type="button" data-quiz-filter="charges" aria-pressed="false">Charges</button>
+                <button class="btn btn-sm" type="button" data-quiz-filter="current" aria-pressed="false">Current</button>
+                <button class="btn btn-sm" type="button" data-quiz-filter="magnetism" aria-pressed="false">Magnetism</button>
+                <button class="btn btn-sm" type="button" data-quiz-filter="induction" aria-pressed="false">Induction</button>
+              </div>
+            </div>
+            <div>
+              <span class="ctl-label" style="margin-bottom:.4rem">Marking</span>
+              <div class="seg" id="quiz-mode" role="group" aria-label="Marking mode">
+                <button class="seg-btn" type="button" data-value="exam" aria-pressed="true">Exam mode</button>
+                <button class="seg-btn" type="button" data-value="instant" aria-pressed="false">Instant feedback</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 mt-4">
+            <button class="btn btn-primary" type="button" id="quiz-submit">Submit quiz</button>
+            <button class="btn" type="button" id="quiz-shuffle">Shuffle order</button>
+            <div style="flex:1 1 180px;min-width:160px">
+              <div class="progress-track"><div class="progress-fill" id="quiz-progress-fill"></div></div>
+              <p class="tiny faint" style="margin:.35rem 0 0"><span id="quiz-progress-text">0 of 20 answered</span> · <span id="quiz-live" hidden></span></p>
+            </div>
+          </div>
+
+          <p class="tiny faint mt-3">
+            <strong>Exam mode</strong> marks nothing until you submit — good for a real test.
+            <strong>Instant feedback</strong> marks each answer immediately and shows the
+            explanation, which is better when you are learning. Submitting always grades the
+            full bank; filters are a revision aid only, and blank answers count as incorrect.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCORE (hidden until submitted) ============ -->
+    <div class="wrap section-tight">
+      <div class="card" id="quiz-score" role="status" aria-live="polite" hidden></div>
+    </div>
+
+    <!-- ============ QUESTIONS ============ -->
+    <div class="wrap section-tight" id="quiz-list">
+      <div id="quiz-questions"><!-- questions injected by js/quiz.js --></div>
+    </div>
+
+    <div class="wrap section-tight">
+      <div class="card">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="font-bold">Want to revise before scoring?</h2>
+            <p class="small muted" style="margin:.25rem 0 0">Each topic page ends with self-check questions and a live simulation.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <a class="btn btn-sm" href="topics/charges.html">Topic 1</a>
+            <a class="btn btn-sm" href="topics/current.html">Topic 2</a>
+            <a class="btn btn-sm" href="topics/magnetism.html">Topic 3</a>
+            <a class="btn btn-sm" href="topics/induction.html">Topic 4</a>
+            <a class="btn btn-sm btn-primary" href="index.html">Module home</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <span class="brand" style="pointer-events:none">
+          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="#22d3ee" stroke-width="2"/>
+            <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="#22d3ee"/>
+          </svg>
+          <span class="brand-name">EMC<em>Lab</em></span>
+        </span>
+        <p class="small muted" style="margin-top:.6rem">Assessment for the EMC interactive electromagnetics module.</p>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Topics</h3>
+        <ul class="footer-links">
+          <li><a href="topics/charges.html">1 · Charges &amp; fields</a></li>
+          <li><a href="topics/current.html">2 · Current electricity</a></li>
+          <li><a href="topics/magnetism.html">3 · Magnetism</a></li>
+          <li><a href="topics/induction.html">4 · Electromagnetic induction</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Project files</h3>
+        <ul class="footer-links">
+          <li><a href="README.md">README &amp; setup</a></li>
+          <li><a href="TESTING.md">Testing checklist</a></li>
+          <li><a href="PRESENTATION-NOTES.md">Presentation notes</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:1.6rem">
+      <hr class="hr">
+      <p class="tiny faint center" style="margin-top:1rem">© <span data-year>2026</span> EMC Lab · Calculus-based Physics II</p>
+    </div>
+  </footer>
+
+  <!-- Chart.js via CDN for the score visualisation; js/quiz.js falls back to
+       dependency-free CSS bars when the CDN cannot be reached -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/quiz-data.js"></script>
+  <script src="js/quiz.js"></script>
+</body>
+</html>

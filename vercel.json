@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/(.*\\.(css|js|svg|png|ico|woff2?))",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+    },
+    {
+      "source": "/(|.*\\.html)",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    }
+  ],
+  "functions": {
+    "api/**/*.js": { "maxDuration": 10, "memory": 256 }
+  }
+}
