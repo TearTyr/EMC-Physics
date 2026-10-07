@@ -85,9 +85,6 @@ a generator, in one interaction.
   analytics (doughnut, per-topic bars, attempt-history line). **Tailwind** handles layout
   utilities. Each of the three CDNs has a tested fallback, so the module still works with no
   network at all.
-* **Optional backend.** `server/index.js` (Express) mirrors progress to MySQL — or to a JSON file
-  with zero configuration — behind a three-route API with server-side merging. The client
-  (`js/sync.js`) is opt-in and silent: no request is made until a user presses **Connect…**.
 * **Formatting** goes through one formatter (`eng`/`unit`) that emits 3 significant figures with a
   single SI prefix — so the whole site reads like an instrument, and units never wrap or stack.
 * **Progress** is one `localStorage` key with a memory fallback, wrapped so blocked storage can
@@ -97,9 +94,9 @@ a generator, in one interaction.
 | Question | Answer |
 |---|---|
 | Where is p5.js, then? | In the bonus AC-generator lab on Topic 4, in instance mode so it pollutes no globals. The core sims stay on the native engine because they need exact HiDPI control and must work with no network; the generator shows the same physics in p5's idiom. |
-| Can we host it on Vercel? | Trivially — it is a static site: import the repo, preset *Other*, deploy; `vercel.json` adds cache headers. The optional sync API ships as Vercel serverless functions (`api/health.js`, `api/progress/[id].js`) reusing `server/lib.js`; on Vercel they need a `MYSQL_URL` env var because serverless disks are ephemeral, and without it they fail safe (503) while the site stays local-only. |
+| Can we host it on Vercel? | Trivially — it is a static site: import the repo, preset *Other*, deploy; `vercel.json` adds cache headers and every `git push` redeploys. There is deliberately no backend: progress is localStorage-only, so nothing to configure, bill, or lose. |
 | Is Tailwind actually being used? It doesn't look like it. | It is — layer 1 of 3: the Play CDN plus utility classes in the markup (`md:grid-cols-2`, `flex`, `gap-4`, …). Layer 2, `css/styles.css`, is a semantic component system that carries the visual design, and layer 3 mirrors the utilities for offline use. That split is why the CSS folder doesn't *look* like a Tailwind project. For production hosts, `npm run build:css` + `switch-css.mjs built` compiles the same utilities statically (~7 kB). |
-| Can we run it on Bun? Is that allowed? | Yes and yes. Bun is a *runtime*, not a frontend framework: the site is static files, and the optional server ships in two flavours that share one implementation (`server/lib.js`) — Express on Node and `Bun.serve`. In our sandbox benchmark Bun served ~2× the requests/sec (945 vs 486) with a third of the median latency. Be clear about what it does *not* do: visitors' browsers run identical bytes, so Bun cannot make the client side faster; the browser-side wins come from cache headers, per-page library loading and off-screen canvas pausing. |
+| Can we run it on Bun? Is that allowed? | Yes and yes. Bun is a *runtime*, not a frontend framework: the site is static files, and the optional server ships in two flavours that share one implementation (`server/lib.js`) — Express on Node and `Bun.serve`. Be clear about what it does *not* do: visitors' browsers run identical bytes, so the runtime cannot make the client side faster; the browser-side wins come from cache headers, per-page library loading and off-screen canvas pausing. |
 | Why Chart.js only for the quiz? | Score analytics are exactly what Chart.js is for (doughnut/bars/line with legends and tooltips). The physics charts (I–V line, Φ/EMF strip chart) are drawn by the sims themselves so they stay in perfect sync with the simulation state and cost nothing extra. |
 | Why analytic derivatives in the induction sim? | Finite differencing a sharply peaked Φ(z) at frame rate undersamples the peak and produces a jagged, frame-rate-dependent EMF. The analytic dΦ/dz is exact; motion is sub-stepped at 2 ms for smooth positions. |
 | Why a two-pole model for the bar magnet? | It reproduces the true dipole field accurately *outside* the magnet and makes line tracing trivial. The UI says openly that monopoles are a drawing model — turning a simplification into a teaching point about ∇·B = 0. |

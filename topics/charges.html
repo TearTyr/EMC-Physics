@@ -11,6 +11,8 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
+  <!-- Optional: if you licence FOT-Yuruka Std via Adobe Fonts, paste your kit:
+       <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css"> -->
   <!-- Type: cute anime / maru-gothic pair — Mochiy Pop One (heads) + M PLUS Rounded 1c (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +52,7 @@
 
   <main class="emc-main" id="main">
     <!-- ============ TITLE BLOCK ============ -->
-    <div class="wrap section-tight">
+    <div class="wrap wrap-narrow section-tight">
       <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="../index.html">Home</a><span aria-hidden="true">/</span><span>Topic 1</span>
@@ -527,7 +529,6 @@
 
   <script defer src="../vendor/katex/katex.min.js"></script>
   <script src="../js/common.js"></script>
-  <script src="../js/sync.js"></script>
   <script src="../js/sim-coulomb.js"></script>
   <script src="../js/sim-efield.js"></script>
 </body>

@@ -160,41 +160,6 @@
   document.addEventListener('emc:ready', renderDashboard);
   renderDashboard();
 
-  /* ------------------------------------------------- optional cloud sync */
-  const syncStatus = document.getElementById('syncStatus');
-  const syncConnect = document.getElementById('syncConnect');
-  const syncDisconnect = document.getElementById('syncDisconnect');
-
-  function syncUI() {
-    if (!syncStatus || !EMC.Sync) return;
-    if (!EMC.Sync.available()) {
-      syncStatus.textContent = 'Sync needs http(s). Open the site via a server ' +
-        '(e.g. npm run server) to enable it; on file:// the module stays fully local.';
-      if (syncConnect) syncConnect.disabled = true;
-      if (syncDisconnect) syncDisconnect.disabled = true;
-      return;
-    }
-    const on = EMC.Sync.enabled();
-    syncStatus.textContent = on
-      ? 'Connected \u2014 changes are mirrored to /api/progress under an anonymous id.'
-      : 'Local only \u2014 nothing leaves this browser.';
-    if (syncConnect) syncConnect.disabled = on;
-    if (syncDisconnect) syncDisconnect.disabled = !on;
-  }
-  if (syncConnect) syncConnect.addEventListener('click', () => {
-    syncConnect.disabled = true;
-    EMC.Sync.connect()
-      .then(info => EMC.toast('Sync connected \u2014 server driver: ' + info.driver))
-      .catch(() => EMC.toast('No sync server found at /api \u2014 staying local only', 'warn'))
-      .then(syncUI);
-  });
-  if (syncDisconnect) syncDisconnect.addEventListener('click', () => {
-    EMC.Sync.disconnect();
-    syncUI();
-    EMC.toast('Sync disconnected \u2014 progress stays in this browser');
-  });
-  syncUI();
-
   const resetBtn = document.getElementById('resetProgress');
   if (resetBtn) resetBtn.addEventListener('click', () => {
     Progress.reset();

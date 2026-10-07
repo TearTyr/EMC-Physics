@@ -163,10 +163,6 @@ console.log('\u2500'.repeat(66));
   ok('hero canvas rendered', drawCalls(win, '#heroCanvas') > 200, `${drawCalls(win, '#heroCanvas')} calls`);
   ok('hero animation draws field-line labels', drawnText(win, '#heroCanvas').some(t => t.includes('E = k q')), '');
   eq('storage status reported', txt(win, 'storageStatus'), 'enabled \u2014 your progress is saved in this browser');
-  ok('optional sync client loaded but disabled by default',
-    !!win.EMC.Sync && win.EMC.Sync.enabled() === false);
-  eq('sync panel explains the local-only default', txt(win, 'syncStatus'),
-    'Local only \u2014 nothing leaves this browser.');
   eq('year filled in', doc.querySelector('[data-year]').textContent, String(new Date().getFullYear()));
 
   // progress persistence: mark a topic, reload the same storage, re-render
@@ -578,8 +574,13 @@ console.log('\u2500'.repeat(66));
   ok('simulation art is flat (no gradients, no glow shadows)',
     !/createLinearGradient|createRadialGradient|shadowBlur/.test(jsSrc));
   // strip comments first: the policy note in the header mentions these words
-  const cssSrc = readFileSync(join(ROOT, 'css/styles.css'), 'utf8')
+  let cssSrc = readFileSync(join(ROOT, 'css/styles.css'), 'utf8')
     .replace(/\/\*[\s\S]*?\*\//g, '');
+  ok('type stack prefers the licensed face with rounded fallbacks',
+    /--font: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')) &&
+    /M PLUS Rounded 1c/.test(cssSrc));
+  ok('mobile pass present (coarse-pointer targets, no sideways scroll)',
+    /pointer: coarse/.test(cssSrc) && /overflow-x: clip/.test(cssSrc));
   ok('stylesheet contains no gradient/blur/glass effects',
     !/gradient|backdrop-filter|blur\(/.test(cssSrc));
 }

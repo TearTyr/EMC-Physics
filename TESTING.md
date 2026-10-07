@@ -12,9 +12,6 @@ headless Chrome 148 and jsdom on this build; the summary at the bottom records t
 npm install        # dev/server deps (jsdom, express, mysql2). Website itself: none.
 npm run check      # static validator
 npm test           # 177 runtime assertions
-npm run test:server      # API contract on Node + Express (14 assertions)
-npm run test:server:bun  # the same contract on Bun.serve (14 assertions)
-npm run bench            # node-vs-bun serving throughput benchmark
 npm run test:vercel      # api/ serverless-function contract (6 assertions)
 npm run build:css        # compile Tailwind utilities -> css/tailwind.generated.css
 node tools/switch-css.mjs built|cdn   # swap the Tailwind delivery mode (idempotent)
@@ -47,7 +44,6 @@ UI behaviour, including:
 | Quiz | 20 questions × 4 options; blank-submit guard; all-correct = 100 %; all-wrong = 0 %; 10/20 = 50 %; explanations shown; options locked after grading; best score + attempts + history persisted; filters, shuffle, retake, instant mode |
 | Chart.js | with a stubbed `Chart`: exactly three instances (doughnut, bar, line) on the right canvases, CSS bars hidden; without it: charts hidden and CSS-bar fallback shown |
 | p5.js | with no p5 global the generator host shows the offline notice and the page still boots |
-| Sync client | loaded on every page, disabled by default, no network traffic until the user connects |
 | Cross-page | viewport meta, `lang`, skip link, labelled canvases, CDN + fallback stylesheet, exactly one `<h1>` |
 
 ---
@@ -67,6 +63,13 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Fonts load as Cabin (body) / Open Sans (headings); with the font CDN blocked the system
       stack takes over with no layout jump beyond family substitution
 - [ ] Canvases redraw crisply when the window is resized (no blur, no stretching)
+- [ ] Topic pages read as ONE aligned column: breadcrumb, mascot, title, lede, objectives card
+      and prose all share the same left edge at 1440 px and 1024 px
+- [ ] Mobile (390 px, touch): no horizontal scrolling anywhere; slider thumbs are the large
+      coarse-pointer size; hero buttons stack full-width; KaTeX display maths scrolls inside its
+      card instead of overflowing the page; the open nav menu clears the home-indicator area
+- [ ] With a licensed FOT-Yuruka Std kit/woff2 present, headings and body render in Yuruka;
+      without it, Mochiy Pop One / M PLUS Rounded 1c render and nothing shifts layout-wise
 - [ ] Keyboard: `Tab` reaches every control; quiz options respond to arrow keys; focus rings visible
 
 ### 2.2 Topic 1 — Charges & fields
@@ -111,33 +114,14 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
       switches between "increasing/repels" and "decreasing/attracts"
 - [ ] Doubling N doubles the EMF; quadrupling R quarters the current but leaves the EMF unchanged
 
-### 2.6 Vercel deployment
-- [ ] `npx vercel` deploys with framework preset *Other*; the preview URL renders the home page
-- [ ] With all CDNs reachable: Tailwind, Chart.js and p5.js load; no console errors
-- [ ] Response headers match `vercel.json`: `/css/*` and `/js/*` carry `max-age=3600`;
-      HTML arrives with Vercel's default `must-revalidate`
-- [ ] Without `MYSQL_URL`: `/api/health` → 503 and the dashboard's **Connect…** warns, site stays local
-- [ ] With `MYSQL_URL` set: connect/mirror flow works exactly as with the bundled server
-- [ ] `node tools/switch-css.mjs built` + redeploy: identical layout, no Play-CDN console warning;
-      `switch-css.mjs cdn` restores the default
+### 2.6 Vercel deployment (static)
+- [ ] `npx vercel` or Git import deploys with framework preset *Other*; the preview URL renders
+- [ ] With all CDNs reachable: fonts, Tailwind, Chart.js and p5.js load; no console errors
+- [ ] Cache headers from `vercel.json`: `/css/*` and `/js/*` carry `max-age=3600`; HTML revalidates
+- [ ] `/api/...` returns 404 (the backend module was removed — nothing should answer there)
+- [ ] Progress ring, quiz scoring and localStorage work exactly as on localhost
 
-### 2.7 Optional sync server
-```bash
-npm run server        # terminal 1
-npm run test:server   # terminal 2 — 14 API assertions
-```
-- [ ] `GET /api/health` reports the live driver (`json-file` without MySQL env vars)
-- [ ] Home dashboard → **Connect…** succeeds against the server and the status line changes
-- [ ] Marking a topic or submitting the quiz mirrors within ~1 s (`server/data/progress.json` updates)
-- [ ] A second browser/profile that connects sees the merged progress (best score, union of topics)
-- [ ] With the server stopped, **Connect…** warns "No sync server found" and the site stays local
-- [ ] Repeat the connect/mirror flow with `npm run server:bun`: identical behaviour, and
-      `/api/health` reports `"runtime": "bun"`
-- [ ] Static responses carry the cache policy: `no-cache` for HTML, `max-age=3600` for assets,
-      on **both** server flavours
-- [ ] On `file://` the panel explains that sync needs http(s) and both buttons are disabled
-
-### 2.8 Quiz & progress
+### 2.7 Quiz & progress
 - [ ] 20 questions render; each shows its topic tag
 - [ ] Answering updates the "n of 20 answered" bar
 - [ ] Submitting with blanks warns once and highlights the first blank; submitting again grades
@@ -149,14 +133,14 @@ npm run test:server   # terminal 2 — 14 API assertions
 - [ ] Reloading the page preserves progress (localStorage); in private/incognito mode a notice explains
       that progress will not persist, and nothing errors
 
-### 2.9 Cross-browser
+### 2.8 Cross-browser
 Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
 - [ ] sliders render with styled tracks and thumbs in all three (WebKit + Moz rules present)
 - [ ] canvases are crisp on a HiDPI/retina display
 - [ ] no console errors or warnings in any browser (DevTools → Console)
 - [ ] `prefers-reduced-motion` enabled: reveal animations and decorative motion stop, sims still work
 
-### 2.10 Accessibility spot checks
+### 2.9 Accessibility spot checks
 - [ ] skip link appears on first `Tab` and jumps to the main content
 - [ ] page reads sensibly with a screen reader: headings in order, canvases announced by their labels
 - [ ] colour is never the only signal (correct/incorrect quiz options also carry ✓/✗ text)
@@ -190,10 +174,6 @@ Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
 |---|---|
 | `node tools/check-links.mjs` | **0 errors, 0 warnings** (9 advisory `[data-*]` notes, all guarded in code) |
 | `node tools/smoke-test.mjs` | **177 / 177 assertions passed** |
-| `node tools/server-test.mjs` | **14 / 14 assertions passed** (node + express, JSON driver) |
-| `node tools/server-test.mjs bun` | **14 / 14 assertions passed** (bun.serve, JSON driver) |
-| `node tools/bench.mjs` | bun.serve ≈ **945 req/s** vs node+express ≈ **486 req/s** (sandbox, concurrency 30) |
-| `node tools/vercel-test.mjs` | **6 / 6 assertions passed** (fail-safe 503/400/405 without a database) |
 | Built-CSS mode, all external requests blocked | layout identical (2-col grid, type scale), **0 console errors** |
 | Headless Chrome with live CDNs | Chart.js charts + p5.js generator render; **0 console errors** |
 | Headless Chrome 148, all 6 pages, desktop + mobile | **0 console errors, 0 failed requests** |

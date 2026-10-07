@@ -15,6 +15,8 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/tailwind-fallback.css">
+  <!-- Optional: if you licence FOT-Yuruka Std via Adobe Fonts, paste your kit:
+       <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css"> -->
   <!-- Type: cute anime / maru-gothic pair — Mochiy Pop One (heads) + M PLUS Rounded 1c (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,24 +370,6 @@
             </div>
           </div>
 
-          <!-- optional backend mirror; the site is complete without it -->
-          <div class="card card-flat mt-4" id="syncCard">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div style="flex:1 1 300px">
-                <h3 class="font-bold" style="font-size:.95rem">Cloud sync <span class="tag">optional</span></h3>
-                <p class="small muted" style="margin:.3rem 0 0">
-                  Progress lives in this browser by default. If your course runs the bundled
-                  Express + MySQL server (<span class="mono">npm run server</span>), connect to
-                  mirror progress to an anonymous id so it follows you between machines.
-                </p>
-              </div>
-              <div class="flex gap-2">
-                <button class="btn btn-sm" type="button" id="syncConnect">Connect…</button>
-                <button class="btn btn-sm btn-ghost" type="button" id="syncDisconnect">Disconnect</button>
-              </div>
-            </div>
-            <p class="tiny faint" style="margin:.55rem 0 0" id="syncStatus">Checking…</p>
-          </div>
         </div>
       </div>
     </section>
@@ -461,7 +445,6 @@
 
   <script defer src="vendor/katex/katex.min.js"></script>
   <script src="js/common.js"></script>
-  <script src="js/sync.js"></script>
   <script src="js/home.js"></script>
 </body>
 </html>

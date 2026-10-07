@@ -3,7 +3,7 @@
 A responsive, interactive educational website for **Calculus-based Physics II**, built for the
 **EMC (Electromagnetics) group**. It teaches electricity and magnetism through written
 tutorials, **eight live simulations**, and a **20-question auto-graded quiz** with Chart.js
-score analytics — plus an *optional* Express + MySQL progress-sync server.
+score analytics. Fully static: no backend, no build step, no required dependencies.
 
 > Every number on every screen is computed from the real equations (Coulomb's law, Ohm's law,
 > the dipole field, Faraday's law). Nothing is animated by hand.
@@ -57,8 +57,7 @@ emc-physics-tutorial/
 ├── js/
 │   ├── common.js                  Shared engine: constants, HiDPI canvas Stage, pointer input,
 │   │                              SI formatter, localStorage progress, nav/reveal/toasts
-│   ├── home.js                    Hero animation + progress dashboard + sync panel (index.html)
-│   ├── sync.js                    Optional client for the Express sync server (opt-in, silent)
+│   ├── home.js                    Hero animation + progress dashboard (index.html)
 │   ├── sim-coulomb.js             Sim 1 — Coulomb force bench (draggable charges)
 │   ├── sim-efield.js              Sim 2 — electric field explorer (lines/vectors/probe)
 │   ├── sim-ohm.js                 Sim 3 — Ohm's law bench (auto-range meter + I–V chart)
@@ -76,15 +75,13 @@ emc-physics-tutorial/
 │   └── schema.sql                 Manual MySQL setup script
 ├── tools/
 │   ├── check-links.mjs            Static validator (links, ids, data-hooks, CSS coverage)
-│   ├── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
-│   ├── server-test.mjs            API contract test (runs against Node or Bun servers)
-│   └── bench.mjs                  Node-vs-Bun static-serving benchmark
-├── api/                           Vercel serverless functions (optional sync on Vercel)
-│   ├── health.js                  GET /api/health
-│   └── progress/[id].js           GET|PUT /api/progress/:id
-├── vercel.json                    Vercel config: cache headers + function settings
+│   └── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
+├── vercel.json                    Vercel config: cache headers for static assets
 ├── tailwind.config.js             Optional production Tailwind build (npm run build:css)
-├── vendor/katex/                  Locally vendored KaTeX (js + css + woff2) — no CDN needed
+├── vendor/
+│   ├── katex/                     Locally vendored KaTeX (js + css + woff2) — no CDN needed
+│   └── fonts/                     Drop-in slot for YOUR licensed fot-yuruka-std.ttf
+│                                  (instructions: vendor/fonts/README.md + css/styles.css footer)
 ├── package.json                   Dev/server scripts: check / test / server / bench / …
 ├── README.md                      This file
 ├── TESTING.md                     Manual + automated testing checklist
@@ -109,8 +106,7 @@ Total: ~8,000 lines across 6 pages, 2 stylesheets and 11 scripts. No framework, 
 | Quiz with ≥ 10 MCQs, automatic scoring + feedback | 20 questions, exam *or* instant marking, per-question explanations, per-topic breakdown, grade bands, review-incorrect filter, shuffle, retake |
 | Chart.js score visualisation | Doughnut (correct/incorrect), horizontal bars (score per topic), line (attempt history) on the score card; CSS-bar fallback when the CDN is unreachable |
 | p5.js simulation | Bonus AC-generator lab on Topic 4 (`js/sim-generator.js`, p5 instance mode); notice fallback offline |
-| Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; degrades gracefully to memory when storage is blocked |
-| Optional backend for tracking | `server/index.js`: Express + MySQL (or zero-config JSON file) with `GET/PUT /api/progress/:id`, server-side merge; opt-in client `js/sync.js` |
+| Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; degrades gracefully to memory when storage is blocked. Deliberately backend-free |
 | Cross-browser (Chrome / Firefox / Edge) | No exotic APIs; feature-guarded `ResizeObserver`, `IntersectionObserver`, Web Animations; vendor-prefixed range-input styling for both engines |
 
 ---
@@ -134,106 +130,35 @@ the maths rather than being scripted.
 
 ---
 
-## 5. Optional progress-sync server
+## 5. Using Bun (optional)
 
-The website never requires it. When you want progress to follow a student between machines:
-
-```bash
-npm install                 # express + mysql2 (server only; jsdom is for tests)
-npm run server              # http://localhost:8080  (also serves the site)
-```
-
-* **Zero config:** with no database environment variables the server stores records in
-  `server/data/progress.json` and reports `"driver": "json-file"` on `/api/health`.
-* **MySQL:** set `MYSQL_URL=mysql://user:pass@host/emc_lab` (or `DB_HOST`, `DB_PORT`, `DB_USER`,
-  `DB_PASS`, `DB_NAME`). The `progress` table is created automatically; `server/schema.sql`
-  contains the manual script including a least-privilege user.
-* **API:** `GET /api/health` · `GET /api/progress/:id` · `PUT /api/progress/:id`. Merging is
-  done on both client and server: topic union, max score, concatenated de-duplicated history.
-* **Client:** progress is local-only until the user presses **Connect…** on the home dashboard.
-  The client then probes `/api/health`, merges, and mirrors every change (debounced 800 ms).
-  On `file://` sync is unavailable and the panel says so. Ids are random anonymous tokens.
-* **Test:** `npm run test:server` boots the server and asserts the whole contract (14 checks).
-
----
-
-## 6. Using Bun (optional — faster serving, same code)
-
-The project is **runtime-agnostic**: every server and tool runs on plain Node *or* on
-[Bun](https://bun.sh). Nothing in the assignment requires or forbids either; Bun is purely a
-deployment/performance choice, and the graded artefact (the static website) is identical bytes
-in both cases.
+Every tool here is plain JavaScript and runs on **Node or Bun** unchanged:
 
 ```bash
-bun install              # drop-in replacement for npm install (much faster)
-npm run server:bun       # Bun.serve flavour:  bun run server/bun-server.js
-npm run test:server:bun  # the same 14 API assertions against the Bun server
-npm run bench            # head-to-head static-serving benchmark
-bun tools/check-links.mjs  # the validators run on Bun too
+bun install                 # fast drop-in for npm install (dev deps only)
+bun tools/check-links.mjs   # static validator
+bun tools/smoke-test.mjs    # runtime harness (jsdom works under Bun)
+bunx serve .                # one-command static server, if you like
 ```
 
-Measured on the development sandbox (`npm run bench`, 1200 mixed HTML/JS/CSS requests at
-concurrency 30 — your numbers will differ):
+Bun changes nothing about the website itself — it is static files, and the browser executes
+the same bytes either way. (An earlier iteration shipped an optional Express/Bun progress
+server; it was removed so the project stays backend-free, exactly as the brief asks.)
 
-| runtime | req/s | p50 | p95 | p99 |
-|---|---|---|---|---|
-| node + express | 486 | 71.5 ms | 97.3 ms | 169.3 ms |
-| **bun.serve** | **945** | **22.8 ms** | **63.9 ms** | **76.5 ms** |
+## 6. Hosting on Vercel
 
-Both servers share one implementation (`server/lib.js`), so the API, merge rules and cache
-policy can never drift between runtimes.
+Plain static files, so hosting is two minutes:
 
-### What Bun does *not* change
-Bun runs on **your machine**, not in the visitor's browser. The browser executes the same
-HTML/CSS/JS either way, so client-side speed is unaffected by the runtime choice. The things
-that actually make the site fast in the browser are already in place:
+1. Push the folder to GitHub (already done: `TearTyr/EMC-Physics`).
+2. Vercel → **Add New… → Project** → import → Framework preset **Other**, Build Command and
+   Output Directory left **empty** → **Deploy**.
+3. Done: `https://emc-physics.vercel.app`. Every later `git push` redeploys automatically.
 
-* both servers send cache headers — HTML revalidates (`no-cache`), assets cache for 1 h;
-* p5.js and Chart.js load **only on the pages that use them**, and never block the fallbacks;
-* every simulation canvas **pauses its rAF loop off-screen** and sub-steps its physics instead
-  of burning frames;
-* DOM readouts are memoised (no per-frame `innerHTML` thrash) and sync writes are debounced;
-* if a CDN is blocked, the fallbacks kick in immediately instead of stalling on a timeout.
+`vercel.json` contributes the only tuning worth having: cache headers (`/css/` and `/js/` for
+one hour, HTML revalidated). Progress is localStorage-only by design — there is no backend to
+configure, no database, and nothing that can incur cost.
 
----
-
-## 7. Hosting on Vercel
-
-Yes — and it is a two-minute job, because the site is plain static files.
-
-**GUI route**
-1. Push this folder to GitHub/GitLab.
-2. Vercel → *Add New… → Project* → import the repo.
-3. Framework preset: **Other** (no build command, no output directory needed — Vercel serves
-   the repo root, where `index.html` lives). Deploy.
-
-**CLI route**
-```bash
-npx vercel            # preview deployment
-npx vercel --prod     # production
-```
-
-What you get from the bundled `vercel.json`:
-* cache headers — everything under `/css/` and `/js/` is served `public, max-age=3600`;
-  HTML needs no rule because Vercel's default for it is already `must-revalidate`.
-  (Vercel `source` patterns are not full regex: no `(a|b)` alternation and no `?`
-  quantifiers — simple per-folder wildcards are the supported idiom.)
-* the optional sync API as **serverless functions**: `api/health.js` and `api/progress/[id].js`,
-  which reuse `server/lib.js`, so the contract is identical to the bundled Node/Bun servers and
-  `js/sync.js` works unchanged (same-origin `/api/...`).
-
-One Vercel-specific rule: serverless filesystems are ephemeral, so the JSON-file driver is
-refused there. **Sync on Vercel needs a MySQL connection string** in
-*Project → Settings → Environment Variables* (`MYSQL_URL`, or `DB_HOST/DB_USER/DB_PASS/DB_NAME`,
-e.g. a free serverless MySQL). Without it `/api/health` answers 503 and the website silently
-stays in local-only mode — verified by `npm run test:vercel`.
-
-If you do not need cross-machine sync, deploy as-is and ignore the `api/` folder entirely; the
-static site is 100 % of the graded artefact.
-
----
-
-## 8. Tailwind: how it is wired (and how to see it)
+## 7. Tailwind: how it is wired (and how to see it)
 
 Tailwind **is** the styling system — it just shares the stage with two other layers, which is
 why a first look at `css/` can be misleading:
@@ -264,7 +189,7 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
 
 ---
 
-## 9. Engineering notes
+## 8. Engineering notes
 
 * **Visual design policy — "chiikawa official, but dark and minimal".** The layout language is
   borrowed from chiikawaofficial.com and translated, not copied: one calm centred column,
@@ -272,10 +197,14 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   large radii, pill buttons, and a small bobbing mascot ("Denki-chan") that appears in the hero,
   above each topic title, and as the brand mark. The palette is a warm charcoal base with the
   reference site's own candy pastels (pink `#f8aebe`, lilac `#d5b8d8`, green `#b5d777`,
-  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography is a cute anime / maru-gothic
-  pair via Google Fonts: **Mochiy Pop One** for headings and the brand (sticker-pop, single
-  weight, no faux-bold), **M PLUS Rounded 1c** for body text — falling back to system rounded
-  faces (`ui-rounded`, Hiragino Maru Gothic) when offline. Motion is limited to the mascot's bob
+  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography prefers **FOT-Yuruka Std**
+  (Fontworks — a *commercial* face, so it is never bundled): the moment you licence it via an
+  Adobe Fonts kit (paste the kit link into the commented slot in each page head) or drop webfont
+  files into `vendor/fonts/` and uncomment the `@font-face` template at the bottom of
+  `css/styles.css`, every heading and paragraph switches to it with zero other changes.
+  Until then the cute anime / maru-gothic fallbacks carry the look: **Mochiy Pop One** for
+  headings and the brand, **M PLUS Rounded 1c** for body text, then system rounded faces
+  (`ui-rounded`, Hiragino Maru Gothic) offline. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
 * **Equations are real LaTeX, with zero network risk.** **KaTeX is vendored locally**
@@ -315,18 +244,13 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
 
 ---
 
-## 10. Developer commands
+## 9. Developer commands
 
 ```bash
 npm install          # dev/server deps: jsdom (tests), express + mysql2 (optional server)
 npm run check        # static validation: links, ids, data-hooks, CSS coverage
 npm test             # 177 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
-npm run test:server  # boots the sync server and asserts the API contract
-npm run test:server:bun  # same contract against the Bun server
-npm run server       # optional Express + MySQL/JSON progress server on :8080
-npm run server:bun   # same server on Bun.serve (faster; see §6)
-npm run bench        # node-vs-bun serving benchmark
 npm run build:css    # optional: compile Tailwind utilities statically
 npm run switch:built # optional: point pages at the compiled CSS
 npm run switch:cdn   # back to the CDN default
@@ -338,7 +262,7 @@ Chart.js, p5.js) has a tested fallback, and the server is purely additive.
 
 ---
 
-## 11. Browser support
+## 10. Browser support
 
 Tested in headless Chrome 148 (see `TESTING.md`); the code targets and is expected to work in:
 
@@ -351,7 +275,7 @@ Tested in headless Chrome 148 (see `TESTING.md`); the code targets and is expect
 
 ---
 
-## 12. Licence and credits
+## 11. Licence and credits
 
 Educational use. Physics content follows the standard calculus-based texts
 (Halliday/Resnick/Walker; Serway; Young & Freedman). Constants are CODATA 2018 values.

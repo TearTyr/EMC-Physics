@@ -374,31 +374,6 @@ window.EMC = (function () {
       this.write(p);
       return p;
     },
-    /**
-     * Merge a remote progress record (from the optional sync server) with the
-     * local one. Union of studied topics, best score wins, histories concat.
-     */
-    merge(remote) {
-      const local = this.read();
-      if (!remote || typeof remote !== 'object') return local;
-      const out = {
-        topics: Object.assign({}, local.topics),
-        quizBest: Math.max(local.quizBest, Number(remote.quizBest) || 0),
-        quizAttempts: Math.max(local.quizAttempts, Number(remote.quizAttempts) || 0),
-        quizLast: Number(remote.quizLast) || local.quizLast,
-        quizHistory: (local.quizHistory || []).concat(Array.isArray(remote.quizHistory) ? remote.quizHistory : []),
-        updatedAt: local.updatedAt
-      };
-      if (remote.topics) for (const t of TOPICS) if (remote.topics[t]) out.topics[t] = true;
-      // de-duplicate history entries (same timestamp) and keep the last 20
-      const seen = new Set();
-      out.quizHistory = out.quizHistory
-        .filter(h => h && !seen.has(h.at + ':' + h.pct) && (seen.add(h.at + ':' + h.pct), true))
-        .sort((a, b) => String(a.at).localeCompare(String(b.at)))
-        .slice(-20);
-      this.write(out);
-      return out;
-    },
     /** 0-100 completion: 80% weight on topics read, 20% on best quiz score. */
     percent() {
       const p = this.read();

@@ -56,9 +56,14 @@
      brand (sticker-pop, already heavy at weight 400), M PLUS Rounded 1c for
      body text. Both cover Latin; offline they fall back to system rounded
      faces (ui-rounded / Hiragino Maru Gothic) so the vibe survives. */
-  --font: 'M PLUS Rounded 1c', ui-rounded, 'Hiragino Maru Gothic ProN',
-          'Yu Gothic UI', 'Segoe UI', system-ui, sans-serif;
-  --font-head: 'Mochiy Pop One', 'M PLUS Rounded 1c', ui-rounded,
+  /* FOT-Yuruka Std (Fontworks) is preferred everywhere. It is a COMMERCIAL
+     face: enable it legally via an Adobe Fonts kit (see the commented link in
+     each page head) or by self-hosting licensed woff2 in vendor/fonts/ (see
+     the @font-face template at the bottom of this file). Until then the
+     rounded fallbacks below keep the same maru-gothic personality. */
+  --font: 'FOT-Yuruka Std', 'M PLUS Rounded 1c', ui-rounded,
+          'Hiragino Maru Gothic ProN', 'Yu Gothic UI', 'Segoe UI', system-ui, sans-serif;
+  --font-head: 'FOT-Yuruka Std', 'Mochiy Pop One', 'M PLUS Rounded 1c', ui-rounded,
                'Hiragino Maru Gothic ProN', 'Segoe UI', system-ui, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
           'Liberation Mono', monospace;
@@ -87,8 +92,9 @@ body.emc {
 
 .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 1.25rem; }
 .wrap-narrow { max-width: 860px; }
+.wrap-narrow .lede { max-width: 100%; }
 
-.section { padding-block: 2.1rem; }
+.section { padding-block: 1.7rem; }
 .section-tight { padding-block: .9rem; }
 
 .hr { height: 0; border: 0; margin: 0; }   /* sections breathe; no rules */
@@ -564,16 +570,45 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
   body.emc { font-size: 15.5px; }
-  .section { padding-block: 2.25rem; }
-  .hero { padding-block: 2.5rem 1.5rem; }
-  .sim-canvas { height: 300px; }
-  .sim-canvas.tall { height: 340px; }
+  .section { padding-block: 1.5rem; }
+  .hero { padding-block: 2rem 1.3rem; }
+  .sim-canvas { height: 320px; }
+  .sim-canvas.tall { height: 360px; }
   .sim-canvas.short { height: 210px; }
   .hero-visual canvas { height: 240px; }
-  .card, .panel-body { padding: 1rem; }
+  .card, .panel-body { padding: .9rem; }
   .readouts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-value { font-size: .92rem; }
   .mascot { width: 84px; }
+  /* full-width sticker buttons are easier thumbs than centred pills */
+  .btn-row { width: 100%; flex-direction: column; }
+  .btn-row .btn { width: 100%; }
+  /* keep KaTeX display maths inside the card on narrow screens */
+  .formula .eq .katex { font-size: 1.02em; }
+  .panel-head { gap: .5rem; }
+  .panel-actions { margin-left: 0; width: 100%; }
+  .q-head { gap: .55rem; }
+  .ctl { padding: .55rem .65rem; }
 }
+
+/* Touch devices: bigger slider thumbs and tracks, roomier tap targets */
+@media (pointer: coarse) {
+  input[type="range"].range { height: 30px; }
+  input[type="range"].range::-webkit-slider-runnable-track { height: 8px; }
+  input[type="range"].range::-webkit-slider-thumb { width: 24px; height: 24px; margin-top: -8px; }
+  input[type="range"].range::-moz-range-track { height: 8px; }
+  input[type="range"].range::-moz-range-thumb { width: 20px; height: 20px; }
+  .btn { padding: .6rem 1.15rem; }
+  .opt { padding: .7rem .8rem; }
+  .nav-toggle { width: 48px; height: 44px; }
+  .seg-btn { padding: .45rem .9rem; }
+}
+
+/* never allow sideways scrolling, whatever a canvas or table does */
+body.emc { overflow-x: clip; }
+
+/* respect the iPhone home-indicator area in the open mobile menu */
+.nav-menu.open { padding-bottom: calc(.8rem + env(safe-area-inset-bottom, 0px)); }
 
 .is-hidden { display: none !important; }
 [hidden] { display: none !important; }
@@ -589,3 +624,49 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
   .prose p, .prose li, .lede, .muted { color: #222; }
   figure.fig .fig-box { background: #fff; border-color: #bbb; }
 }
+
+/* ==========================================================================
+   >>>  YOUR FONT GOES HERE — FOT-Yuruka Std  <<<
+   --------------------------------------------------------------------------
+   You own a copy: fot-yuruka-std.ttf. Two steps and it is live:
+
+   STEP 1 — put the file at this exact path (the folder already exists):
+              vendor/fonts/fot-yuruka-std.ttf
+
+   STEP 2 — uncomment the @font-face block just below (delete the leading
+            "/*" line and the trailing "*/" line). That is ALL: the font
+            stacks at the top of this file already list 'FOT-Yuruka Std'
+            first for both body text and headings, so every page switches
+            over automatically — no HTML or JS changes needed.
+
+   Notes
+     * One .ttf = one weight (Regular). Bold text (<strong>, buttons, stat
+       labels) will be synthesised by the browser, which looks fine in this
+       design. If you also own a Bold .ttf, uncomment the second face too.
+     * The site degrades gracefully: while the font file is absent (or on a
+       machine you shared the repo with), the free rounded fallbacks
+       (Mochiy Pop One / M PLUS Rounded 1c / system maru gothic) render
+       instead. Nothing ever breaks.
+     * If your licence forbids redistribution, keep the .ttf out of public
+       Git hosts — vendor/fonts/README.md explains how.
+     * Verify: DevTools -> Network -> filter "Font" -> reload; or just look
+       for Yuruka's soft rounded letterforms in the headings.
+   ========================================================================== */
+/*
+@font-face {
+  font-family: 'FOT-Yuruka Std';
+  src: url('../vendor/fonts/fot-yuruka-std.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+*/
+/* Own the Bold cut as well? Uncomment this too:
+@font-face {
+  font-family: 'FOT-Yuruka Std';
+  src: url('../vendor/fonts/fot-yuruka-std-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+*/

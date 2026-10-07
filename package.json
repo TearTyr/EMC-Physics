@@ -5,22 +5,12 @@
   "scripts": {
     "check": "node tools/check-links.mjs",
     "test": "node tools/smoke-test.mjs",
-    "test:server": "node tools/server-test.mjs",
-    "server": "node server/index.js",
-    "server:bun": "bun run server/bun-server.js",
-    "test:server:bun": "node tools/server-test.mjs bun",
-    "bench": "node tools/bench.mjs",
     "build:css": "npx -y tailwindcss@3.4.10 -c tailwind.config.js -i css/tailwind.input.css -o css/tailwind.generated.css --minify",
     "switch:cdn": "node tools/switch-css.mjs cdn",
-    "switch:built": "node tools/switch-css.mjs built",
-    "test:vercel": "node tools/vercel-test.mjs"
+    "switch:built": "node tools/switch-css.mjs built"
   },
   "devDependencies": {
     "jsdom": "^27.0.0"
   },
-  "dependencies": {
-    "express": "^4.19.2",
-    "mysql2": "^3.11.0"
-  },
-  "description": "Interactive electromagnetics tutorial for Calculus-based Physics II. The website itself has zero runtime dependencies; express/mysql2 are only needed for the optional progress-sync server."
+  "description": "Interactive electromagnetics tutorial for Calculus-based Physics II. Fully static: zero runtime dependencies; jsdom is a dev-only test dependency."
 }
