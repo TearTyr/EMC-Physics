@@ -20,6 +20,7 @@
       ]
     }
   ],
-  "buildCommand": "bun run build:css",
+  "buildCommand": "bun run build",
+  "outputDirectory": "public",
   "installCommand": "bun install"
 }

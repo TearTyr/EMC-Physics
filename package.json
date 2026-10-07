@@ -6,6 +6,8 @@
     "check": "node tools/check-links.mjs",
     "test": "node tools/smoke-test.mjs",
     "build:css": "tailwindcss -c tailwind.config.js -i css/input.css -o css/site.css --minify",
+    "build:public": "node tools/build-public.mjs",
+    "build": "bun run build:css && bun run build:public",
     "switch:cdn": "node tools/switch-css.mjs cdn",
     "switch:built": "node tools/switch-css.mjs built",
     "font:scan": "node tools/add-font.mjs",

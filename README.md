@@ -73,11 +73,12 @@ emc-physics-tutorial/
 ├── tools/
 │   ├── check-links.mjs            Static validator (links, ids, data-hooks, CSS coverage)
 │   ├── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
+│   ├── build-public.mjs           Assembles + verifies public/ (the Vercel output directory)
 │   ├── perf-audit.mjs             Transfer-size / blocking-script / font-payload budgets
 │   ├── add-font.mjs               Registers OPTIONAL licensed faces in vendor/fonts/manifest.json
 │   ├── switch-css.mjs             Swaps Tailwind delivery mode (cdn <-> built)
 │   └── cleanup-repo.ps1           Windows repo-hygiene script: plan -> confirm -> clean (see §9)
-├── vercel.json                    Vercel config: install/build commands + cache headers
+├── vercel.json                    Vercel config: install/build commands, outputDirectory + cache headers
 ├── tailwind.config.js             Tailwind pipeline config (bun run build:css)
 ├── vendor/
 │   ├── katex/                     Locally vendored KaTeX (js + css + woff2) — no CDN needed
@@ -160,8 +161,12 @@ project standardises on Bun (`bun.lock` is committed and Vercel detects it).
 `vercel.json` pins the whole pipeline so a deploy is reproducible from a bare clone:
 
 * `installCommand: bun install` — Vercel detects `bun.lock` and uses Bun.
-* `buildCommand: bun run build:css` — `css/site.css` is **recompiled on every deploy**
-  from `css/input.css`, so committed CSS can never drift from the markup.
+* `buildCommand: bun run build` — recompiles `css/site.css` from `css/input.css` on every
+  deploy (committed CSS can never drift from the markup), then `tools/build-public.mjs`
+  assembles the complete site into a fresh `public/` and verifies every local link resolves.
+* `outputDirectory: public` — pinned in `vercel.json`, which **overrides** the dashboard's
+  Output Directory setting, so a stale dashboard value can never fail the build again.
+  `public/` itself is gitignored: it is a build artifact, regenerated on every deploy.
 * Headers: `/css/` and `/js/` are `no-cache` (304 when unchanged) so fresh HTML can never
   pair with a stale stylesheet; `/vendor/` (KaTeX, fonts) caches for a day.
 * Each page carries one line of inline critical CSS — scoped to `@media (min-width: 901px)` —
@@ -175,14 +180,17 @@ Progress is localStorage-only by design: no backend, no database, nothing that c
 | --- | --- | --- |
 | Framework Preset | `Other` | static site; no framework detection needed |
 | Root Directory | *(empty)* | the site lives at the repository root |
-| Build Command | *(empty — `vercel.json` sets it)* | `bun run build:css` |
-| Output Directory | *(empty — **never** `public`)* | pages are served from the repo root as-is |
+| Build Command | *(empty — `vercel.json` sets it)* | `bun run build` |
+| Output Directory | *(anything — `vercel.json` overrides it)* | `vercel.json` pins `public`; the build generates it |
 | Install Command | *(empty — `vercel.json` sets it)* | `bun install` |
 
 > **Troubleshooting.**
-> `No Output Directory named "public" found after the Build completed` → the project's
-> **Output Directory** was set to `public` in the dashboard (e.g. typed into the wizard when
-> the project was created). Clear the field and save; this site has no build output folder.
+> `No Output Directory named "public" found after the Build completed` → historically a
+> dashboard-set Output Directory with nothing generating that folder. Fixed at the source:
+> `vercel.json` pins `outputDirectory: public` **and** `bun run build` generates the folder
+> (the vercel.json value overrides the dashboard per Vercel's docs). If you still see it,
+> the deployment predates commit *"generate public/ output dir"* — push and redeploy with
+> "Use existing Build Cache" unticked.
 > `Unknown lockfile version` while parsing `bun.lock` → a Bun ≥ 1.4 machine rewrote the
 > lockfile to version 2 and it was committed; Vercel's bundled Bun 1.3.x cannot read it.
 > Regenerate with Bun 1.3.x (see §5) and commit the `lockfileVersion: 1` file.
@@ -336,8 +344,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1
   hard-protected list (`css/site.css`, `bun.lock`, the committed OFL woff2 files,
   the HTML pages, the configs);
 * **reports** (never silently "fixes") a `lockfileVersion: 2` `bun.lock`, a missing
-  `css/site.css`, a stray `public/` folder or `outputDirectory` in `vercel.json`
-  (the two things behind Vercel's *"No Output Directory named public"*), tracked
+  `css/site.css`, `public/` files **tracked in git** (it is the generated deploy
+  artifact and must stay gitignored), `vercel.json` **not** pinning
+  `"outputDirectory": "public"` (the pin that overrides the dashboard and prevents
+  Vercel's *"No Output Directory named public"* error), tracked
   `node_modules`, tracked files over 1 MB, and private font binaries still
   reachable in **git history** — `.gitignore` does not rewrite history;
 * `-CheckLive` then probes the deployment: `/api/health` must **not** be 200 while

@@ -7,7 +7,7 @@ Paths inside the zip mirror the repo root.
 Git Bash one-liner, if the zip is sitting in your Downloads folder:
 
     cd /d/VS/EMC-Physics
-    tar -xf ~/Downloads/emc-sync-fonts-v2.zip     # bsdtar reads zip; Explorer works too
+    tar -xf ~/Downloads/emc-sync-v4-full-repo.zip   # bsdtar reads zip; Explorer works too
 
 Then check the script is really there before you run anything:
 
@@ -60,9 +60,11 @@ for confirmation, then:
   * repairs   .gitignore if the vendor/fonts/*.ttf|*.otf rules went missing
   * refuses   to delete anything css/fonts.css references or anything protected
               (css/site.css, bun.lock, the committed OFL woff2 faces, configs)
-  * reports   bun.lock at lockfileVersion 2, a missing css/site.css, a stray
-              public/ folder or outputDirectory in vercel.json (the two causes of
-              the Vercel "No Output Directory named public" error), tracked
+  * reports   bun.lock at lockfileVersion 2, a missing css/site.css, public/
+              files TRACKED in git (public/ is the generated deploy artifact and
+              must stay gitignored), vercel.json NOT pinning
+              "outputDirectory": "public" (the pin that overrides the dashboard
+              and kills the "No Output Directory named public" error), tracked
               node_modules, files >1 MB, and licensed fonts still sitting in
               git HISTORY (untracking does not rewrite history - the script says
               how to purge it)
@@ -112,15 +114,29 @@ public repo. The site no longer needs any of them.
     git commit -m "fonts: committed OFL G8321 Bold + Lilita One; drop Yuruka, dead backend, stray lockfile"
     git push
 
-## 4. Fix the Vercel build ("No Output Directory named public found")
-The error is NOT in vercel.json (no outputDirectory there) and NOT in the
-repo (there is no public/ folder) - it is a saved PROJECT SETTING:
-  vercel.com -> your project -> Settings -> Build & Development Settings
-  -> Output Directory shows "public" -> Edit (pencil) -> CLEAR the field
-     so it is completely empty -> Save.
-Then: Deployments -> latest -> "..." menu -> Redeploy (untick
-"Use existing Build Cache"). Build order afterwards: bun install ->
-bun run build:css -> static output served straight from the repo root.
+## 4. The Vercel build fix ("No Output Directory named public found")
+This is now fixed IN THE REPO - no more dashboard wrestling:
+
+  * vercel.json pins "outputDirectory": "public". Per Vercel's own docs, the
+    vercel.json value OVERRIDES the dashboard's Output Directory setting, so
+    whatever stale value is saved there can no longer fail the build.
+  * buildCommand is now "bun run build" = build:css (Tailwind) + build:public
+    (tools/build-public.mjs copies the pages, css/, js/, vendor/ and the linked
+    docs into a fresh public/ and verifies every local link resolves).
+  * public/ is gitignored - a build artifact, never committed.
+
+So: extract this pack, commit, push (section 3). Vercel rebuilds on push:
+bun install -> bun run build -> serves public/. If no deployment starts
+automatically: Deployments -> latest -> "..." -> Redeploy with "Use existing
+Build Cache" UNTICKED.
+Optional tidy-up (no longer required): Settings -> Build & Development
+Settings -> Output Directory can be cleared or left as "public" - the repo
+now wins either way.
+
+Locally you can reproduce the exact deploy build with:
+
+    bun install
+    bun run build     # writes css/site.css, then assembles public/
 
 ## 5. After the deploy
     # Git Bash

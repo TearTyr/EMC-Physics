@@ -69,7 +69,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1
       (`css/site.css`, `bun.lock`, the four committed OFL woff2 faces, HTML pages, configs)
 - [x] repairs `.gitignore` when a required rule is missing (appends, never rewrites)
 - [x] reports without changing: `lockfileVersion: 2` in `bun.lock`, missing `css/site.css`,
-      a stray `public/` folder, `outputDirectory` in `vercel.json`, tracked `node_modules`,
+      `public/` files tracked in git (build artifact — must stay gitignored), `vercel.json`
+      not pinning `"outputDirectory": "public"`, tracked `node_modules`,
       tracked files > 1 MB, and licensed binaries still reachable in git **history**
 - [x] idempotent — a second run reports "The repo is already clean"
 - [x] `-CheckLive` probes the deployment: `/api/health` must not be 200; `g8321-700.woff2`,
@@ -181,6 +182,9 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 
 ### 2.6 Vercel deployment (static)
 - [ ] `npx vercel` or Git import deploys with framework preset *Other*; the preview URL renders
+- [ ] Build log ends with `build:public OK — output directory is deployable.` and Vercel
+      serves from `public/` (pinned by `vercel.json` `outputDirectory`, overriding any
+      dashboard value — `bun run build` locally reproduces the exact deploy output)
 - [ ] With all CDNs reachable: fonts, Tailwind, Chart.js and p5.js load; no console errors
 - [ ] Cache headers from `vercel.json`: `/css/*` and `/js/*` are `no-cache` (revalidate, 304 when
       unchanged), `/vendor/*` caches for a day; after a deploy, a plain reload never shows a
