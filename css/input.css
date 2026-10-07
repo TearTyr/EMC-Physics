@@ -387,7 +387,8 @@
   .hero-visual canvas { display: block; width: 100%; height: 380px; border-radius: var(--r-card); border: 2px solid var(--line); background: var(--plate); }
   .stat-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; width: 100%; max-width: 980px; }
   .stat-strip .stat { text-align: center; }
-  .stat-strip .stat-value { font-size: 1.45rem; font-family: theme('fontFamily.ui'); font-weight: 100; }
+  /* stat numbers are small (1.45rem): Regular 400, not Thin — thin hairlines lose legibility at this size */
+  .stat-strip .stat-value { font-size: 1.45rem; font-family: theme('fontFamily.ui'); font-weight: 400; }
   .steps { display: grid; gap: .9rem; grid-template-columns: 1fr; counter-reset: step; }
   .step { position: relative; padding: 1.15rem; }
   .step::before { counter-increment: step; content: "0" counter(step); font-family: theme('fontFamily.mono'); font-size: .78rem; font-weight: 700; color: var(--pk); letter-spacing: .12em; display: block; margin-bottom: .35rem; }

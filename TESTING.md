@@ -96,7 +96,8 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
       are committed, so on ANY host DevTools > Rendered Fonts shows body copy in G8321
       Regular 400, headings/buttons/labels in G8321 Bold 700 (or `fot-yuruka-std` on a
       machine that holds that licensed face locally), and big display numerals in G8321
-      Thin 100.
+      Thin 100. Exception by design: the home stat-strip numbers (4 / 8 / 25 / 0) render
+      in Regular 400 — at 1.45rem the Thin hairlines lose legibility.
 
 ### 2.1 Navigation & layout
 - [ ] Home → each topic → quiz links all navigate; the active nav item is highlighted

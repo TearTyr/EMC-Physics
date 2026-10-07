@@ -218,7 +218,8 @@ verifies each one exists in the compiled `css/site.css`.
 |---|---|---|
 | Titles / headings / buttons / labels | `fot-yuruka-std` → **G8321 Bold 700** | licensed face locally (`vendor/fonts/manifest.json` slot); committed fallback `vendor/fonts/g8321-700.woff2` |
 | Body copy / prose | **G8321 Regular 400** | committed `vendor/fonts/g8321-400.woff2` |
-| Display numerals (grade, watermark, ring %, stat strip) | **G8321 Thin 100** | committed `vendor/fonts/g8321-100.woff2` |
+| Display numerals (grade, watermark, ring %) | **G8321 Thin 100** | committed `vendor/fonts/g8321-100.woff2` |
+| Home stat-strip numbers (small, 1.45rem) | **G8321 Regular 400** | committed `vendor/fonts/g8321-400.woff2` |
 
 All three weights are G8321 by Coji Morishita (SIL OFL 1.1) — the whole site is one
 family, so local dev and the deployed site are guaranteed consistent. The stacks live once
