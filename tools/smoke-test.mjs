@@ -616,6 +616,12 @@ console.log('\u2500'.repeat(66));
     /pointer: coarse/.test(cssSrc) && /overflow-x: clip/.test(cssSrc));
   ok('stylesheet contains no gradient/blur/glass effects',
     !/gradient|backdrop-filter|blur\(/.test(cssSrc));
+  // flex or grid on a bullet li fragments <sub>/<sup> into separate items
+  ok('bullet lists keep inline maths intact (marker is absolutely positioned)',
+    /\.topic-list li \{\s*position: relative/.test(cssSrc) &&
+    !/\.topic-list li \{[^}]*display: (flex|grid)/.test(cssSrc));
+  ok('anchor jumps respect the sticky header',
+    /scroll-padding-top: calc\(var\(--header-h\)/.test(cssSrc));
 }
 
 /* ---------------- summary ---------------- */

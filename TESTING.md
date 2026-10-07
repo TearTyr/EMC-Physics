@@ -74,9 +74,14 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
       with the manifest empty the site falls back with a single *info* line and
       **no 404s and no errors**; on `file://` Chrome falls back silently (custom fonts are
       blocked there by design)
-- [ ] Exponents never scatter: `sup`/`sub` are CSS-positioned (relative, metric-independent),
-      so formula lists stay intact under any activated face; the home-page "Physics inside the
-      code" card is additionally typeset by KaTeX when available
+- [ ] Exponents never scatter: bullet lists use an absolutely-positioned marker (flex/grid on
+      an `<li>` would promote every `<sub>`/`<sup>` to its own item - the historical cause of
+      "scattered" exponents), and `sup`/`sub` are CSS-positioned rather than font-metric based;
+      the home-page "Physics inside the code" card is additionally typeset by KaTeX
+- [ ] Comfort pass: cards/lists/callouts/quiz options have airy padding and line-heights;
+      anchor links (`#sim-…`, `#coulomb`, …) land below the sticky header, not under it
+- [ ] Touch: on a coarse pointer, quiz options and buttons are >= 44 px tall and slider thumbs
+      are the enlarged size
 - [ ] Keyboard: `Tab` reaches every control; quiz options respond to arrow keys; focus rings visible
 
 ### 2.2 Topic 1 — Charges & fields
