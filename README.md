@@ -53,7 +53,9 @@ emc-physics-tutorial/
 │   └── induction.html             Topic 4 — flux, Faraday, Lenz, magnet through a coil
 ├── css/
 │   ├── styles.css                 Design tokens + all semantic components (the design system)
-│   └── tailwind-fallback.css      Offline copy of the Tailwind utilities the markup uses
+│   ├── fonts.css                  @font-face for the vendored open fonts (+ Lilita One)
+│   ├── site.css                   Committed Tailwind build (utilities + Preflight)
+│   └── tailwind.input.css         Build input for the above
 ├── js/
 │   ├── common.js                  Shared engine: constants, HiDPI canvas Stage, pointer input,
 │   │                              SI formatter, localStorage progress, nav/reveal/toasts
@@ -230,13 +232,16 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   not in the canvas code (charges, magnets, bulbs and particles are flat pastel stickers).
   `tools/smoke-test.mjs` enforces this: it fails if `createLinearGradient`,
   `createRadialGradient`, `shadowBlur`, `backdrop-filter` or a CSS gradient ever reappear.
-* **Styling.** Tailwind is loaded from `https://cdn.tailwindcss.com` as required, and is used for
-  layout utilities in the markup. All component design (panels, cards, sliders, readouts, quiz)
-  lives in `css/styles.css`, which is linked *after* the CDN script so its class selectors win
-  over Tailwind's Preflight. `css/tailwind-fallback.css` re-declares exactly the utility classes
-  the markup uses with Tailwind's own values, so the layout is pixel-identical with or without
-  the CDN — offline, on `file://`, or behind a blocking CSP. `node tools/check-links.mjs`
-  reports any utility used but not covered.
+* **Styling.** Tailwind utilities are compiled once with the official CLI into a committed
+  `css/site.css` — deterministic, offline-safe, no in-browser compile. `tailwind.config.js`
+  scans the markup plus `js/quiz.js` (the one script that injects utility classes) and
+  blocklists prose words that collide with utility names (`table`, `filter`, `ring`, …).
+  The Play CDN tag stays in each head as the brief's "Tailwind via CDN" path;
+  `npm run switch:built` removes it for production-pure deploys and `switch:cdn` restores it.
+  All component design lives in `css/styles.css`, linked after, with class selectors that beat
+  Preflight. One breakpoint system everywhere: **640 / 900 / 1200 px**, shared by the Tailwind
+  config and `styles.css`. Accent colours derive from one variable per hue (`--c/--ct/--ce`),
+  so tags, callouts, accents and readout highlights never hard-code a tint again.
 * **Canvas engine.** `EMC.Stage` (`js/common.js`) wraps each `<canvas>`: device-pixel-ratio
   scaling, resize observation, an auto-pausing `requestAnimationFrame` loop, and unified
   pointer events (mouse + touch + pen) with pointer capture for drags. Render functions draw in

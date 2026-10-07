@@ -11,10 +11,10 @@ headless Chrome 148 and jsdom on this build; the summary at the bottom records t
 ```bash
 npm install        # dev/server deps (jsdom, express, mysql2). Website itself: none.
 npm run check      # static validator
-npm test           # 177 runtime assertions
-npm run test:vercel      # api/ serverless-function contract (6 assertions)
-npm run build:css        # compile Tailwind utilities -> css/tailwind.generated.css
-node tools/switch-css.mjs built|cdn   # swap the Tailwind delivery mode (idempotent)
+npm test           # 195 runtime assertions
+npm run build:css  # recompile Tailwind utilities -> css/site.css after markup changes
+npm run switch:cdn / npm run switch:built   # toggle the Play CDN tag (idempotent)
+npm run font:scan  # register licensed .ttf faces in vendor/fonts/manifest.json
 ```
 
 ### 1.1 `tools/check-links.mjs` (no dependencies)
@@ -24,8 +24,8 @@ node tools/switch-css.mjs built|cdn   # swap the Tailwind delivery mode (idempot
       (`getElementById`, `el('…')`, `bindRange('…')`)
 - [x] advisory report of `[data-*]` hooks queried but absent (scripts guard for these)
 - [x] local `#anchor` links resolve
-- [x] every Tailwind-looking utility class used in the markup is present in
-      `css/tailwind-fallback.css` (offline-layout guarantee)
+- [x] every Tailwind-looking utility class used in the markup is present in the committed
+      build `css/site.css` (prose words that collide with utility names are blocklisted)
 
 ### 1.2 `tools/smoke-test.mjs` (jsdom)
 Boots each of the six pages, stubs a 2D context, runs the real scripts and asserts physics and
@@ -199,7 +199,7 @@ Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
 | Check | Result |
 |---|---|
 | `node tools/check-links.mjs` | **0 errors, 0 warnings** (9 advisory `[data-*]` notes, all guarded in code) |
-| `node tools/smoke-test.mjs` | **177 / 177 assertions passed** |
+| `node tools/smoke-test.mjs` | **195 / 195 assertions passed** |
 | Built-CSS mode, all external requests blocked | layout identical (2-col grid, type scale), **0 console errors** |
 | Headless Chrome with live CDNs | Chart.js charts + p5.js generator render; **0 console errors** |
 | Headless Chrome 148, all 6 pages, desktop + mobile | **0 console errors, 0 failed requests** |

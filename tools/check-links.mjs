@@ -129,8 +129,9 @@ for (const file of htmlFiles) {
 }
 
 /* ---------- 6. Tailwind fallback coverage ------------------------------- */
-const fallback = existsSync(join(ROOT, 'css/tailwind-fallback.css'))
-  ? readFileSync(join(ROOT, 'css/tailwind-fallback.css'), 'utf8') : '';
+/* the committed Tailwind build is the offline/production source of utilities */
+const fallback = existsSync(join(ROOT, 'css/site.css'))
+  ? readFileSync(join(ROOT, 'css/site.css'), 'utf8') : '';
 const coveredSelectors = new Set(
   [...fallback.matchAll(/\.(-?[a-zA-Z_][\w\-:.\\/[\]()%#,\s]*?)(?=[,{\s])/g)].map(m => m[1].replace(/\\/g, ''))
 );
@@ -163,7 +164,7 @@ let missing = 0;
 for (const [cls, files] of [...usedUtilities].sort()) {
   if (!coveredSelectors.has(cls)) {
     missing++;
-    warnings.push(`utility "${cls}" used in ${[...new Set(files)].join(', ')} is not in css/tailwind-fallback.css`);
+    warnings.push(`utility "${cls}" used in ${[...new Set(files)].join(', ')} is missing from css/site.css (run npm run build:css)`);
   }
 }
 
@@ -174,7 +175,7 @@ console.log('EMC Lab — static project validation');
 console.log(line);
 console.log(`HTML pages ......... ${htmlFiles.length}`);
 console.log(`JS files ........... ${jsFiles.length}`);
-console.log(`Tailwind utilities . ${usedUtilities.size} used, ${usedUtilities.size - missing} covered offline`);
+console.log(`Tailwind utilities . ${usedUtilities.size} used, ${usedUtilities.size - missing} present in css/site.css`);
 console.log('');
 
 if (errors.length) {

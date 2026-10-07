@@ -106,14 +106,14 @@
     const pct = total ? (answered / total) * 100 : 0;
     if (el('quiz-progress-fill')) el('quiz-progress-fill').style.width = pct.toFixed(1) + '%';
     if (el('quiz-progress-text')) el('quiz-progress-text').textContent = `${answered} of ${total} answered`;
-    if (el('quiz-count')) el('quiz-count').textContent = `${total} question${total === 1 ? '' : 's'}`;
+    if (el('quiz-count')) el('quiz-count').textContent = String(total);   // label already says "Questions"
 
     // live score while in instant mode
     if (S.instant && el('quiz-live')) {
       const marked = list.filter(q => S.marked.has(q.id));
       const right = marked.filter(q => S.marked.get(q.id) === true).length;
       el('quiz-live').hidden = marked.length === 0;
-      el('quiz-live').textContent = `Marked so far: ${right}/${marked.length}`;
+      el('quiz-live').textContent = `\u00A0\u00B7 Marked so far: ${right}/${marked.length}`;
     } else if (el('quiz-live')) {
       el('quiz-live').hidden = true;
     }

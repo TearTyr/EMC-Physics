@@ -10,9 +10,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/tailwind-fallback.css">
+  <link rel="stylesheet" href="css/site.css">
   <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="css/fonts.css">
+  <link rel="preload" as="font" type="font/woff2" href="vendor/fonts/m-plus-rounded-1c-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="vendor/fonts/lilita-one-400.woff2" crossorigin>
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
   <style>.nav-drop-menu{position:absolute;visibility:hidden;opacity:0}.nav-drop-menu.open{visibility:visible;opacity:1}</style>
@@ -56,7 +58,7 @@
   </header>
 
   <main class="emc-main" id="main">
-    <div class="wrap section-tight">
+    <div class="wrap wrap-narrow section-tight">
       <div class="callout callout-warn" id="storageNotice" role="status" hidden></div>
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="index.html">Home</a><span aria-hidden="true">/</span><span>Quiz</span>
@@ -78,7 +80,7 @@
       </p>
 
       <div class="stat-strip" style="max-width:640px">
-        <div class="stat"><span class="stat-label">Questions</span><span class="stat-value hl-cyan" id="quiz-count">20</span></div>
+        <div class="stat"><span class="stat-label">Questions</span><span class="stat-value hl-cyan" id="quiz-count">25</span></div>
         <div class="stat"><span class="stat-label">Best score</span><span class="stat-value hl-emerald" id="quiz-best">—</span></div>
         <div class="stat"><span class="stat-label">Attempts</span><span class="stat-value" id="quiz-attempts">0</span></div>
         <div class="stat"><span class="stat-label">Pass mark</span><span class="stat-value hl-amber">70%</span></div>
@@ -115,7 +117,7 @@
             <span class="tag tag-amber" id="quiz-streak" hidden aria-label="Current correct streak">streak ×0</span>
             <div style="flex:1 1 180px;min-width:160px">
               <div class="progress-track"><div class="progress-fill" id="quiz-progress-fill"></div></div>
-              <p class="tiny faint" style="margin:.35rem 0 0"><span id="quiz-progress-text">0 of 20 answered</span> · <span id="quiz-live" hidden></span></p>
+              <p class="tiny faint" style="margin:.35rem 0 0"><span id="quiz-progress-text">0 of 25 answered</span><span id="quiz-live" hidden></span></p>
             </div>
           </div>
 

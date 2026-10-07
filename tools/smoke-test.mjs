@@ -585,14 +585,15 @@ console.log('\u2500'.repeat(66));
     ok(`${p}: has a skip link`, /class="skip-link"/.test(html));
     ok(`${p}: every canvas has an accessible label`,
       [...html.matchAll(/<canvas[^>]*>/g)].every(m => /aria-label=/.test(m[0])));
-    ok(`${p}: loads the Tailwind CDN and the offline fallback`,
-      /cdn\.tailwindcss\.com/.test(html) && /tailwind-fallback\.css/.test(html));
+    ok(`${p}: links the compiled Tailwind sheet (and the CDN tag by default)`,
+      /css\/site\.css/.test(html) && /cdn\.tailwindcss\.com/.test(html));
     ok(`${p}: exactly one <h1>`, (html.match(/<h1[\s>]/g) || []).length === 1);
   }
   const fontsCss = readFileSync(join(ROOT, 'css/fonts.css'), 'utf8');
   ok('open cute fonts are self-hosted (no CDN needed)',
     /Mochiy Pop One/.test(fontsCss) && /M PLUS Rounded 1c/.test(fontsCss) &&
-    ['mochiy-pop-one-400.woff2', 'm-plus-rounded-1c-400.woff2'].every(f =>
+    /Lilita One/.test(fontsCss) &&
+    ['mochiy-pop-one-400.woff2', 'm-plus-rounded-1c-400.woff2', 'lilita-one-400.woff2'].every(f =>
       existsSync(join(ROOT, 'vendor/fonts', f))));
   ok('licensed FOT-Yuruka Std sits first in both stacks',
     /--font: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')) &&
@@ -620,8 +621,9 @@ console.log('\u2500'.repeat(66));
   ok('bullet lists keep inline maths intact (marker is absolutely positioned)',
     /\.topic-list li \{\s*position: relative/.test(cssSrc) &&
     !/\.topic-list li \{[^}]*display: (flex|grid)/.test(cssSrc));
-  ok('anchor jumps respect the sticky header',
-    /scroll-padding-top: calc\(var\(--header-h\)/.test(cssSrc));
+  ok('anchor offset defined exactly once (scroll-margin, not double offset)',
+    /\[id\] \{ scroll-margin-top: calc\(var\(--header-h\)/.test(cssSrc) &&
+    !/scroll-padding-top/.test(cssSrc));
 }
 
 /* ---------------- summary ---------------- */
