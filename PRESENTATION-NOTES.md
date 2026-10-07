@@ -70,9 +70,13 @@ a generator, in one interaction.
 ### Architecture
 * **Six static pages**, one per topic plus home and quiz. Shared chrome (header, footer,
   progress) is plain markup; behaviour is shared through `js/common.js`.
-* **No build step, no framework, no backend.** Open `index.html` or serve the folder. Tailwind
-  comes from the official CDN as required; a hand-maintained fallback stylesheet carries an
-  identical copy of every utility the markup uses, so the design survives offline/`file://`/CSP.
+* **The pages read as a plain tutorial, not a project report.** No course or module name, no
+  "works everywhere / tested in" blurb, no build-step stats, no dev-doc links — the reading
+  experience is a single centred article column (700 px prose, 1060 px sim panels) with
+  blog-style air above every heading so one idea fills a screen at a time.
+* **Static site, no framework, no backend.** Serve the folder (or open `index.html`). Tailwind
+  is compiled at build time (`bun run build:css`) into `css/site.css`, so what ships is plain
+  static HTML, CSS and JavaScript — identical bytes on `file://`, localhost or Vercel.
 * **`EMC.Stage`** — a small canvas engine used by all seven simulations: HiDPI backing-store
   scaling, `ResizeObserver`-driven resizing, an rAF loop that pauses off-screen, and unified
   pointer input (mouse/touch/pen) with capture so drags keep working outside the canvas.
@@ -94,7 +98,7 @@ a generator, in one interaction.
 | Question | Answer |
 |---|---|
 | Where is p5.js, then? | In the bonus AC-generator lab on Topic 4, in instance mode so it pollutes no globals. The core sims stay on the native engine because they need exact HiDPI control and must work with no network; the generator shows the same physics in p5's idiom. |
-| Can we host it on Vercel? | Trivially — it is a static site: import the repo, preset *Other*, leave **Root Directory and Output Directory empty** (there is no build output folder — setting `public` fails the deploy), and every `git push` redeploys; `vercel.json` pins the install/build commands and cache headers. There is deliberately no backend: progress is localStorage-only, so nothing to configure, bill, or lose. |
+| Can we host it on Vercel? | Trivially — it is a static site: import the repo, preset *Other*, and let `vercel.json` pin everything: `buildCommand` runs `bun run build` (Tailwind compile + `tools/build-public.mjs` assembling `public/`) and `outputDirectory: "public"` overrides any stale dashboard value, so every `git push` redeploys; cache headers are pinned there too. There is deliberately no backend: progress is localStorage-only, so nothing to configure, bill, or lose. |
 | Is Tailwind actually being used? It doesn't look like it. | It is — it *is* the pipeline. `css/input.css` declares `@layer base / components / utilities` around the three `@tailwind` directives, and the CLI compiles everything into `css/site.css` (Vercel rebuilds it on deploy). Utilities in the markup sit in the top cascade layer, the sticker components in the middle, element resets at the bottom — which is exactly why `mt-2` wins over a heading reset without a single `!important`. |
 | Can we run it on Bun? Is that allowed? | Yes and yes. Bun is the project's *package manager and task runner* — `bun install`, `bun run build:css`, `bun run test` — and a runtime, not a frontend framework. Visitors' browsers receive identical static bytes no matter which tool built them; the browser-side wins come from cache headers, per-page library loading and off-screen canvas pausing. (An optional progress-sync server existed early in development and was deliberately removed: progress is localStorage-only, so there is nothing to host, configure or bill.) |
 | Why Chart.js only for the quiz? | Score analytics are exactly what Chart.js is for (doughnut/bars/line with legends and tooltips). The physics charts (I–V line, Φ/EMF strip chart) are drawn by the sims themselves so they stay in perfect sync with the simulation state and cost nothing extra. |
@@ -104,7 +108,7 @@ a generator, in one interaction.
 | Why does submitting grade the whole bank even when filtered? | Filters are a revision aid; letting them shrink the denominator would make "100 %" meaningless. The UI states this next to the toolbar. |
 
 ### Testing strategy
-Static validator (links, ids, data-hooks, CSS coverage) plus a jsdom harness with **167
+Static validator (links, ids, data-hooks, CSS coverage) plus a jsdom harness with **208
 assertions** that assert *physics* — e.g. F(+2 µC,−2 µC,0.30 m) = 399 mN, R(10‖22‖47) = 6.00 Ω,
 Φ matches the closed form to 1 %, EMF ∝ N, I = EMF/R at every sample — and *behaviour*: quiz
 scoring at 100/50/0 %, blank-submit guard, storage persistence. Plus a real headless-Chrome pass

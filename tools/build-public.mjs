@@ -16,7 +16,7 @@
  *  1. deletes any previous public/ (always a clean rebuild),
  *  2. copies the runtime allow-list into it:
  *       index.html, quiz.html, topics/, css/, js/, vendor/
- *       + the three docs the pages link to (README/TESTING/PRESENTATION-NOTES),
+ *       (dev docs such as README/TESTING stay in the repo, not on the site),
  *  3. prunes dev-only files that ride inside copied dirs (css/input.css, .gitkeep),
  *  4. verifies every required asset exists AND every local href/src in every
  *     copied .html resolves inside public/ — a broken deploy fails the build
@@ -36,13 +36,10 @@ const outDir = join(repoRoot, 'public');
 
 /* ------------------------------------------------------------------ config */
 
-// Single files copied from the repo root (pages + the docs they link to).
+// Single files copied from the repo root (the pages themselves).
 const COPY_FILES = [
   'index.html',
   'quiz.html',
-  'README.md',
-  'TESTING.md',
-  'PRESENTATION-NOTES.md',
 ];
 
 // Whole directories copied recursively.

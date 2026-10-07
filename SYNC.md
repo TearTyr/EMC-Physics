@@ -1,4 +1,19 @@
-# EMC Lab sync pack - font system v2 (G8321 Bold + Lilita One) & repo cleanup
+# EMC Lab sync pack v7 - clean site copy + article-style reading layout
+
+What changed in this pack:
+
+  * Student-facing copy no longer talks about the course, the module or how the
+    site was built: the "Works everywhere / tested in ..." card, the
+    "Dependencies 0 - no build step" stat, the footer "Project files" and
+    "Browser support" blocks and every "module" sentence are gone. The pages
+    now read as a plain physics tutorial; dev docs stay in the repo only.
+  * Topic pages got an article reading rhythm modelled on a clean blog layout:
+    one centred 700 px column, ~4.2 rem of air above every numbered heading,
+    line-height 1.85, and ~2.2 rem around equations/callouts/figures so only
+    one idea sits on screen at a time. Sim panels centre at 1060 px.
+  * tools/build-public.mjs no longer copies README/TESTING/PRESENTATION-NOTES
+    into public/ (nothing links to them any more); deploy is 48 files.
+  * Everything else (font system, vercel.json pin, cleanup script) unchanged.
 
 ## 1. Extract
 Copy this zip's contents over D:\VS\EMC-Physics (overwrite when asked).
@@ -7,7 +22,7 @@ Paths inside the zip mirror the repo root.
 Git Bash one-liner, if the zip is sitting in your Downloads folder:
 
     cd /d/VS/EMC-Physics
-    tar -xf ~/Downloads/emc-sync-v4-full-repo.zip   # bsdtar reads zip; Explorer works too
+    tar -xf ~/Downloads/emc-sync-v7-full-repo.zip --strip-components=1   # zip has one top-level folder; Explorer works too
 
 Then check the script is really there before you run anything:
 
@@ -77,7 +92,7 @@ Useful switches:
     -Verify            run bun install / bun run check / bun run test afterwards
     -Commit -Push      git add -A + commit + push (sets upstream if missing)
     -CheckLive         probe the deployment (/api/health must NOT be 200;
-                       g8321-700.woff2, lilita-one-400.woff2, css/site.css must be)
+                       g8321-400.woff2, g8321-700.woff2, css/site.css must be)
     -RepoPath <dir>    clean a repo other than the one the script lives in
 
 Typical full run:
@@ -111,7 +126,7 @@ public repo. The site no longer needs any of them.
 
 ## 3. Commit + push (skipped if you used -Commit -Push)
     git add -A
-    git commit -m "fonts: committed OFL G8321 Bold + Lilita One; drop Yuruka, dead backend, stray lockfile"
+    git commit -m "site: clean student-facing copy + article-style reading rhythm"
     git push
 
 ## 4. The Vercel build fix ("No Output Directory named public found")
@@ -121,8 +136,9 @@ This is now fixed IN THE REPO - no more dashboard wrestling:
     vercel.json value OVERRIDES the dashboard's Output Directory setting, so
     whatever stale value is saved there can no longer fail the build.
   * buildCommand is now "bun run build" = build:css (Tailwind) + build:public
-    (tools/build-public.mjs copies the pages, css/, js/, vendor/ and the linked
-    docs into a fresh public/ and verifies every local link resolves).
+    (tools/build-public.mjs copies the pages, css/, js/ and vendor/ into a
+    fresh public/ and verifies every local link resolves; repo docs such as
+    README/TESTING stay out of the deploy).
   * public/ is gitignored - a build artifact, never committed.
 
 So: extract this pack, commit, push (section 3). Vercel rebuilds on push:
@@ -141,11 +157,11 @@ Locally you can reproduce the exact deploy build with:
 ## 5. After the deploy
     # Git Bash
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -CheckLive
-Expect: /api/health NOT 200, and g8321-700.woff2, lilita-one-400.woff2,
+Expect: /api/health NOT 200, and g8321-400.woff2, g8321-700.woff2,
 css/site.css and / all 200. Then re-run the site suites:
 
     bun run check    # link/asset audit - expect 0 errors, 0 warnings
-    bun run test     # headless smoke test - expect 207/207
+    bun run test     # headless smoke test - expect 208/208
 
 Reminder: untracking the .ttf files does NOT remove them from git history.
 Your repo is public, so the paid Yuruka binary is still downloadable from old

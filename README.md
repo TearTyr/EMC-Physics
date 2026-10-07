@@ -250,8 +250,16 @@ family, no licence risk. ~45 KB of fonts total.
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
   Readability rules: prose lives in a ~700 px measure (~79 characters per line) at line-height
-  1.8, and every supplementary block (real-world connections, common traps) is collapsed
-  behind a "+" disclosure so the main flow stays short; worked examples and rules stay open.
+  1.85, in an article rhythm copied from a clean long-form blog layout — ~4.2 rem of air above
+  every numbered heading, ~2.2 rem around equations, callouts, figures, definition lists and
+  disclosures, sim panels centred on their own 1060 px line — so only one idea sits on screen
+  at a time and no page ever reads as a wall of text. Every supplementary block (real-world
+  connections, common traps) is collapsed behind a "+" disclosure so the main flow stays short;
+  worked examples and rules stay open.
+* **The site talks about physics only.** No page mentions the course, the module or how the
+  site was built, tested or deployed — no "Works everywhere" blurb, no dependency/build-step
+  stats, no dev-doc links in footers. That material lives in this README, TESTING.md and
+  PRESENTATION-NOTES.md, which the deployed site no longer links to or ships.
 * **Equations are real LaTeX, with zero network risk.** **KaTeX is vendored locally**
   (`vendor/katex/`: js, css and woff2 fonts, ~600 kB), so typesetting works offline, on
   `file://`, and on any host including Vercel. Every displayed equation carries its source in a

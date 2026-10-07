@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="EMC Lab — an interactive, browser-based electromagnetics tutorial for Calculus-based Physics II: electric fields, circuits, magnetism and electromagnetic induction, with live simulations and a scored quiz.">
+  <meta name="description" content="EMC Lab — an interactive, browser-based electromagnetics tutorial: electric fields, circuits, magnetism and electromagnetic induction, with live simulations and a scored quiz.">
   <meta name="theme-color" content="#060b16">
   <title>EMC Lab · Interactive Electromagnetics Tutorial</title>
 
@@ -67,7 +67,7 @@
 
     <section class="hero">
       <div class="wrap hero-stack">
-        <svg class="mascot" viewBox="0 0 120 112" role="img" aria-label="Denki-chan, the module mascot">
+        <svg class="mascot" viewBox="0 0 120 112" role="img" aria-label="Denki-chan, the EMC Lab mascot">
   <path d="M38 26 C34 8 46 5 49 16" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3" stroke-linecap="round"/>
   <path d="M82 26 C86 8 74 5 71 16" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3" stroke-linecap="round"/>
   <ellipse cx="60" cy="64" rx="42" ry="40" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3"/>
@@ -76,7 +76,7 @@
   <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
   <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
-        <span class="eyebrow">Calculus-based Physics II · Module EMC</span>
+        <span class="eyebrow">Interactive electromagnetics</span>
         <h1 class="h-hero">See electricity and magnetism move.</h1>
         <p class="lede">
           Four tutorial chapters, eight live simulations and a 25-question scored quiz.
@@ -100,13 +100,12 @@
           <div class="stat"><span class="stat-label">Topics</span><span class="stat-value hl-cyan">4</span></div>
           <div class="stat"><span class="stat-label">Simulations</span><span class="stat-value hl-amber">8</span></div>
           <div class="stat"><span class="stat-label">Quiz questions</span><span class="stat-value hl-emerald">25</span></div>
-          <div class="stat"><span class="stat-label">Dependencies</span><span class="stat-value">0</span><span class="stat-sub">no build step</span></div>
         </div>
       </div>
     </section>
 
     <section class="section wrap">
-      <h2 class="h-sec reveal">How to use this module</h2>
+      <h2 class="h-sec reveal">How to use this site</h2>
       <div class="steps mt-4">
         <div class="card step reveal">
           <h3 class="font-bold">Read the tutorial</h3>
@@ -277,21 +276,13 @@
           <p class="small muted mt-2">A coil spinning in a uniform field: Φ = NBA·cos(2πft) drawn live with p5.js, producing the mains sine wave.</p>
         </a>
         <div class="card card-flat reveal">
-          <span class="tag">Physics inside the code</span>
+          <span class="tag">Governing equations</span>
           <ul class="topic-list mt-2">
             <li><span data-tex="E = kq/r^2">E = kq/r<sup>2</sup></span>, superposition by vector sum</li>
             <li><span data-tex="R_{\mathrm{eq}}">R<sub>eq</sub></span> for series, parallel and mixed</li>
             <li><span data-tex="\Phi = \mu_0 m a^2 / [2(a^2+z^2)^{3/2}]">Φ = μ<sub>0</sub>ma<sup>2</sup>/[2(a<sup>2</sup>+z<sup>2</sup>)<sup>3/2</sup>]</span></li>
             <li><span data-tex="r = mv/(|q|B)">r = mv/(|q|B)</span>, <span data-tex="T = 2\pi m/(|q|B)">T = 2πm/(|q|B)</span></li>
           </ul>
-        </div>
-        <div class="card card-flat reveal">
-          <span class="tag tag-emerald">Works everywhere</span>
-          <p class="small muted mt-2">
-            Pure HTML, CSS and JavaScript. Tested in Chrome, Firefox and Edge on desktop,
-            and on touch screens down to 320 px wide. Progress is stored locally — no
-            account, no server, no tracking.
-          </p>
         </div>
       </div>
     </section>
@@ -361,7 +352,7 @@
               </dl>
               <p class="tiny faint" style="margin-top:.8rem">
                 Tick a topic with the <em>Mark topic as complete</em> button at the end of each page.
-                Scoring 70% or more in the quiz counts as having studied the whole module.
+                Scoring 70% or more in the quiz counts as having studied all four topics.
               </p>
             </div>
           </div>
@@ -387,7 +378,7 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap footer-grid">
+    <div class="wrap footer-grid footer-grid-2">
       <div>
         <span class="brand" style="pointer-events:none">
           <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
@@ -401,9 +392,8 @@
           <span class="brand-name">EMC<em>Lab</em></span>
         </span>
         <p class="small muted" style="margin-top:.6rem">
-          An interactive electromagnetics module for Calculus-based Physics II.
-          Built with plain HTML, CSS and JavaScript — no build step, no backend,
-          no data leaves your browser.
+          An interactive electromagnetics tutorial.
+          Your progress is saved in this browser only.
         </p>
         <p class="tiny faint">Local storage: <span id="storageStatus">checking…</span></p>
       </div>
@@ -416,16 +406,6 @@
           <li><a href="topics/induction.html">4 · Electromagnetic induction</a></li>
           <li><a href="quiz.html">Quiz (25 questions)</a></li>
         </ul>
-      </div>
-      <div>
-        <h3 class="small uppercase tracking-widest faint" style="margin:0 0 .6rem">Project files</h3>
-        <ul class="footer-links">
-          <li><a href="README.md">README &amp; setup</a></li>
-          <li><a href="TESTING.md">Testing checklist</a></li>
-          <li><a href="PRESENTATION-NOTES.md">Presentation notes</a></li>
-        </ul>
-        <h3 class="small uppercase tracking-widest faint" style="margin:1rem 0 .4rem">Browser support</h3>
-        <p class="tiny faint" style="margin:0">Chrome 100+ · Firefox 100+ · Edge 100+ · Safari 15.4+</p>
       </div>
     </div>
     <div class="wrap" style="margin-top:1.6rem">

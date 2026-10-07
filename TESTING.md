@@ -96,7 +96,7 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
       are committed, so on ANY host DevTools > Rendered Fonts shows body copy in G8321
       Regular 400, headings/buttons/labels in G8321 Bold 700 (or `fot-yuruka-std` on a
       machine that holds that licensed face locally), and big display numerals in G8321
-      Thin 100. Exception by design: the home stat-strip numbers (4 / 8 / 25 / 0) render
+      Thin 100. Exception by design: the home stat-strip numbers (4 / 8 / 25) render
       in Regular 400 — at 1.45rem the Thin hairlines lose legibility.
 
 ### 2.1 Navigation & layout
@@ -105,6 +105,13 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Header **Topics** dropdown: opens on click, closes on outside click / Escape / choosing a
       topic; highlights the current topic; on mobile it expands as an inline sub-list
 - [ ] Topic prose measures ~700 px (about 75-80 characters per line) at every viewport
+- [ ] Topic pages keep the article rhythm: ~4.2 rem of air above every numbered heading
+      (`.prose .h-sec` margin-top ≈ 71 px at 1440 px), line-height 1.85, ~2.2 rem around
+      equations/callouts/figures/disclosures, sim panels centred at ≤ 1060 px — one idea
+      per screen, never a wall of text
+- [ ] Student-facing copy stays clean: no "module", no course name, no "Works everywhere",
+      no "no build step" and no dev-doc links (README/TESTING/PRESENTATION-NOTES) anywhere
+      in the six pages — grep the pages, not the repo, to check
 - [ ] "Real world" and misconceptions blocks start collapsed behind `+` disclosures and open
       without shifting the layout jumpily
 - [ ] Reading-progress bar under the header fills as you scroll
