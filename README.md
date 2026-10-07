@@ -272,9 +272,10 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   large radii, pill buttons, and a small bobbing mascot ("Denki-chan") that appears in the hero,
   above each topic title, and as the brand mark. The palette is a warm charcoal base with the
   reference site's own candy pastels (pink `#f8aebe`, lilac `#d5b8d8`, green `#b5d777`,
-  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography uses the same
-  two families the reference loads — **Cabin** for body/nav and **Open Sans** for headings —
-  via Google Fonts, falling back to system faces offline. Motion is limited to the mascot's bob
+  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography is a cute anime / maru-gothic
+  pair via Google Fonts: **Mochiy Pop One** for headings and the brand (sticker-pop, single
+  weight, no faux-bold), **M PLUS Rounded 1c** for body text — falling back to system rounded
+  faces (`ui-rounded`, Hiragino Maru Gothic) when offline. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
 * **Equations are real LaTeX, with zero network risk.** **KaTeX is vendored locally**

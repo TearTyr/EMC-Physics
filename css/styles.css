@@ -52,10 +52,14 @@
   --r-ctl:  12px;
   --header-h: 56px;
   --maxw: 1120px;
-  /* Same two families chiikawaofficial.com loads (Squarespace template
-     variables): body/nav = Cabin, headings/titles = Open Sans. */
-  --font: 'Cabin', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-head: 'Open Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  /* Cute anime / maru-gothic pairing: Mochiy Pop One for headings and the
+     brand (sticker-pop, already heavy at weight 400), M PLUS Rounded 1c for
+     body text. Both cover Latin; offline they fall back to system rounded
+     faces (ui-rounded / Hiragino Maru Gothic) so the vibe survives. */
+  --font: 'M PLUS Rounded 1c', ui-rounded, 'Hiragino Maru Gothic ProN',
+          'Yu Gothic UI', 'Segoe UI', system-ui, sans-serif;
+  --font-head: 'Mochiy Pop One', 'M PLUS Rounded 1c', ui-rounded,
+               'Hiragino Maru Gothic ProN', 'Segoe UI', system-ui, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
           'Liberation Mono', monospace;
 }
@@ -101,10 +105,10 @@ body.emc {
 /* --------------------------------------------------------------------------
    3. Typography
    -------------------------------------------------------------------------- */
-.emc h1, .emc h2, .emc h3, .emc h4 { line-height: 1.3; font-weight: 800; margin: 0; color: var(--text); font-family: var(--font-head); }
-.h-hero  { font-size: clamp(1.8rem, 4.6vw, 2.5rem); letter-spacing: -.01em; }
-.h-topic { font-size: clamp(1.5rem, 3.6vw, 2rem); letter-spacing: -.01em; }
-.h-sec   { font-size: clamp(1.15rem, 2.3vw, 1.4rem); margin-bottom: .5rem; }
+.emc h1, .emc h2, .emc h3, .emc h4 { line-height: 1.35; font-weight: 400; margin: 0; color: var(--text); font-family: var(--font-head); letter-spacing: .01em; }
+.h-hero  { font-size: clamp(1.6rem, 4.2vw, 2.25rem); }
+.h-topic { font-size: clamp(1.35rem, 3.2vw, 1.8rem); }
+.h-sec   { font-size: clamp(1.08rem, 2.1vw, 1.3rem); margin-bottom: .5rem; }
 .h-sub   { font-size: 1.05rem; margin: 1.2rem 0 .4rem; font-weight: 800; }
 .lede    { color: var(--text-dim); font-size: 1rem; max-width: 62ch; }
 .muted   { color: var(--text-dim); }
@@ -116,7 +120,7 @@ body.emc {
 
 .eyebrow {
   display: inline-block;
-  font-size: .74rem; font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  font-size: .74rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
   color: var(--pk);
 }
 .eyebrow-amber, .eyebrow-violet { color: var(--pk); }
@@ -145,7 +149,7 @@ a.link:hover { color: #cfe9f2; }
 }
 .nav-inner { display: flex; align-items: center; gap: 1rem; min-height: var(--header-h); }
 
-.brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; color: var(--text); font-weight: 800; font-family: var(--font-head); }
+.brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; color: var(--text); font-weight: 400; font-family: var(--font-head); }
 .brand-mark { width: 34px; height: 34px; flex: none; }
 .brand-name { font-size: 1.02rem; line-height: 1.15; }
 .brand-name em { font-style: normal; color: var(--pk); }
@@ -191,7 +195,7 @@ a.link:hover { color: #cfe9f2; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
   padding: .55rem 1.15rem; border-radius: 999px; cursor: pointer;
-  font: inherit; font-size: .92rem; font-weight: 800; text-decoration: none;
+  font: inherit; font-size: .92rem; font-weight: 700; text-decoration: none;
   border: 2px solid var(--edge); background: var(--panel-2); color: var(--text);
   user-select: none; -webkit-tap-highlight-color: transparent;
   transition: transform .12s ease, border-color .15s ease, background .15s ease;
@@ -247,7 +251,7 @@ a.link:hover { color: #cfe9f2; }
   padding: .75rem 1.1rem; border-bottom: 1.5px solid var(--line);
   background: var(--panel-2);
 }
-.panel-title { font-size: 1rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: .55rem; }
+.panel-title { font-size: .98rem; font-weight: 400; margin: 0; display: flex; align-items: center; gap: .55rem; }
 .panel-title .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sk); flex: none; }
 .panel-sub { font-size: .8rem; color: var(--text-faint); margin: 0; }
 .panel-body { padding: .95rem; }
