@@ -68,8 +68,15 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Mobile (390 px, touch): no horizontal scrolling anywhere; slider thumbs are the large
       coarse-pointer size; hero buttons stack full-width; KaTeX display maths scrolls inside its
       card instead of overflowing the page; the open nav menu clears the home-indicator area
-- [ ] With a licensed FOT-Yuruka Std kit/woff2 present, headings and body render in Yuruka;
-      without it, Mochiy Pop One / M PLUS Rounded 1c render and nothing shifts layout-wise
+- [ ] Font manifest flow: with licensed `.ttf`s (G8321-*, LilitaOne-*, fot-yuruka-*) plus a
+      scanned manifest served over http(s), the console logs one info line per activated face;
+      h1 computed family = "Lilita One", body = "FOT-Yuruka Std", labels = "M PLUS Rounded 1c";
+      with the manifest empty the site falls back with a single *info* line and
+      **no 404s and no errors**; on `file://` Chrome falls back silently (custom fonts are
+      blocked there by design)
+- [ ] Exponents never scatter: `sup`/`sub` are CSS-positioned (relative, metric-independent),
+      so formula lists stay intact under any activated face; the home-page "Physics inside the
+      code" card is additionally typeset by KaTeX when available
 - [ ] Keyboard: `Tab` reaches every control; quiz options respond to arrow keys; focus rings visible
 
 ### 2.2 Topic 1 — Charges & fields
@@ -123,7 +130,14 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 
 ### 2.7 Quiz & progress
 - [ ] 25 questions render; each shows its topic tag
-- [ ] Answering updates the "n of 20 answered" bar
+- [ ] Answering updates the "n of 25 answered" bar and starts the quiz clock; the score card
+      shows total time, seconds-per-question and best streak
+- [ ] Instant mode: two consecutive correct answers reveal the streak chip (×2) and the burst
+      ring; every graded feedback box shows the reacting mascot and the time spent
+- [ ] Keyboard: with a question on screen, keys 1–4 (or A–D) select an option, Enter submits,
+      N jumps to the next blank
+- [ ] Circuit builder and induction lab show a "Predict, then run" strip: answering highlights
+      the simulator-computed correct choice, and "Try it" performs the change on the live sim
 - [ ] Submitting with blanks warns once and highlights the first blank; submitting again grades
 - [ ] All correct → 100 %, all wrong → 0 %, half → 50 %; the per-topic breakdown matches
 - [ ] Explanations appear under every graded question; correct option is always revealed

@@ -468,7 +468,7 @@
       list.push({
         text: `Predict: rewire the bank from <b>${state.topology}</b> to <b>${other}</b> (same resistors, bulb still in circuit). The total current from the battery will…`,
         answer: dirOf(A.Itotal, H.Itotal),
-        explain: `R<sub>eq</sub> goes ${state.topology === 'series' ? 'down (parallel branches add paths)' : 'up (one long path again)'}: ${fixed(A.Rbank, 2)} Ω → ${fixed(H.Rbank, 2)} Ω, so I goes ${DIRS[dirOf(A.Itotal, H.Itotal)]}.`,
+        explain: `R<sub>eq</sub> goes ${state.topology === 'series' ? 'down (parallel branches add paths)' : 'up (one long path again)'}: ${fixed(A.Rbank, 2)} Ω → ${fixed(H.Rbank, 2)} Ω, so the total current will ${DIRS[dirOf(A.Itotal, H.Itotal)]}.`,
         apply: () => { const b = document.querySelector(`#circ-topology [data-value="${other}"]`); if (b) b.click(); }
       });
     }
@@ -477,7 +477,7 @@
       list.push({
         text: 'Predict: <b>double every resistance</b> in the circuit (bank and bulb). The total current will…',
         answer: dirOf(A.Itotal, H.Itotal),
-        explain: `Ohm's law with V fixed: I = V/R, and every R doubled, so I ${DIRS[dirOf(A.Itotal, H.Itotal)]} — exactly ${fixed(A.Itotal / H.Itotal, 2)}× here.`,
+        explain: `Ohm's law with V fixed: I = V/R, and every R doubled, so the total current will ${DIRS[dirOf(A.Itotal, H.Itotal)]} — exactly ${fixed(A.Itotal / H.Itotal, 2)}× here.`,
         apply: () => { state.resistors = state.resistors.map(r => r * 2); state.bulbR *= 2; renderRows(); refresh(); }
       });
     }
@@ -486,7 +486,7 @@
       list.push({
         text: 'Predict: <b>bypass the bulb</b> (uncheck “include the bulb”). The total current will…',
         answer: dirOf(A.Itotal, H.Itotal),
-        explain: `Removing a series resistance lowers R<sub>total</sub> from ${fixed(A.Rtotal, 2)} Ω to ${fixed(H.Rtotal, 2)} Ω, so I must ${DIRS[dirOf(A.Itotal, H.Itotal)]}.`,
+        explain: `Removing a series resistance lowers R<sub>total</sub> from ${fixed(A.Rtotal, 2)} Ω to ${fixed(H.Rtotal, 2)} Ω, so the total current must ${DIRS[dirOf(A.Itotal, H.Itotal)]}.`,
         apply: () => { const c = el('circ-includeBulb'); if (c) { c.checked = false; c.dispatchEvent(new Event('change')); } }
       });
     }

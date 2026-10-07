@@ -75,7 +75,9 @@ emc-physics-tutorial/
 │   └── schema.sql                 Manual MySQL setup script
 ├── tools/
 │   ├── check-links.mjs            Static validator (links, ids, data-hooks, CSS coverage)
-│   └── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
+│   ├── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
+│   ├── add-font.mjs               Registers licensed .ttf faces in vendor/fonts/manifest.json
+│   └── switch-css.mjs             Swaps Tailwind delivery mode (cdn <-> built)
 ├── vercel.json                    Vercel config: cache headers for static assets
 ├── tailwind.config.js             Optional production Tailwind build (npm run build:css)
 ├── vendor/
@@ -103,7 +105,8 @@ Total: ~8,000 lines across 6 pages, 2 stylesheets and 11 scripts. No framework, 
 | Sim 3 — induction: magnet through a coil | `js/sim-induction.js`: exact on-axis dipole flux, Faraday EMF, centre-zero galvanometer, ⊙/ current symbols, scrolling Φ and EMF strip charts, drag/push/oscillate modes |
 | Extra simulations (4 more) | Coulomb bench, field explorer, bar-magnet lab, Lorentz-force lab |
 | Tutorials with explanations, diagrams, formulas, real-world examples | Each topic page: objectives → theory → SVG figures → worked examples → applications → misconceptions → self-check reveals |
-| Quiz with ≥ 10 MCQs, automatic scoring + feedback | 25 questions, exam *or* instant marking, per-question explanations, per-topic breakdown, grade bands, review-incorrect filter, shuffle, retake |
+| Quiz with ≥ 10 MCQs, automatic scoring + feedback | 25 questions, exam *or* instant marking, per-question explanations, per-topic breakdown, grade bands, review-incorrect filter, shuffle, retake, **quiz clock with per-question splits, correct-streak counter with a pastel burst, keyboard flow (1–4/A–D, Enter, N)** and a reacting mascot in every graded feedback |
+| Predict-then-run challenges | The circuit builder and the induction lab ask you to predict an outcome; the **simulator itself computes the answer** from its live analysis, then a "Try it" button performs the change so the readouts confirm it |
 | Chart.js score visualisation | Doughnut (correct/incorrect), horizontal bars (score per topic), line (attempt history) on the score card; CSS-bar fallback when the CDN is unreachable |
 | p5.js simulation | Bonus AC-generator lab on Topic 4 (`js/sim-generator.js`, p5 instance mode); notice fallback offline |
 | Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; degrades gracefully to memory when storage is blocked. Deliberately backend-free |
@@ -197,14 +200,17 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   large radii, pill buttons, and a small bobbing mascot ("Denki-chan") that appears in the hero,
   above each topic title, and as the brand mark. The palette is a warm charcoal base with the
   reference site's own candy pastels (pink `#f8aebe`, lilac `#d5b8d8`, green `#b5d777`,
-  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography prefers **FOT-Yuruka Std**
-  (Fontworks — a *commercial* face, so it is never bundled): the moment you licence it via an
-  Adobe Fonts kit (paste the kit link into the commented slot in each page head) or drop webfont
-  files into `vendor/fonts/` and uncomment the `@font-face` template at the bottom of
-  `css/styles.css`, every heading and paragraph switches to it with zero other changes.
-  Until then the cute anime / maru-gothic fallbacks carry the look: **Mochiy Pop One** for
-  headings and the brand, **M PLUS Rounded 1c** for body text, then system rounded faces
-  (`ui-rounded`, Hiragino Maru Gothic) offline. Motion is limited to the mascot's bob
+  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography is a
+  three-family rounded system — diverse but coherent: **Lilita One** for poster moments
+  (hero title, topic titles, score grade), **FOT-Yuruka Std** in real weights (Thin 100 …
+  Black 900, recognised via the `G8321-*` family code) for headings, body and buttons, and
+  **M PLUS Rounded 1c** for small labels and tags. Licensed faces activate through a
+  committed manifest: drop the `.ttf`s into `vendor/fonts/`, `npm run font:scan`, commit and
+  push — `js/common.js` registers every entry via the FontFace API and logs one info line per
+  face; duplicate family+weight entries resolve to the larger, more complete file. Without
+  the licensed faces, the vendored open fallbacks (Mochiy Pop One + M PLUS Rounded 1c, woff2
+  in `vendor/fonts/`, no CDN) carry the identical design. `sup`/`sub` are positioned by CSS
+  rather than font metrics, so no activated face can ever scatter exponents. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
 * **Equations are real LaTeX, with zero network risk.** **KaTeX is vendored locally**
@@ -251,6 +257,7 @@ npm install          # dev/server deps: jsdom (tests), express + mysql2 (optiona
 npm run check        # static validation: links, ids, data-hooks, CSS coverage
 npm test             # 177 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
+npm run font:scan    # register your licensed fot-yuruka-std.ttf in the font manifest
 npm run build:css    # optional: compile Tailwind utilities statically
 npm run switch:built # optional: point pages at the compiled CSS
 npm run switch:cdn   # back to the CDN default

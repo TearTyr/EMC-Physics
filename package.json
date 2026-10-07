@@ -7,7 +7,8 @@
     "test": "node tools/smoke-test.mjs",
     "build:css": "npx -y tailwindcss@3.4.10 -c tailwind.config.js -i css/tailwind.input.css -o css/tailwind.generated.css --minify",
     "switch:cdn": "node tools/switch-css.mjs cdn",
-    "switch:built": "node tools/switch-css.mjs built"
+    "switch:built": "node tools/switch-css.mjs built",
+    "font:scan": "node tools/add-font.mjs"
   },
   "devDependencies": {
     "jsdom": "^27.0.0"

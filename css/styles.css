@@ -61,15 +61,33 @@
      each page head) or by self-hosting licensed woff2 in vendor/fonts/ (see
      the @font-face template at the bottom of this file). Until then the
      rounded fallbacks below keep the same maru-gothic personality. */
+  /* A three-family rounded system that stays coherent:
+       display  — Lilita One        : hero/topic titles, score grade (poster pop)
+       head/UI  — FOT-Yuruka Std    : headings, brand, panel titles, buttons
+       text     — FOT-Yuruka Std    : body prose (real 400/500/700 weights)
+       labels   — M PLUS Rounded 1c : eyebrows, tags, stat labels, seg controls
+       numbers  -- the mono stack    : readouts, tables, equations fallback
+     Every family degrades to the vendored open faces, then system rounded. */
   --font: 'FOT-Yuruka Std', 'M PLUS Rounded 1c', ui-rounded,
           'Hiragino Maru Gothic ProN', 'Yu Gothic UI', 'Segoe UI', system-ui, sans-serif;
   --font-head: 'FOT-Yuruka Std', 'Mochiy Pop One', 'M PLUS Rounded 1c', ui-rounded,
                'Hiragino Maru Gothic ProN', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Lilita One', 'Mochiy Pop One', 'FOT-Yuruka Std', ui-rounded,
+                  'Hiragino Maru Gothic ProN', 'Segoe UI', system-ui, sans-serif;
+  --font-label: 'M PLUS Rounded 1c', 'FOT-Yuruka Std', ui-rounded,
+                'Hiragino Maru Gothic ProN', 'Segoe UI', system-ui, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
           'Liberation Mono', monospace;
 }
 
 ::selection { background: var(--ye); color: #221d07; }
+
+/* sup/sub positioned by CSS, NOT by font metrics: vertical-align:super/sub
+   reads the face's OS/2 superscript values, and display faces (Yuruka) can
+   carry extremes that scatter exponents across the line box. */
+sup, sub { vertical-align: baseline; position: relative; line-height: 0; font-size: .72em; }
+sup { top: -.55em; }
+sub { bottom: -.3em; }
 
 /* --------------------------------------------------------------------------
    2. Base
@@ -111,9 +129,9 @@ body.emc {
 /* --------------------------------------------------------------------------
    3. Typography
    -------------------------------------------------------------------------- */
-.emc h1, .emc h2, .emc h3, .emc h4 { line-height: 1.35; font-weight: 400; margin: 0; color: var(--text); font-family: var(--font-head); letter-spacing: .01em; }
-.h-hero  { font-size: clamp(1.6rem, 4.2vw, 2.25rem); }
-.h-topic { font-size: clamp(1.35rem, 3.2vw, 1.8rem); }
+.emc h1, .emc h2, .emc h3, .emc h4 { line-height: 1.35; font-weight: 700; margin: 0; color: var(--text); font-family: var(--font-head); letter-spacing: .01em; }
+.emc .h-hero  { font-size: clamp(1.7rem, 4.4vw, 2.5rem); font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; }
+.emc .h-topic { font-size: clamp(1.45rem, 3.4vw, 2rem); font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; }
 .h-sec   { font-size: clamp(1.08rem, 2.1vw, 1.3rem); margin-bottom: .5rem; }
 .h-sub   { font-size: 1.05rem; margin: 1.2rem 0 .4rem; font-weight: 800; }
 .lede    { color: var(--text-dim); font-size: 1rem; max-width: 62ch; }
@@ -125,7 +143,7 @@ body.emc {
 .center  { text-align: center; }
 
 .eyebrow {
-  display: inline-block;
+  display: inline-block; font-family: var(--font-label);
   font-size: .74rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
   color: var(--pk);
 }
@@ -199,6 +217,7 @@ a.link:hover { color: #cfe9f2; }
    6. Buttons (stickers), segments, tags
    -------------------------------------------------------------------------- */
 .btn {
+  font-family: var(--font-label);
   display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
   padding: .55rem 1.15rem; border-radius: 999px; cursor: pointer;
   font: inherit; font-size: .92rem; font-weight: 700; text-decoration: none;
@@ -222,6 +241,7 @@ a.link:hover { color: #cfe9f2; }
 .btn-group { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
 .seg { display: inline-flex; background: var(--panel-2); border: 2px solid var(--line); border-radius: 999px; padding: 3px; gap: 3px; flex-wrap: wrap; }
 .seg-btn {
+  font-family: var(--font-label);
   border: 0; background: transparent; color: var(--text-dim); cursor: pointer;
   font: inherit; font-size: .84rem; font-weight: 700; padding: .35rem .85rem; border-radius: 999px;
 }
@@ -229,7 +249,7 @@ a.link:hover { color: #cfe9f2; }
 .seg-btn[aria-pressed="true"], .seg-btn.active { background: var(--sk); color: #10222b; font-weight: 800; }
 
 .tag {
-  display: inline-flex; align-items: center; gap: .3rem; padding: .14rem .6rem; border-radius: 999px;
+  display: inline-flex; font-family: var(--font-label); align-items: center; gap: .3rem; padding: .14rem .6rem; border-radius: 999px;
   font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
   background: var(--panel-2); border: 1.5px solid var(--line); color: var(--text-faint);
 }
@@ -270,7 +290,7 @@ a.link:hover { color: #cfe9f2; }
 }
 .topic-num {
   position: absolute; right: .7rem; top: .3rem; font-size: 3.2rem; font-weight: 800;
-  color: rgba(237, 235, 227, .07); line-height: 1; pointer-events: none; font-family: var(--mono);
+  color: rgba(237, 235, 227, .07); line-height: 1; pointer-events: none; font-family: var(--font-display);
 }
 .topic-icon {
   width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
@@ -310,7 +330,7 @@ a.link:hover { color: #cfe9f2; }
   background: var(--panel-2); border: 1.5px solid var(--line-soft);
   border-radius: var(--r-ctl); padding: .5rem .75rem;
 }
-.ctl-label { font-size: .85rem; font-weight: 700; color: var(--text-dim); display: flex; align-items: center; gap: .4rem; }
+.ctl-label { font-family: var(--font-label); font-size: .85rem; font-weight: 700; color: var(--text-dim); display: flex; align-items: center; gap: .4rem; }
 .ctl-label .sym { font-family: var(--mono); color: var(--sk); font-weight: 700; }
 .ctl-value { font-family: var(--mono); font-size: .92rem; font-weight: 700; color: var(--ye); text-align: right; white-space: nowrap; }
 .ctl-range { grid-column: 1 / -1; }
@@ -338,7 +358,7 @@ select.inp { cursor: pointer; }
 
 .readouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: .5rem; }
 .stat { background: var(--panel-2); border: 1.5px solid var(--line-soft); border-radius: var(--r-ctl); padding: .45rem .65rem; min-width: 0; }
-.stat-label { display: block; font-size: .72rem; letter-spacing: .05em; color: var(--text-faint); font-weight: 800; }
+.stat-label { display: block; font-family: var(--font-label); font-size: .72rem; letter-spacing: .05em; color: var(--text-faint); font-weight: 700; }
 .stat-value { display: block; font-family: var(--mono); font-size: 1rem; font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
 .stat-value.tight { font-size: .88rem; line-height: 1.45; }
 .stat-value.hl-cyan { color: var(--sk); } .stat-value.hl-amber { color: var(--ye); }
@@ -382,7 +402,7 @@ table.data td.txt { font-family: var(--font); }
    9. Content blocks
    -------------------------------------------------------------------------- */
 .prose p { margin: 0 0 .75rem; color: var(--text-dim); }
-.prose strong { color: var(--text); font-weight: 800; }
+.prose strong { color: var(--text); font-weight: 700; }
 .prose ul, .prose ol { margin: 0 0 .85rem; padding-left: 1.3rem; color: var(--text-dim); }
 .prose li { margin-bottom: .35rem; }
 .prose li::marker { color: var(--pk); font-weight: 800; }
@@ -520,7 +540,7 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .challenge .q-prompt { font-weight: 700; font-size: .93rem; color: var(--text); }
 
 .score-card { display: flex; gap: 1.4rem; align-items: center; flex-wrap: wrap; }
-.grade { font-size: 2.5rem; font-weight: 800; font-family: var(--mono); line-height: 1; }
+.grade { font-size: 2.6rem; font-weight: 400; font-family: var(--font-display); line-height: 1.1; }
 .score-bar { flex: 1 1 220px; min-width: 200px; }
 
 /* --------------------------------------------------------------------------
@@ -654,13 +674,16 @@ body.emc { overflow-x: clip; }
 }
 
 /* ==========================================================================
-   FOT-Yuruka Std (your licensed .ttf)
+   FOT-Yuruka Std (your licensed .ttf) — how activation works
    --------------------------------------------------------------------------
-   Loaded at runtime by js/common.js (EMC boot) from
-       vendor/fonts/fot-yuruka-std.ttf        (or ../vendor/... on topic pages)
-   using the FontFace API: if the file is present it becomes the primary face
-   everywhere instantly; if absent the request fails SILENTLY (no console
-   noise) and the self-hosted open fonts in css/fonts.css carry the look.
-   To activate: copy your ttf to vendor/fonts/fot-yuruka-std.ttf and push.
-   Bold cut (optional): vendor/fonts/fot-yuruka-std-bold.ttf is picked up too.
+   1. drop the file in   vendor/fonts/fot-yuruka-std.ttf   (Bold: -bold.ttf)
+   2. run                npm run font:scan        (writes manifest.json)
+   3. commit + push      vendor/fonts/
+   js/common.js reads vendor/fonts/manifest.json at boot and registers every
+   listed face through the FontFace API. 'FOT-Yuruka Std' is first in both
+   font stacks, so the whole site switches instantly. Without a manifest
+   entry the bundled open fonts (css/fonts.css) render and the console shows
+   one informational line - never an error, never a 404.
+   Serve over http(s) when testing locally: Chrome blocks custom fonts on
+   file:// URLs (python3 -m http.server works).
    ========================================================================== */

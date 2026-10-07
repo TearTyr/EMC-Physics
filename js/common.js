@@ -601,25 +601,53 @@ window.EMC = (function () {
    * log a 404 on every page load on hosts without the binary).
    */
   function loadLicensedFont() {
-    if (typeof window.FontFace !== 'function' || !window.fetch) return;
-    const bases = ['', '../'];                      // root pages vs topics/
-    const cuts = [['fot-yuruka-std.ttf', 400], ['fot-yuruka-std-bold.ttf', 700]];
-    for (const [file, weight] of cuts) {
-      (async () => {
-        for (const base of bases) {
-          try {
-            const r = await fetch(base + 'vendor/fonts/' + file, { method: 'HEAD' });
-            if (!r.ok) continue;
-            const face = new window.FontFace('FOT-Yuruka Std',
-              `url(${base}vendor/fonts/${file}) format('truetype')`,
-              { weight: String(weight), style: 'normal', display: 'swap' });
-            await face.load();
-            document.fonts.add(face);
-            return;
-          } catch (err) { /* try next base, else stay silent */ }
-        }
-      })();
+    // vendor/fonts/manifest.json (always committed, always 200) lists the
+    // licensed faces present in the repo, so we never probe for files that
+    // might not exist: no 404 noise on hosts without the font.
+    const cssLink = document.querySelector('link[href$="css/styles.css"]');
+    const base = cssLink ? cssLink.getAttribute('href').replace(/css\/styles\.css$/, '') : '';
+    const note = msg => console.info('[EMC] ' + msg);
+    if (typeof window.fetch !== 'function') {          // e.g. jsdom test harness
+      document.documentElement.dataset.yuruka = 'fallback';
+      return;
     }
+    fetch(base + 'vendor/fonts/manifest.json', { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : { licensed: [] }))
+      .then(man => {
+        const cuts = (man && Array.isArray(man.licensed) ? man.licensed : [])
+          .filter(c => c && typeof c.file === 'string');
+        if (!cuts.length || typeof window.FontFace !== 'function') {
+          document.documentElement.dataset.yuruka = 'fallback';
+          note('licensed font not registered - using bundled rounded fallbacks');
+          return;
+        }
+        let activated = false;
+        cuts.forEach(c => {
+          const url = base + 'vendor/fonts/' + c.file;
+          const family = c.family || 'FOT-Yuruka Std';
+          const face = new window.FontFace(family, `url(${url}) format('truetype')`,
+            { weight: String(c.weight || 400), style: 'normal', display: 'swap' });
+          face.load()
+            .then(loaded => {
+              document.fonts.add(loaded);
+              if (family === 'FOT-Yuruka Std' && (c.weight || 400) === 400) {
+                activated = true;
+                document.documentElement.dataset.yuruka = 'active';
+              }
+              note(`font active: ${family} ${c.weight || 400} (${c.file})`);
+            })
+            .catch(() => {
+              if (!activated && (c.weight || 400) === 400) {
+                document.documentElement.dataset.yuruka = 'fallback';
+                note('Yuruka file failed to decode - using bundled rounded fallbacks');
+              }
+            });
+        });
+      })
+      .catch(() => {
+        document.documentElement.dataset.yuruka = 'fallback';
+        note('font manifest unreadable - using bundled rounded fallbacks');
+      });
   }
 
   /** Boot everything that is page-independent. */
