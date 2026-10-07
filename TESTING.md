@@ -53,6 +53,19 @@ UI behaviour, including:
 
 Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 
+### 2.0 Styling architecture
+
+- [ ] `bun run build:css` regenerates `css/site.css` with no diff when nothing changed.
+- [ ] Cascade: add `mt-2` to any `.card h3` in DevTools — computed margin-top becomes `0.5rem`
+      (utilities layer beats the `@layer base` reset). No `!important` needed anywhere.
+- [ ] Mobile (<=900px): open the burger, then open **Topics** — the four topic links expand
+      *in flow* between the Topics button and the pink CTA; nothing overlaps.
+- [ ] Coulomb sim at 390px: hint / E(mid) arrow / F caption / charges / r label / q1 / q2 form
+      seven separated rows — no text sits on top of the charge glyphs.
+- [ ] Fonts: with `vendor/fonts/fot-yuruka-std.ttf`, `G8321-*.ttf` and `LilitaOne-Regular.ttf`
+      present, DevTools > Rendering shows titles in fot-yuruka-std, body in LilitaOne-Regular,
+      buttons/labels in G8321; without them the rounded open-font fallbacks appear.
+
 ### 2.1 Navigation & layout
 - [ ] Home → each topic → quiz links all navigate; the active nav item is highlighted
 - [ ] Under 900 px the nav collapses to a hamburger; it opens, closes on selection, and closes on `Esc`

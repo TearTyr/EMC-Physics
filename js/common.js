@@ -545,8 +545,9 @@ window.EMC = (function () {
     // vendor/fonts/manifest.json (always committed, always 200) lists the
     // licensed faces present in the repo, so we never probe for files that
     // might not exist: no 404 noise on hosts without the font.
-    const cssLink = document.querySelector('link[href$="css/styles.css"]');
-    const base = cssLink ? cssLink.getAttribute('href').replace(/css\/styles\.css$/, '') : '';
+    const cssLink = document.querySelector('link[href$="css/site.css"]') ||
+                  document.querySelector('link[href$="css/fonts.css"]');
+    const base = cssLink ? cssLink.getAttribute('href').replace(/css\/[^/]+$/, '') : '';
     const note = msg => console.info('[EMC] ' + msg);
     if (typeof window.fetch !== 'function') {          // e.g. jsdom test harness
       document.documentElement.dataset.yuruka = 'fallback';

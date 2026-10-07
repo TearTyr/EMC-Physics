@@ -9,9 +9,7 @@
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%2317181c'/%3E%3Cellipse cx='24' cy='27' rx='15' ry='14' fill='%23f6f1e5'/%3E%3Cpath d='M15 16 C13 8 19 6 21 12' fill='%23f6f1e5'/%3E%3Cpath d='M33 16 C35 8 29 6 27 12' fill='%23f6f1e5'/%3E%3Ccircle cx='19' cy='26' r='1.8' fill='%232b2d33'/%3E%3Ccircle cx='29' cy='26' r='1.8' fill='%232b2d33'/%3E%3Cpath d='M22 31 q2 2 4 0' stroke='%232b2d33' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 
-  <script defer src="https://cdn.tailwindcss.com"></script>
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
-  <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/site.css">
   <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
   <link rel="stylesheet" href="css/fonts.css">
@@ -19,7 +17,7 @@
   <link rel="preload" as="font" type="font/woff2" href="vendor/fonts/lilita-one-400.woff2" crossorigin>
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
-  <style>.nav-drop-menu{position:absolute;visibility:hidden;opacity:0}.nav-drop-menu.open{visibility:visible;opacity:1}</style>
+  <style>@media (min-width: 901px){.nav-drop-menu{position:absolute;visibility:hidden;opacity:0}.nav-drop-menu.open{visibility:visible;opacity:1}}</style>
 </head>
 
 <body class="emc">
@@ -241,42 +239,42 @@
         <a class="card card-hover reveal" href="topics/charges.html#sim-coulomb-panel">
           <span class="tag tag-rose">Topic 1</span>
           <h3 class="font-bold mt-2">Coulomb force bench</h3>
-          <p class="small muted">Drag two charges apart and watch the inverse-square force arrows grow and shrink.</p>
+          <p class="small muted mt-2">Drag two charges apart and watch the inverse-square force arrows grow and shrink.</p>
         </a>
         <a class="card card-hover reveal" href="topics/charges.html#sim-efield-panel">
           <span class="tag tag-rose">Topic 1</span>
           <h3 class="font-bold mt-2">Electric field explorer</h3>
-          <p class="small muted">Place any number of charges; field lines, vector grids and a test-charge probe update live.</p>
+          <p class="small muted mt-2">Place any number of charges; field lines, vector grids and a test-charge probe update live.</p>
         </a>
         <a class="card card-hover reveal" href="topics/current.html#sim-ohm-panel">
           <span class="tag tag-amber">Topic 2</span>
           <h3 class="font-bold mt-2">Ohm’s law simulator</h3>
-          <p class="small muted">Auto-ranging ammeter, a bulb that brightens with power, and an I–V characteristic plot.</p>
+          <p class="small muted mt-2">Auto-ranging ammeter, a bulb that brightens with power, and an I–V characteristic plot.</p>
         </a>
         <a class="card card-hover reveal" href="topics/current.html#sim-circuit-panel">
           <span class="tag tag-amber">Topic 2</span>
           <h3 class="font-bold mt-2">Circuit builder</h3>
-          <p class="small muted">Add resistors in series, parallel or a combination; animated current splits correctly between branches.</p>
+          <p class="small muted mt-2">Add resistors in series, parallel or a combination; animated current splits correctly between branches.</p>
         </a>
         <a class="card card-hover reveal" href="topics/magnetism.html#sim-magnet-panel">
           <span class="tag tag-violet">Topic 3</span>
           <h3 class="font-bold mt-2">Bar magnet field lab</h3>
-          <p class="small muted">Field lines, compass needles, vector grids and iron filings around a magnet you can rotate and drag.</p>
+          <p class="small muted mt-2">Field lines, compass needles, vector grids and iron filings around a magnet you can rotate and drag.</p>
         </a>
         <a class="card card-hover reveal" href="topics/magnetism.html#sim-lorentz-panel">
           <span class="tag tag-violet">Topic 3</span>
           <h3 class="font-bold mt-2">Lorentz force &amp; circular motion</h3>
-          <p class="small muted">Protons, electrons and alpha particles curving in a field — plus a right-hand-rule challenge.</p>
+          <p class="small muted mt-2">Protons, electrons and alpha particles curving in a field — plus a right-hand-rule challenge.</p>
         </a>
         <a class="card card-hover reveal" href="topics/induction.html#sim-induction-panel">
           <span class="tag tag-cyan">Topic 4</span>
           <h3 class="font-bold mt-2">Magnet through a coil</h3>
-          <p class="small muted">Exact dipole flux, Faraday’s law, a centre-zero galvanometer and a scrolling Φ/EMF chart.</p>
+          <p class="small muted mt-2">Exact dipole flux, Faraday’s law, a centre-zero galvanometer and a scrolling Φ/EMF chart.</p>
         </a>
         <a class="card card-hover reveal" href="topics/induction.html#sim-generator-panel">
           <span class="tag tag-emerald">Topic 4 · p5.js</span>
           <h3 class="font-bold mt-2">AC generator (bonus lab)</h3>
-          <p class="small muted">A coil spinning in a uniform field: Φ = NBA·cos(2πft) drawn live with p5.js, producing the mains sine wave.</p>
+          <p class="small muted mt-2">A coil spinning in a uniform field: Φ = NBA·cos(2πft) drawn live with p5.js, producing the mains sine wave.</p>
         </a>
         <div class="card card-flat reveal">
           <span class="tag">Physics inside the code</span>

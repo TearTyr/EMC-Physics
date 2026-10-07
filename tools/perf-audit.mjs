@@ -58,8 +58,12 @@ catch { try { puppeteer = (await import('/tmp/node_modules/puppeteer/lib/esm/pup
         catch { console.log('puppeteer not found - install it to run the audit'); server?.close(); process.exit(0); } }
 
 const browser = await puppeteer.launch({
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-  protocolTimeout: 240000
+  headless: 'new',
+  protocolTimeout: 120000,
+  timeout: 90000,
+  dumpio: true,
+  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu',
+         '--single-process', '--no-zygote', '--disable-background-networking']
 });
 async function newPage() {
   for (let i = 0; i < 3; i++) {

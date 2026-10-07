@@ -14,7 +14,7 @@
       bindRange('x', ...)) actually exists on that page.
    5. Every [data-*] hook queried by a page's scripts exists on that page.
    6. Every Tailwind-looking utility class used in the markup is covered by
-      css/tailwind-fallback.css, so the offline layout cannot silently break.
+      css/site.css, so the compiled layout cannot silently break.
    7. Every local anchor (#id) points at an id that exists on the same page.
 
    Exit code is 1 if any error is found (usable as a CI/pre-commit gate).
@@ -142,7 +142,7 @@ for (const file of htmlFiles) {
     for (const cls of m[1].split(/\s+/)) {
       if (!cls) continue;
       // Heuristic: a Tailwind utility contains a responsive/state prefix or a
-      // known utility prefix. Semantic project classes are listed in styles.css.
+      // known utility prefix. Semantic project classes live in css/input.css (@layer components).
       // A variant prefix (md:, hover:, ...) always means Tailwind.
       // Otherwise require a numeric/fractional value or a valueless utility,
       // so semantic project classes like "h-hero" or "ring-wrap" are skipped.

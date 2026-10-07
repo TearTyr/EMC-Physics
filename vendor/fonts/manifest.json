@@ -1,49 +1,59 @@
 {
   "licensed": [
     {
-      "family": "FOT-Yuruka Std",
+      "family": "fot-yuruka-std",
       "file": "fot-yuruka-std.woff2",
       "weight": 400
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "fot-yuruka-std",
       "file": "fot-yuruka-std.ttf",
       "weight": 400
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
       "file": "G8321-Thin.ttf",
       "weight": 100
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
       "file": "G8321-Light.ttf",
       "weight": 300
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
+      "file": "G8321-Regular.ttf",
+      "weight": 400
+    },
+    {
+      "family": "G8321",
       "file": "G8321-Medium.ttf",
       "weight": 500
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
       "file": "G8321-SemiBold.ttf",
       "weight": 600
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
       "file": "G8321-Bold.ttf",
       "weight": 700
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
       "file": "G8321-ExtraBold.ttf",
       "weight": 800
     },
     {
-      "family": "FOT-Yuruka Std",
+      "family": "G8321",
       "file": "G8321-Black.ttf",
       "weight": 900
+    },
+    {
+      "family": "LilitaOne-Regular",
+      "file": "LilitaOne-Regular.ttf",
+      "weight": 400
     }
   ]
 }

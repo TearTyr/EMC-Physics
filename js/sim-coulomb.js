@@ -65,7 +65,7 @@
     ctx.moveTo(x2, midY - 10); ctx.lineTo(x2, midY + 10);
     ctx.stroke();
     ctx.restore();
-    label(ctx, `r = ${r.toFixed(3)} m`, (x1 + x2) / 2, midY + 28, { color: '#cbd5e1', size: 12.5 });
+    label(ctx, `r = ${r.toFixed(3)} m`, (x1 + x2) / 2, midY + 46, { color: '#cbd5e1', size: 12.5 });
 
     /* --- force arrows --- */
     const F = forceMagnitude();
@@ -82,7 +82,7 @@
       arrow(ctx, x2 + dir2 * (r2 + 4), midY, x2 + dir2 * (r2 + 4 + L), midY, { color: col, width: 4, head: 13 });
       // One shared caption: per-arrow labels collide at small separations, and a
       // single label makes the Newton-III point ("same F on both") explicit.
-      label(ctx, `F = ${unit(F, 'N', 3)} on each (equal & opposite)`, (x1 + x2) / 2, midY - 24,
+      label(ctx, `F = ${unit(F, 'N', 3)} on each (equal & opposite)`, (x1 + x2) / 2, midY - 52,
         { color: col, size: 12, weight: '800' });
     }
 
@@ -90,9 +90,9 @@
     chargeGlyph(ctx, x1, midY, r1, state.q1);
     chargeGlyph(ctx, x2, midY, r2, state.q2);
     label(ctx, `q1 = ${state.q1 > 0 ? '+' : ''}${state.q1.toFixed(1)} \u00B5C`,
-      x1, midY + r1 + 24, { color: '#fac0cd', size: 12 });
+      x1, midY + 66, { color: '#f8aebe', size: 12 });
     label(ctx, `q2 = ${state.q2 > 0 ? '+' : ''}${state.q2.toFixed(1)} \u00B5C`,
-      x2, midY + r2 + 24, { color: '#cfe9f2', size: 12 });
+      x2, midY + 86, { color: '#a8d3e0', size: 12 });
 
     /* --- net field at the midpoint --- */
     if (state.showE && Math.abs(fieldAtMidpoint()) > 0) {
@@ -100,9 +100,9 @@
       const mx = (x1 + x2) / 2;
       const eLen = clamp(14 + (Math.log10(Math.abs(E)) + 6) * 9, 14, 60);
       const s = Math.sign(E);
-      arrow(ctx, mx - s * eLen / 2, midY - 46, mx + s * eLen / 2, midY - 46,
+      arrow(ctx, mx - s * eLen / 2, midY - 84, mx + s * eLen / 2, midY - 84,
         { color: '#f6d36b', width: 3, head: 10 });
-      label(ctx, `E(mid) = ${unit(Math.abs(E), 'N/C', 2)}`, mx, midY - 70, { color: '#f6d36b', size: 11.5 });
+      label(ctx, `E(mid) = ${unit(Math.abs(E), 'N/C', 2)}`, mx, midY - 104, { color: '#f6d36b', size: 11.5 });
     }
 
     label(ctx, 'Drag either charge to change r', w / 2, 18,

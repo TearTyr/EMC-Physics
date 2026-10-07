@@ -22,8 +22,10 @@ const WEIGHTS = [
 ];
 function familyOf(file) {
   const f = file.toLowerCase();
-  if (f.startsWith('g8321') || f.includes('yuruka')) return 'FOT-Yuruka Std';
-  return null;   // Lilita One is vendored as woff2 in css/fonts.css; unknown files ignored
+  if (f.startsWith('g8321')) return 'G8321';
+  if (f.includes('yuruka')) return 'fot-yuruka-std';
+  if (f.includes('lilita')) return 'LilitaOne-Regular';
+  return null;   // unknown ttf: ignored on purpose
 }
 function weightOf(file) {
   const f = file.toLowerCase().replace(/\.ttf$/, '');

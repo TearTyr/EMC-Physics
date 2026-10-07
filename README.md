@@ -34,8 +34,8 @@ python3 -m http.server 8000        # or: npx serve .
 Upload the folder to GitHub Pages, Netlify, Vercel or a university web space as-is.
 
 **Requirements:** a modern browser — Chrome 100+, Firefox 100+, Edge 100+ (also Safari 15.4+).
-An internet connection is *optional*: Tailwind loads from a CDN when available, and an identical
-offline stylesheet (`css/tailwind-fallback.css`) takes over when it is not (see §5).
+No internet connection is required at run time: Tailwind is compiled ahead of time into
+`css/site.css`, and every font (including your licensed faces) is served from `vendor/` (see §7).
 
 ---
 
@@ -52,10 +52,9 @@ emc-physics-tutorial/
 │   ├── magnetism.html             Topic 3 — field lines, bar magnets, F = qv×B
 │   └── induction.html             Topic 4 — flux, Faraday, Lenz, magnet through a coil
 ├── css/
-│   ├── styles.css                 Design tokens + all semantic components (the design system)
-│   ├── fonts.css                  @font-face for the vendored open fonts (+ Lilita One)
-│   ├── site.css                   Committed Tailwind build (utilities + Preflight)
-│   └── tailwind.input.css         Build input for the above
+│   ├── input.css                  THE styling source: @layer base/components + @tailwind directives
+│   ├── site.css                   Committed build of input.css (bun run build:css)
+│   └── fonts.css                  @font-face for the vendored open-font fallbacks
 ├── js/
 │   ├── common.js                  Shared engine: constants, HiDPI canvas Stage, pointer input,
 │   │                              SI formatter, localStorage progress, nav/reveal/toasts
@@ -85,7 +84,7 @@ emc-physics-tutorial/
 ├── vendor/
 │   ├── katex/                     Locally vendored KaTeX (js + css + woff2) — no CDN needed
 │   └── fonts/                     Drop-in slot for YOUR licensed fot-yuruka-std.ttf
-│                                  (instructions: vendor/fonts/README.md + css/styles.css footer)
+│                                  (instructions: vendor/fonts/README.md + css/input.css header)
 ├── package.json                   Dev/server scripts: check / test / server / bench / …
 ├── README.md                      This file
 ├── TESTING.md                     Manual + automated testing checklist
@@ -136,67 +135,64 @@ the maths rather than being scripted.
 
 ---
 
-## 5. Using Bun (optional)
-
-Every tool here is plain JavaScript and runs on **Node or Bun** unchanged:
+## 5. Bun is the package manager
 
 ```bash
-bun install                 # fast drop-in for npm install (dev deps only)
-bun tools/check-links.mjs   # static validator
-bun tools/smoke-test.mjs    # runtime harness (jsdom works under Bun)
-bunx serve .                # one-command static server, if you like
+bun install          # installs the single dev dependency (tailwindcss) -> bun.lock
+bun run build:css    # css/input.css -> css/site.css (minified, ~36 kB)
+bun run check        # static validator (links, ids, utility coverage)
+bun run test         # 204-assertion jsdom + browser harness
+bun run perf         # gzip transfer / font payload / blocking-script budgets
+bun run font:scan    # re-read vendor/fonts/ and rewrite the font manifest
 ```
 
-Bun changes nothing about the website itself — it is static files, and the browser executes
-the same bytes either way. (An earlier iteration shipped an optional Express/Bun progress
-server; it was removed so the project stays backend-free, exactly as the brief asks.)
+Everything else is plain static files; Bun and Node produce identical output, but the
+project standardises on Bun (`bun.lock` is committed and Vercel detects it).
 
 ## 6. Hosting on Vercel
 
-Plain static files, so hosting is two minutes:
+`vercel.json` pins the whole pipeline so a deploy is reproducible from a bare clone:
 
-1. Push the folder to GitHub (already done: `TearTyr/EMC-Physics`).
-2. Vercel → **Add New… → Project** → import → Framework preset **Other**, Build Command and
-   Output Directory left **empty** → **Deploy**.
-3. Done: `https://emc-physics.vercel.app`. Every later `git push` redeploys automatically.
+* `installCommand: bun install` — Vercel detects `bun.lock` and uses Bun.
+* `buildCommand: bun run build:css` — `css/site.css` is **recompiled on every deploy**
+  from `css/input.css`, so committed CSS can never drift from the markup.
+* Headers: `/css/` and `/js/` are `no-cache` (304 when unchanged) so fresh HTML can never
+  pair with a stale stylesheet; `/vendor/` (KaTeX, fonts) caches for a day.
+* Each page carries one line of inline critical CSS — scoped to `@media (min-width: 901px)` —
+  that keeps the Topics dropdown collapsed even if a stale stylesheet were ever served.
 
-`vercel.json` contributes the only tuning worth having: `/css/` and `/js/` are served
-  `no-cache` (revalidate every hit, 304 when unchanged) so a fresh HTML can never pair with a
-  stale stylesheet; `/vendor/` (KaTeX, fonts) caches for a day. Each page also carries one line
-  of inline critical CSS that keeps the Topics dropdown collapsed even if a stale stylesheet
-  were ever served. Progress is localStorage-only by design — there is no backend to
-configure, no database, and nothing that can incur cost.
+Progress is localStorage-only by design: no backend, no database, nothing that can incur cost.
 
-## 7. Tailwind: how it is wired (and how to see it)
+## 7. Styling architecture — one source, three cascade layers
 
-Tailwind **is** the styling system — it just shares the stage with two other layers, which is
-why a first look at `css/` can be misleading:
+All styling lives in **`css/input.css`**, compiled by the Tailwind CLI into `css/site.css`.
+There is no second stylesheet to fight with: the file is organised as
 
-| Layer | File / tag | Role |
+| Layer | Contents | Loses to |
 |---|---|---|
-| 1 · Tailwind utilities | `<script src="https://cdn.tailwindcss.com">` in every `<head>` + inline `tailwind.config` | layout primitives written straight in the markup: `grid grid-cols-1 md:grid-cols-2 gap-4`, `flex items-center justify-between`, `text-sm`, `mt-6`, `rounded-xl`, … |
-| 2 · Component design system | `css/styles.css` | the *look*: dark lab theme, panels, sliders, readouts, quiz cards, progress ring. Deliberately semantic (`.panel`, `.ctl`, `.q-card`) so the design lives in one reviewed file |
-| 3 · Offline mirror | `css/tailwind-fallback.css` | a value-for-value copy of exactly the utilities layer 1 uses, so a blocked CDN (offline, `file://`, strict CSP) cannot break the layout |
+| `@layer base` | colour/shape tokens, the three font stacks, element resets (`h1…h4 {margin:0}`, list padding, `sup/sub` positioning) | components **and** utilities |
+| `@layer components` | the sticker design system: `.card`, `.panel`, `.ctl`, `.q-card`, `.opt`, nav, mascot, the 640/900/1200 media queries | utilities |
+| `@layer utilities` | Tailwind's own output — every utility used in markup (`mt-2`, `gap-4`, `md:grid-cols-2`, …) | nothing |
 
-Proof it is live: `node tools/check-links.mjs` prints
-`Tailwind utilities . 18 used, 18 covered offline`; in DevTools, any element with
-`md:grid-cols-2` shows its computed grid coming from the `<style>` tag the Play CDN injects;
-and blocking the CDN leaves the page pixel-identical because layer 3 takes over.
+Because CSS cascade layers order **base < components < utilities**, a utility class in the
+markup always wins over an element reset or a component rule of equal specificity — that is
+the whole specificity-conflict story, solved by architecture instead of `!important`.
+`bun run check` proves coverage: it lists every utility class used in the six pages and
+verifies each one exists in the compiled `css/site.css`.
 
-**Production variant (optional).** The Play CDN compiles in the browser and logs a warning on
-production domains. For Vercel/Netlify you can compile the same utilities once instead:
+### Type system (exactly three families)
 
-```bash
-npm run build:css          # tailwindcss CLI -> css/tailwind.generated.css (minified, ~7 kB)
-node tools/switch-css.mjs built   # repoint the six pages (drops the CDN + fallback sheet)
-node tools/switch-css.mjs cdn     # ...and back to the CDN default (assignment requirement)
-```
+| Role | Family | Source |
+|---|---|---|
+| Titles / bold text | `fot-yuruka-std` | your licensed `fot-yuruka-std.ttf` (or its woff2 subset), loaded at runtime from `vendor/fonts/manifest.json` |
+| Normal text | `LilitaOne-Regular` | your `LilitaOne-Regular.ttf`; vendored `lilita-one-400.woff2` answers to the same family as fallback |
+| UI, labels, buttons | `G8321` | your `G8321-*.ttf` weight family (Thin…Black), manifest-loaded |
 
-Both modes were rendered in a browser with **every external request blocked** and produced the
-same layout (2-column topic grid, correct type scale, zero console errors). The repo ships in
-`cdn` mode because the brief asks for Tailwind *via CDN*.
-
----
+The stacks live once in `tailwind.config.js` (`fontFamily.title / sans / ui`) and are pulled
+into CSS with `theme('fontFamily.…')`, so config and output can never disagree. Open rounded
+faces (Mochiy Pop One, M PLUS Rounded 1c) remain only as last-resort fallbacks for machines
+without your licensed files. Run `python3 tools/subset_font.py` once to turn the 4.5 MB Yuruka
+TTF into a ~50 kB woff2 that the manifest prefers automatically.
 
 ## 8. Engineering notes
 
@@ -233,16 +229,18 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   not in the canvas code (charges, magnets, bulbs and particles are flat pastel stickers).
   `tools/smoke-test.mjs` enforces this: it fails if `createLinearGradient`,
   `createRadialGradient`, `shadowBlur`, `backdrop-filter` or a CSS gradient ever reappear.
-* **Styling.** Tailwind utilities are compiled once with the official CLI into a committed
-  `css/site.css` — deterministic, offline-safe, no in-browser compile. `tailwind.config.js`
-  scans the markup plus `js/quiz.js` (the one script that injects utility classes) and
-  blocklists prose words that collide with utility names (`table`, `filter`, `ring`, …).
-  The Play CDN tag stays in each head as the brief's "Tailwind via CDN" path;
-  `npm run switch:built` removes it for production-pure deploys and `switch:cdn` restores it.
-  All component design lives in `css/styles.css`, linked after, with class selectors that beat
-  Preflight. One breakpoint system everywhere: **640 / 900 / 1200 px**, shared by the Tailwind
-  config and `styles.css`. Accent colours derive from one variable per hue (`--c/--ct/--ce`),
-  so tags, callouts, accents and readout highlights never hard-code a tint again.
+* **Styling.** A single source file, `css/input.css`, holds `@layer base` (tokens, font stacks,
+  element resets), `@layer components` (the whole sticker design system) and the three
+  `@tailwind` directives; `bun run build:css` compiles it to the committed `css/site.css`
+  (also re-run by Vercel on every deploy). Cascade layers guarantee utilities > components >
+  base, which is what makes `mt-2`-style markup utilities win without `!important`.
+  `tailwind.config.js` scans the markup plus `js/quiz.js` (the one script that injects utility
+  classes) and blocklists prose words that collide with utility names (`table`, `filter`,
+  `ring`, …). One breakpoint system everywhere: **640 / 900 / 1200 px**, shared by the config
+  and the component media queries. Accent colours derive from one variable per hue
+  (`--c/--ct/--ce`), so tags, callouts, accents and readout highlights never hard-code a tint.
+  `node tools/switch-css.mjs cdn` can still add the Play CDN tag if a rubric literally demands
+  "Tailwind via CDN"; `… built` (the shipped default) removes it again.
 * **Canvas engine.** `EMC.Stage` (`js/common.js`) wraps each `<canvas>`: device-pixel-ratio
   scaling, resize observation, an auto-pausing `requestAnimationFrame` loop, and unified
   pointer events (mouse + touch + pen) with pointer capture for drags. Render functions draw in

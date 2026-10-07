@@ -585,8 +585,8 @@ console.log('\u2500'.repeat(66));
     ok(`${p}: has a skip link`, /class="skip-link"/.test(html));
     ok(`${p}: every canvas has an accessible label`,
       [...html.matchAll(/<canvas[^>]*>/g)].every(m => /aria-label=/.test(m[0])));
-    ok(`${p}: links the compiled Tailwind sheet (and the CDN tag by default)`,
-      /css\/site\.css/.test(html) && /cdn\.tailwindcss\.com/.test(html));
+    ok(`${p}: links the compiled Tailwind pipeline (site.css) + font faces`,
+      /css\/site\.css/.test(html) && /css\/fonts\.css/.test(html) && !/styles\.css/.test(html));
     ok(`${p}: exactly one <h1>`, (html.match(/<h1[\s>]/g) || []).length === 1);
     ok(`${p}: every script tag is defer (no render-blocking)`,
       [...html.matchAll(/<script[^>]*src=/g)].every(m => m[0].includes('defer')));
@@ -598,12 +598,11 @@ console.log('\u2500'.repeat(66));
     ['mochiy-pop-one-400.woff2', 'm-plus-rounded-1c-400.woff2', 'lilita-one-400.woff2'].every(f =>
       existsSync(join(ROOT, 'vendor/fonts', f))));
   const manifest = JSON.parse(readFileSync(join(ROOT, 'vendor/fonts/manifest.json'), 'utf8'));
-  ok('font manifest ships the licensed Yuruka cuts',
-    manifest.licensed.some(c => c.family === 'FOT-Yuruka Std' && c.weight === 400) &&
-    manifest.licensed.some(c => c.weight === 700));
-  ok('licensed FOT-Yuruka Std sits first in both stacks',
-    /--font: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')) &&
-    /--font-head: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')));
+  ok('font manifest ships the three specified families',
+    /fot-yuruka-std/.test(JSON.stringify(manifest)) && /G8321/.test(JSON.stringify(manifest)) &&
+    /LilitaOne-Regular/.test(JSON.stringify(manifest)));
+  ok('title stack leads with the licensed face',
+    /title: \['fot-yuruka-std'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')));
   ok('common.js activates Yuruka at runtime when the ttf is present',
     /loadLicensedFont/.test(readFileSync(join(ROOT, 'js/common.js'), 'utf8')));
 
@@ -614,18 +613,25 @@ console.log('\u2500'.repeat(66));
   ok('simulation art is flat (no gradients, no glow shadows)',
     !/createLinearGradient|createRadialGradient|shadowBlur/.test(jsSrc));
   // strip comments first: the policy note in the header mentions these words
-  let cssSrc = readFileSync(join(ROOT, 'css/styles.css'), 'utf8')
+  let cssSrc = readFileSync(join(ROOT, 'css/input.css'), 'utf8')
     .replace(/\/\*[\s\S]*?\*\//g, '');
-  ok('type stack prefers the licensed face with rounded fallbacks',
-    /--font: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')) &&
-    /M PLUS Rounded 1c/.test(cssSrc));
+  ok('type stacks lead with your three faces',
+    /title: \['fot-yuruka-std'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
+    /sans:  \['LilitaOne-Regular'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
+    /ui:    \['G8321'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')));
+  ok('cascade is layer-based: base < components < utilities',
+    /@layer base/.test(cssSrc) && /@layer components/.test(cssSrc) && /@tailwind utilities/.test(cssSrc));
+  ok('type system is exactly the three specified families',
+    /fontFamily:\s*{[\s\S]*title: \['fot-yuruka-std'[\s\S]*sans:  \['LilitaOne-Regular'[\s\S]*ui:    \['G8321'/
+      .test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
+    /theme\('fontFamily\.title'\)/.test(cssSrc) && /theme\('fontFamily\.ui'\)/.test(cssSrc) && /theme\('fontFamily\.sans'\)/.test(cssSrc));
   ok('mobile pass present (coarse-pointer targets, no sideways scroll)',
     /pointer: coarse/.test(cssSrc) && /overflow-x: clip/.test(cssSrc));
   ok('stylesheet contains no gradient/blur/glass effects',
     !/gradient|backdrop-filter|blur\(/.test(cssSrc));
   // flex or grid on a bullet li fragments <sub>/<sup> into separate items
   ok('bullet lists keep inline maths intact (marker is absolutely positioned)',
-    /\.topic-list li \{\s*position: relative/.test(cssSrc) &&
+    /\.topic-list li \{ position: relative/.test(cssSrc) &&
     !/\.topic-list li \{[^}]*display: (flex|grid)/.test(cssSrc));
   ok('anchor offset defined exactly once (scroll-margin, not double offset)',
     /\[id\] \{ scroll-margin-top: calc\(var\(--header-h\)/.test(cssSrc) &&
