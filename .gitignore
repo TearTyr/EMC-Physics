@@ -1,12 +1,9 @@
 # --- dependencies & tooling (never commit these) ---
 node_modules/
-package-lock.json.bak
+package-lock.json        # project is Bun-only; bun.lock is the one true lockfile
 .vercel/                 # local Vercel CLI project link
 .DS_Store
 Thumbs.db
-
-# --- runtime data from the optional sync server ---
-server/data/             # JSON-driver records (local dev only)
 
 # --- editors / logs ---
 *.log

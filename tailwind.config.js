@@ -3,13 +3,14 @@
    fontFamily mirrors the specified type system:
      title -> fot-yuruka-std (licensed TTF via manifest)   [bold/titles]
      sans  -> LilitaOne-Regular (your TTF, woff2 fallback) [normal text]
-     ui    -> G8321 (your Yuruka weight family)            [UI, labels]      */
+     ui    -> G8321 (your Yuruka weight family)            [UI, labels]
+   blocklist protects hand-written component class names from being
+   shadowed by generated utilities (it is a TOP-LEVEL option — inside
+   `content` it is invalid and triggers the purge/content warning).    */
 export default {
-  content: {
-    files: ['./*.html', './topics/*.html', './js/quiz.js'],
-    blocklist: ['container', 'collapse', 'resize', 'filter', 'transform',
-                'table', 'ring', 'summary', 'content', 'order', 'grow', 'shrink']
-  },
+  content: ['./*.html', './topics/*.html', './js/quiz.js'],
+  blocklist: ['container', 'collapse', 'resize', 'filter', 'transform',
+              'table', 'ring', 'summary', 'content', 'order', 'grow', 'shrink'],
   theme: {
     screens: { sm: '640px', md: '900px', lg: '1200px' },
     extend: {

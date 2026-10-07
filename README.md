@@ -8,9 +8,10 @@ score analytics. Fully static: no backend, no build step, no required dependenci
 > Every number on every screen is computed from the real equations (Coulomb's law, Ohm's law,
 > the dipole field, Faraday's law). Nothing is animated by hand.
 >
-> **Stack:** HTML + CSS + vanilla JavaScript, Tailwind CSS (CDN), native Canvas 2D for the core
-> sims, **p5.js** for the bonus AC-generator lab, **Chart.js** for quiz analytics, and an
-> optional **Node/Express + MySQL** backend. The website itself still opens straight from the
+> **Stack:** HTML + CSS + vanilla JavaScript, Tailwind CSS compiled locally
+> (`css/input.css` → `css/site.css` via the Tailwind CLI), native Canvas 2D for the core
+> sims, **p5.js** for the bonus AC-generator lab, and **Chart.js** for quiz analytics.
+> The website itself still opens straight from the
 > file system: every library has a tested offline fallback.
 
 ---
@@ -69,29 +70,27 @@ emc-physics-tutorial/
 │   ├── sim-generator.js           Sim 8 — AC generator, rendered with p5.js (bonus lab)
 │   ├── quiz-data.js               25 questions with worked explanations
 │   └── quiz.js                    Quiz engine: marking modes, scoring, Chart.js analytics
-├── server/
-│   ├── lib.js                     Shared API logic: stores, merge rule, sanitising, cache policy
-│   ├── index.js                   Optional Express API + static host (Node flavour)
-│   ├── bun-server.js              The same server on Bun.serve (faster flavour, no Express)
-│   └── schema.sql                 Manual MySQL setup script
 ├── tools/
 │   ├── check-links.mjs            Static validator (links, ids, data-hooks, CSS coverage)
 │   ├── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
+│   ├── perf-audit.mjs             Transfer-size / blocking-script / font-payload budgets
 │   ├── add-font.mjs               Registers licensed .ttf faces in vendor/fonts/manifest.json
+│   ├── subset_font.py             Subsets the 4.5 MB fot-yuruka-std.ttf down to a ~50 KB woff2
 │   └── switch-css.mjs             Swaps Tailwind delivery mode (cdn <-> built)
-├── vercel.json                    Vercel config: cache headers for static assets
-├── tailwind.config.js             Optional production Tailwind build (npm run build:css)
+├── vercel.json                    Vercel config: install/build commands + cache headers
+├── tailwind.config.js             Tailwind pipeline config (bun run build:css)
 ├── vendor/
 │   ├── katex/                     Locally vendored KaTeX (js + css + woff2) — no CDN needed
 │   └── fonts/                     Drop-in slot for YOUR licensed fot-yuruka-std.ttf
 │                                  (instructions: vendor/fonts/README.md + css/input.css header)
-├── package.json                   Dev/server scripts: check / test / server / bench / …
+├── package.json                   Dev scripts: check / test / build:css / perf / font:scan
 ├── README.md                      This file
 ├── TESTING.md                     Manual + automated testing checklist
 └── PRESENTATION-NOTES.md          Physics + implementation notes for presenting the module
 ```
 
-Total: ~8,000 lines across 6 pages, 2 stylesheets and 11 scripts. No framework, no bundler.
+Total: ~8,000 lines across 6 pages, the styling pipeline (source + build + font faces)
+and 12 scripts. No framework, no bundler, no backend.
 
 ---
 
@@ -141,7 +140,7 @@ the maths rather than being scripted.
 bun install          # installs the single dev dependency (tailwindcss) -> bun.lock
 bun run build:css    # css/input.css -> css/site.css (minified, ~36 kB)
 bun run check        # static validator (links, ids, utility coverage)
-bun run test         # 204-assertion jsdom + browser harness
+bun run test         # 206-assertion jsdom + browser harness
 bun run perf         # gzip transfer / font payload / blocking-script budgets
 bun run font:scan    # re-read vendor/fonts/ and rewrite the font manifest
 ```
@@ -169,6 +168,24 @@ project standardises on Bun (`bun.lock` is committed and Vercel detects it).
   that keeps the Topics dropdown collapsed even if a stale stylesheet were ever served.
 
 Progress is localStorage-only by design: no backend, no database, nothing that can incur cost.
+
+### Dashboard settings (project → Settings → General / Build & Development Settings)
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| Framework Preset | `Other` | static site; no framework detection needed |
+| Root Directory | *(empty)* | the site lives at the repository root |
+| Build Command | *(empty — `vercel.json` sets it)* | `bun run build:css` |
+| Output Directory | *(empty — **never** `public`)* | pages are served from the repo root as-is |
+| Install Command | *(empty — `vercel.json` sets it)* | `bun install` |
+
+> **Troubleshooting.**
+> `No Output Directory named "public" found after the Build completed` → the project's
+> **Output Directory** was set to `public` in the dashboard (e.g. typed into the wizard when
+> the project was created). Clear the field and save; this site has no build output folder.
+> `Unknown lockfile version` while parsing `bun.lock` → a Bun ≥ 1.4 machine rewrote the
+> lockfile to version 2 and it was committed; Vercel's bundled Bun 1.3.x cannot read it.
+> Regenerate with Bun 1.3.x (see §5) and commit the `lockfileVersion: 1` file.
 
 ## 7. Styling architecture — one source, three cascade layers
 
@@ -242,8 +259,10 @@ TTF into a ~50 kB woff2 that the manifest prefers automatically.
   (also re-run by Vercel on every deploy). Cascade layers guarantee utilities > components >
   base, which is what makes `mt-2`-style markup utilities win without `!important`.
   `tailwind.config.js` scans the markup plus `js/quiz.js` (the one script that injects utility
-  classes) and blocklists prose words that collide with utility names (`table`, `filter`,
-  `ring`, …). One breakpoint system everywhere: **640 / 900 / 1200 px**, shared by the config
+  classes) and keeps a **top-level** `blocklist` of prose words that collide with utility names
+  (`table`, `filter`, `ring`, …). Careful: nesting `blocklist` inside `content` invalidates the
+  whole config — Tailwind then logs the `purge`/`content` warning and silently drops the
+  blocklist, so scanner accidents leak into the build. One breakpoint system everywhere: **640 / 900 / 1200 px**, shared by the config
   and the component media queries. Accent colours derive from one variable per hue
   (`--c/--ct/--ce`), so tags, callouts, accents and readout highlights never hard-code a tint.
   `node tools/switch-css.mjs cdn` can still add the Play CDN tag if a rubric literally demands
@@ -270,19 +289,19 @@ TTF into a ~50 kB woff2 that the manifest prefers automatically.
 ## 9. Developer commands
 
 ```bash
-npm install          # dev/server deps: jsdom (tests), express + mysql2 (optional server)
-npm run check        # static validation: links, ids, data-hooks, CSS coverage
-npm test             # 177 runtime assertions across all six pages (skips politely
+bun install          # dev deps only: jsdom (tests) + tailwindcss (CSS build)
+bun run check        # static validation: links, ids, data-hooks, CSS coverage
+bun run test         # 206 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
-npm run font:scan    # register your licensed fot-yuruka-std.ttf in the font manifest
-npm run build:css    # optional: compile Tailwind utilities statically
-npm run switch:built # optional: point pages at the compiled CSS
-npm run switch:cdn   # back to the CDN default
-npm run test:vercel  # contract test for the api/ serverless functions
+bun run build:css    # recompile css/input.css -> css/site.css after markup changes
+bun run perf         # gzip transfer / font payload / blocking-script budgets
+bun run font:scan    # register your licensed .ttf/.woff2 faces in the font manifest
+bun run switch:cdn   # optional: add the Play CDN tag (rubric demands "Tailwind via CDN")
+bun run switch:built # optional: back to the shipped default (compiled site.css)
 ```
 
-The website itself still has **zero required dependencies**: every CDN library (Tailwind,
-Chart.js, p5.js) has a tested fallback.
+The website itself still has **zero required dependencies**: every CDN library
+(Chart.js, p5.js) has a tested fallback, and the compiled Tailwind CSS is committed.
 
 ### Performance tooling
 * every `<script>` tag is `defer`; `preconnect` hints exist only on pages that use a CDN;

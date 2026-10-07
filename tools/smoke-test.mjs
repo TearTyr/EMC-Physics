@@ -636,6 +636,17 @@ console.log('\u2500'.repeat(66));
   ok('anchor offset defined exactly once (scroll-margin, not double offset)',
     /\[id\] \{ scroll-margin-top: calc\(var\(--header-h\)/.test(cssSrc) &&
     !/scroll-padding-top/.test(cssSrc));
+
+  // regression guard: `blocklist` nested inside `content` makes the whole config
+  // invalid — Tailwind logs the purge/content warning and silently drops the
+  // blocklist, letting scanner accidents (`<table>` → .table) into site.css.
+  const twCfg = readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8');
+  ok('tailwind config: array-form content, top-level blocklist',
+    /content: \[/.test(twCfg) && /blocklist: \[/.test(twCfg) && !/content: \{/.test(twCfg));
+  const builtCss = readFileSync(join(ROOT, 'css/site.css'), 'utf8');
+  ok('blocklisted prose words never leak into site.css as utilities',
+    !/\.(grow|shrink|table|transform|filter|ring|container|collapse|resize|summary|content|order)\s*\{/
+      .test(builtCss));
 }
 
 /* ---------------- summary ---------------- */

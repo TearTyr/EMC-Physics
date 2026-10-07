@@ -9,9 +9,9 @@ headless Chrome 148 and jsdom on this build; the summary at the bottom records t
 ## 1. Automated checks
 
 ```bash
-npm install        # dev/server deps (jsdom, express, mysql2). Website itself: none.
-npm run check      # static validator
-npm test           # 195 runtime assertions
+bun install        # dev deps: jsdom (tests) + tailwindcss (CSS build). Website itself: none.
+bun run check      # static validator
+bun run test       # 206 runtime assertions
 npm run build:css  # recompile Tailwind utilities -> css/site.css after markup changes
 npm run switch:cdn / npm run switch:built   # toggle the Play CDN tag (idempotent)
 npm run font:scan  # register licensed .ttf/.woff2 faces in vendor/fonts/manifest.json
@@ -216,7 +216,7 @@ Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
 | Check | Result |
 |---|---|
 | `node tools/check-links.mjs` | **0 errors, 0 warnings** (9 advisory `[data-*]` notes, all guarded in code) |
-| `node tools/smoke-test.mjs` | **195 / 195 assertions passed** |
+| `node tools/smoke-test.mjs` | **206 / 206 assertions passed** |
 | Built-CSS mode, all external requests blocked | layout identical (2-col grid, type scale), **0 console errors** |
 | Headless Chrome with live CDNs | Chart.js charts + p5.js generator render; **0 console errors** |
 | Headless Chrome 148, all 6 pages, desktop + mobile | **0 console errors, 0 failed requests** |

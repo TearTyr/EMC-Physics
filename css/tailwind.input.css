@@ -1,5 +1,0 @@
-/* Input for the optional production build (npm run build:css).
-   The site's default path remains the Tailwind Play CDN. */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
