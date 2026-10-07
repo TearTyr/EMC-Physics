@@ -15,7 +15,8 @@ server/data/             # JSON-driver records (local dev only)
 .history/
 
 # NOTE on purposeful NON-ignores:
-#  * css/tailwind.generated.css  -> kept trackable so you can commit the
-#    "built" Tailwind mode if you deploy that way (see README §8).
-#  * package-lock.json           -> commit it: Vercel's install step then uses
-#    exactly the versions you tested.
+#  * css/site.css  -> the committed Tailwind build, so the site works even
+#    without running `bun run build:css` (Vercel rebuilds it anyway).
+#  * bun.lock      -> commit it, but keep it at "lockfileVersion": 1
+#    (written by Bun 1.3.x). Bun >= 1.4 rewrites it to version 2, which the
+#    Bun 1.3.x bundled into Vercel's install step cannot read.

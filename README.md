@@ -149,6 +149,13 @@ bun run font:scan    # re-read vendor/fonts/ and rewrite the font manifest
 Everything else is plain static files; Bun and Node produce identical output, but the
 project standardises on Bun (`bun.lock` is committed and Vercel detects it).
 
+> **Lockfile compatibility:** the committed `bun.lock` is `lockfileVersion: 1`, the
+> format Bun 1.3.x reads and writes. Vercel's install step runs a bundled Bun 1.3.x,
+> which cannot parse the `lockfileVersion: 2` files written by Bun ≥ 1.4 — it logs
+> `Unknown lockfile version`, ignores the lockfile and re-resolves from scratch
+> (vercel/vercel#17577). Keep Bun 1.3.x locally (or re-run `bun install` with 1.3.x
+> before committing) so builds stay reproducible.
+
 ## 6. Hosting on Vercel
 
 `vercel.json` pins the whole pipeline so a deploy is reproducible from a bare clone:
