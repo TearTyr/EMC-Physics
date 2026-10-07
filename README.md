@@ -213,7 +213,10 @@ npx vercel --prod     # production
 ```
 
 What you get from the bundled `vercel.json`:
-* cache headers — HTML `no-cache`, assets `public, max-age=3600`;
+* cache headers — everything under `/css/` and `/js/` is served `public, max-age=3600`;
+  HTML needs no rule because Vercel's default for it is already `must-revalidate`.
+  (Vercel `source` patterns are not full regex: no `(a|b)` alternation and no `?`
+  quantifiers — simple per-folder wildcards are the supported idiom.)
 * the optional sync API as **serverless functions**: `api/health.js` and `api/progress/[id].js`,
   which reuse `server/lib.js`, so the contract is identical to the bundled Node/Bun servers and
   `js/sync.js` works unchanged (same-origin `/api/...`).
@@ -262,6 +265,22 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
 
 ## 9. Engineering notes
 
+* **Visual design policy — "chiikawa official, but dark and minimal".** The layout language is
+  borrowed from chiikawaofficial.com and translated, not copied: one calm centred column,
+  sections separated by space instead of rules, sticker-like cards with thick soft outlines and
+  large radii, pill buttons, and a small bobbing mascot ("Denki-chan") that appears in the hero,
+  above each topic title, and as the brand mark. The palette is a warm charcoal base with the
+  reference site's own candy pastels (pink `#f8aebe`, lilac `#d5b8d8`, green `#b5d777`,
+  blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography uses the same
+  two families the reference loads — **Cabin** for body/nav and **Open Sans** for headings —
+  via Google Fonts, falling back to system faces offline. Motion is limited to the mascot's bob
+  and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
+  Simulations and SVG figures sit on flat near-black plates, like lab instruments.
+* **Equations are real LaTeX.** Every displayed equation carries its source in a `data-tex`
+  attribute and is typeset at boot by **KaTeX** (CDN): `F = k\,\frac{|q_1q_2|}{r^2}`,
+  `\mathcal{E} = -N\,\frac{d\Phi}{dt}`, and so on — 19 display equations plus the home-page
+  formula table (inline mode). If the KaTeX CDN is unreachable, each element keeps its
+  hand-readable plain-text fallback, so nothing ever shows raw TeX or empty boxes.
 * **Styling.** Tailwind is loaded from `https://cdn.tailwindcss.com` as required, and is used for
   layout utilities in the markup. All component design (panels, cards, sliders, readouts, quiz)
   lives in `css/styles.css`, which is linked *after* the CDN script so its class selectors win

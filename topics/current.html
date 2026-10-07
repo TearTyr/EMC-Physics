@@ -6,11 +6,17 @@
   <meta name="description" content="Ohm's law, series and parallel circuits and equivalent resistance — with an interactive Ohm's law simulator and a circuit builder.">
   <meta name="theme-color" content="#060b16">
   <title>Topic 2 · Current electricity — EMC Lab</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='13' fill='%230e1a2e'/%3E%3Cpath d='M27 7 13 27h9l-3 14L35 20h-9z' fill='%2322d3ee'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%2317181c'/%3E%3Cellipse cx='24' cy='27' rx='15' ry='14' fill='%23f6f1e5'/%3E%3Cpath d='M15 16 C13 8 19 6 21 12' fill='%23f6f1e5'/%3E%3Cpath d='M33 16 C35 8 29 6 27 12' fill='%23f6f1e5'/%3E%3Ccircle cx='19' cy='26' r='1.8' fill='%232b2d33'/%3E%3Ccircle cx='29' cy='26' r='1.8' fill='%232b2d33'/%3E%3Cpath d='M22 31 q2 2 4 0' stroke='%232b2d33' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
+  <!-- Type: the same two families chiikawaofficial.com uses (Cabin body, Open Sans headings) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
+  <!-- KaTeX: the LaTeX formatter for every equation on the page -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 </head>
 
 <body class="emc">
@@ -19,10 +25,13 @@
   <header class="site-header">
     <div class="wrap nav-inner">
       <a class="brand" href="../index.html" aria-label="EMC Lab — home">
-        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
-          <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="url(#bm)" stroke-width="2"/>
-          <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="url(#bm)"/>
+        <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M15 15 C13 7 19 5 21 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <path d="M33 15 C35 7 29 5 27 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <ellipse cx="24" cy="27" rx="16" ry="15" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <circle cx="18.5" cy="26" r="1.7" fill="#2b2d33"/><circle cx="29.5" cy="26" r="1.7" fill="#2b2d33"/>
+          <path d="M22 31 q2 2 4 0" stroke="#2b2d33" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <circle cx="13.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/><circle cx="34.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/>
         </svg>
         <span class="brand-name">EMC<em>Lab</em><span class="brand-sub">Electromagnetics</span></span>
       </a>
@@ -45,6 +54,15 @@
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="../index.html">Home</a><span aria-hidden="true">/</span><span>Topic 2</span>
       </nav>
+      <svg class="mascot mascot-sm" aria-hidden="true" viewBox="0 0 120 112">
+  <path d="M38 26 C34 8 46 5 49 16" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3" stroke-linecap="round"/>
+  <path d="M82 26 C86 8 74 5 71 16" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="60" cy="64" rx="42" ry="40" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3"/>
+  <circle cx="46" cy="58" r="3.6" fill="#2b2d33"/><circle cx="74" cy="58" r="3.6" fill="#2b2d33"/>
+  <path d="M55 68 q5 5 10 0" stroke="#2b2d33" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+  <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
+  <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
+</svg>
       <span class="eyebrow eyebrow-amber" style="margin-top:.7rem">Topic 2 of 4</span>
       <h1 class="h-topic" style="margin:.6rem 0 .5rem">Current electricity</h1>
       <p class="lede">
@@ -91,8 +109,8 @@
 
       <h2 class="h-sec" id="ohm">2.2 · Ohm’s law</h2>
       <div class="formula">
-        <span class="eq">V = I · R</span>
-        <span class="eq" style="font-size:1.05rem">I = V/R &nbsp;·&nbsp; R = V/I</span>
+        <span class="eq" data-display data-tex="V = IR">V = I · R</span>
+        <span class="eq" data-display data-tex="I = \dfrac{V}{R}, \quad R = \dfrac{V}{I}" style="font-size:1.05rem">I = V/R &nbsp;·&nbsp; R = V/I</span>
         <span class="where">V in volts · I in amperes · R in ohms</span>
       </div>
       <p>
@@ -105,7 +123,7 @@
 
       <h3 class="h-sub">Electrical power</h3>
       <div class="formula">
-        <span class="eq">P = V·I = I<sup>2</sup>R = V<sup>2</sup>/R</span>
+        <span class="eq" data-display data-tex="P = VI = I^2 R = \dfrac{V^2}{R}">P = V·I = I<sup>2</sup>R = V<sup>2</sup>/R</span>
         <span class="where">P in watts (W) = joules per second</span>
       </div>
       <p>
@@ -236,7 +254,7 @@
     <section class="section-tight wrap">
       <div class="panel reveal">
         <div class="panel-head">
-          <h3 class="panel-title"><span class="dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24"></span> Ohm’s law simulator</h3>
+          <h3 class="panel-title"><span class="dot" style="background:#f6d36b"></span> Ohm’s law simulator</h3>
           <p class="panel-sub">I = V / R · P = VI</p>
           <div class="panel-actions">
             <button class="btn btn-sm" type="button" data-ohm-preset="9,22">9 V · 22 Ω</button>
@@ -280,7 +298,7 @@
                 <input class="range ctl-range" type="range" id="ohm-rated" min="0.05" max="5" step="0.05" value="0.5" aria-label="Resistor power rating in watts">
               </div>
               <label class="ctl" style="grid-template-columns:auto 1fr;cursor:pointer">
-                <input type="checkbox" id="ohm-electrons" style="accent-color:#38bdf8">
+                <input type="checkbox" id="ohm-electrons" style="accent-color:#f6d36b">
                 <span class="ctl-label" style="font-size:.86rem">Show electron flow instead of conventional current</span>
               </label>
             </div>
@@ -316,7 +334,7 @@
     <section class="section-tight wrap">
       <div class="panel reveal">
         <div class="panel-head">
-          <h3 class="panel-title"><span class="dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24"></span> Circuit builder</h3>
+          <h3 class="panel-title"><span class="dot" style="background:#f6d36b"></span> Circuit builder</h3>
           <p class="panel-sub">series · parallel · combination</p>
           <div class="panel-actions">
             <div class="seg" id="circ-topology" role="group" aria-label="Circuit topology">
@@ -350,7 +368,7 @@
                 <input class="range ctl-range" type="range" id="circ-bulbR" min="1" max="100" step="1" value="15" aria-label="Bulb resistance in ohms">
               </div>
               <label class="ctl" style="grid-template-columns:auto 1fr;cursor:pointer">
-                <input type="checkbox" id="circ-includeBulb" checked style="accent-color:#fbbf24">
+                <input type="checkbox" id="circ-includeBulb" checked style="accent-color:#f6d36b">
                 <span class="ctl-label" style="font-size:.86rem">Include the bulb in the circuit</span>
               </label>
               <div>
@@ -436,10 +454,14 @@
     <div class="wrap footer-grid">
       <div>
         <span class="brand" style="pointer-events:none">
-          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="#22d3ee" stroke-width="2"/>
-            <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="#22d3ee"/>
-          </svg>
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M15 15 C13 7 19 5 21 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <path d="M33 15 C35 7 29 5 27 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <ellipse cx="24" cy="27" rx="16" ry="15" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <circle cx="18.5" cy="26" r="1.7" fill="#2b2d33"/><circle cx="29.5" cy="26" r="1.7" fill="#2b2d33"/>
+          <path d="M22 31 q2 2 4 0" stroke="#2b2d33" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <circle cx="13.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/><circle cx="34.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/>
+        </svg>
           <span class="brand-name">EMC<em>Lab</em></span>
         </span>
         <p class="small muted" style="margin-top:.6rem">Topic 2 of the EMC interactive electromagnetics module.</p>
@@ -471,6 +493,7 @@
     </div>
   </footer>
 
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script src="../js/common.js"></script>
   <script src="../js/sync.js"></script>
   <script src="../js/sim-ohm.js"></script>

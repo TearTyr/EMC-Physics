@@ -545,7 +545,7 @@ window.EMC = (function () {
       }
       const el = document.createElement('div');
       const color = kind === 'ok' ? '#34d399' : kind === 'warn' ? '#fbbf24' : '#22d3ee';
-      el.style.cssText = `background:rgba(9,17,32,.96);border:1px solid ${color};color:#e8eefb;
+      el.style.cssText = `background:#141414;border:1px solid ${color};color:#fff;
         padding:.55rem .95rem;border-radius:999px;font-size:.86rem;font-weight:600;
         box-shadow:0 16px 34px -18px #000;opacity:0;transform:translateY(8px);
         transition:opacity .25s ease,transform .25s ease;max-width:90vw;text-align:center`;
@@ -606,6 +606,28 @@ window.EMC = (function () {
     }
   }
 
+  /**
+   * Typeset every [data-tex] element with KaTeX (the project's LaTeX formatter).
+   * Each element keeps hand-readable plain text as its content, so if the KaTeX
+   * CDN is unreachable the equation still renders legibly — just un-typeset.
+   */
+  function katexify(root) {
+    if (!window.katex) return 0;
+    let n = 0;
+    (root || document).querySelectorAll('[data-tex]').forEach(elm => {
+      if (elm.dataset.texDone) return;
+      try {
+        window.katex.render(elm.dataset.tex, elm, {
+          displayMode: elm.hasAttribute('data-display'),
+          throwOnError: false
+        });
+        elm.dataset.texDone = '1';
+        n++;
+      } catch (err) { /* keep the plain-text fallback */ }
+    });
+    return n;
+  }
+
   /** Boot everything that is page-independent. */
   function boot() {
     UI.initNav();
@@ -614,6 +636,10 @@ window.EMC = (function () {
     UI.initTopicButtons();
     UI.initStorageNotice();
     UI.initYear();
+    katexify(document);
+    // KaTeX loads with `defer`, i.e. after this boot runs: typeset again once
+    // the whole page (including deferred scripts) has finished loading.
+    window.addEventListener('load', () => katexify(document));
     // Let individual pages react to progress changes (home dashboard).
     document.dispatchEvent(new CustomEvent('emc:ready', { detail: Progress.read() }));
   }
@@ -628,7 +654,7 @@ window.EMC = (function () {
     CONST, TOPICS, PROGRESS_KEY,
     clamp, lerp, dist, roundTo, mapRange, damp,
     eng, unit, fixed,
-    Stage, roundRect, arrow, label, chargeGlyph, scrollToEl,
+    Stage, roundRect, arrow, label, chargeGlyph, scrollToEl, katexify,
     store, Progress,
     bindRange, bindSegment, bindToggles,
     UI, toast: UI.toast

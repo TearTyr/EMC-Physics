@@ -61,6 +61,10 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Under 900 px the nav collapses to a hamburger; it opens, closes on selection, and closes on `Esc`
 - [ ] Reading-progress bar under the header fills as you scroll
 - [ ] At 1440 px, 1024 px, 768 px and 390 px every page has no horizontal scrollbar
+- [ ] Equations render as typeset maths (KaTeX fractions/integrals), and with the KaTeX CDN
+      blocked they fall back to the plain-text form — never raw `\\frac{}` source
+- [ ] Fonts load as Cabin (body) / Open Sans (headings); with the font CDN blocked the system
+      stack takes over with no layout jump beyond family substitution
 - [ ] Canvases redraw crisply when the window is resized (no blur, no stretching)
 - [ ] Keyboard: `Tab` reaches every control; quiz options respond to arrow keys; focus rings visible
 
@@ -109,7 +113,8 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 ### 2.6 Vercel deployment
 - [ ] `npx vercel` deploys with framework preset *Other*; the preview URL renders the home page
 - [ ] With all CDNs reachable: Tailwind, Chart.js and p5.js load; no console errors
-- [ ] Response headers match `vercel.json`: HTML `no-cache`, css/js `max-age=3600`
+- [ ] Response headers match `vercel.json`: `/css/*` and `/js/*` carry `max-age=3600`;
+      HTML arrives with Vercel's default `must-revalidate`
 - [ ] Without `MYSQL_URL`: `/api/health` → 503 and the dashboard's **Connect…** warns, site stays local
 - [ ] With `MYSQL_URL` set: connect/mirror flow works exactly as with the bundled server
 - [ ] `node tools/switch-css.mjs built` + redeploy: identical layout, no Play-CDN console warning;

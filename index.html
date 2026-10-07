@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#060b16">
   <title>EMC Lab · Interactive Electromagnetics Tutorial</title>
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='13' fill='%230e1a2e'/%3E%3Cpath d='M27 7 13 27h9l-3 14L35 20h-9z' fill='%2322d3ee'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%2317181c'/%3E%3Cellipse cx='24' cy='27' rx='15' ry='14' fill='%23f6f1e5'/%3E%3Cpath d='M15 16 C13 8 19 6 21 12' fill='%23f6f1e5'/%3E%3Cpath d='M33 16 C35 8 29 6 27 12' fill='%23f6f1e5'/%3E%3Ccircle cx='19' cy='26' r='1.8' fill='%232b2d33'/%3E%3Ccircle cx='29' cy='26' r='1.8' fill='%232b2d33'/%3E%3Cpath d='M22 31 q2 2 4 0' stroke='%232b2d33' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 
   <!-- Tailwind CSS via CDN (required by the project brief) -->
   <!-- Component styles first, then the offline utility fallback -->
@@ -15,6 +15,12 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/tailwind-fallback.css">
+  <!-- Type: the same two families chiikawaofficial.com uses (Cabin body, Open Sans headings) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
+  <!-- KaTeX: the LaTeX formatter for every equation on the page -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 </head>
 
 <body class="emc">
@@ -24,14 +30,13 @@
   <header class="site-header">
     <div class="wrap nav-inner">
       <a class="brand" href="index.html" aria-label="EMC Lab — home">
-        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/>
-            </linearGradient>
-          </defs>
-          <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="url(#bm)" stroke-width="2"/>
-          <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="url(#bm)"/>
+        <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M15 15 C13 7 19 5 21 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <path d="M33 15 C35 7 29 5 27 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <ellipse cx="24" cy="27" rx="16" ry="15" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <circle cx="18.5" cy="26" r="1.7" fill="#2b2d33"/><circle cx="29.5" cy="26" r="1.7" fill="#2b2d33"/>
+          <path d="M22 31 q2 2 4 0" stroke="#2b2d33" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <circle cx="13.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/><circle cx="34.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/>
         </svg>
         <span class="brand-name">EMC<em>Lab</em><span class="brand-sub">Electromagnetics</span></span>
       </a>
@@ -58,43 +63,41 @@
 
     <!-- ======================= HERO ======================= -->
     <section class="hero">
-      <div class="wrap hero-grid">
-        <div>
-          <span class="eyebrow">Calculus-based Physics II · Module EMC</span>
-          <h1 class="h-hero" style="margin:.85rem 0 .7rem">
-            See <span class="accent-cyan">electricity</span> and
-            <span class="accent-violet">magnetism</span> move.
-          </h1>
-          <p class="lede">
-            Four tutorial chapters, eight live simulations and a 20-question scored quiz.
-            Drag a charge, build a circuit, push a magnet through a coil and watch the
-            induced EMF appear on the graph — every number on screen is computed from the
-            real equations, not faked.
-          </p>
-
-          <div class="flex flex-wrap gap-3 mt-6">
-            <a class="btn btn-primary" href="topics/charges.html">
-              Start with Topic 1
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-            <a class="btn" href="topics/induction.html">Jump to the induction sim</a>
-            <a class="btn btn-ghost" href="quiz.html">Take the quiz</a>
-          </div>
-
-          <div class="stat-strip">
-            <div class="stat"><span class="stat-label">Topics</span><span class="stat-value hl-cyan">4</span></div>
-            <div class="stat"><span class="stat-label">Simulations</span><span class="stat-value hl-amber">8</span></div>
-            <div class="stat"><span class="stat-label">Quiz questions</span><span class="stat-value hl-emerald">20</span></div>
-            <div class="stat"><span class="stat-label">Dependencies</span><span class="stat-value">0</span><span class="stat-sub">no build step</span></div>
-          </div>
+      <div class="wrap hero-stack">
+        <svg class="mascot" viewBox="0 0 120 112" role="img" aria-label="Denki-chan, the module mascot">
+  <path d="M38 26 C34 8 46 5 49 16" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3" stroke-linecap="round"/>
+  <path d="M82 26 C86 8 74 5 71 16" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="60" cy="64" rx="42" ry="40" fill="#f6f1e5" stroke="#3a3d45" stroke-width="3"/>
+  <circle cx="46" cy="58" r="3.6" fill="#2b2d33"/><circle cx="74" cy="58" r="3.6" fill="#2b2d33"/>
+  <path d="M55 68 q5 5 10 0" stroke="#2b2d33" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+  <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
+  <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
+</svg>
+        <span class="eyebrow">Calculus-based Physics II · Module EMC</span>
+        <h1 class="h-hero">See electricity and magnetism move.</h1>
+        <p class="lede">
+          Four tutorial chapters, eight live simulations and a 20-question scored quiz.
+          Drag a charge, build a circuit, push a magnet through a coil and watch the
+          induced EMF appear on the graph — every number on screen is computed from
+          the real equations, not faked.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="topics/charges.html">Start with Topic 1</a>
+          <a class="btn" href="topics/induction.html">Jump to the induction sim</a>
+          <a class="btn btn-ghost" href="quiz.html">Take the quiz</a>
         </div>
-
-        <div class="hero-visual reveal">
+        <div class="hero-visual">
           <canvas id="heroCanvas" aria-label="Animated electric dipole field lines"></canvas>
-          <p class="tiny faint center" style="margin-top:.5rem">
+          <p class="tiny faint center" style="margin-top:.6rem">
             An electric dipole: field lines run from the positive to the negative charge.
             (Topic 1 simulation lets you build your own.)
           </p>
+        </div>
+        <div class="stat-strip">
+          <div class="stat"><span class="stat-label">Topics</span><span class="stat-value hl-cyan">4</span></div>
+          <div class="stat"><span class="stat-label">Simulations</span><span class="stat-value hl-amber">8</span></div>
+          <div class="stat"><span class="stat-label">Quiz questions</span><span class="stat-value hl-emerald">20</span></div>
+          <div class="stat"><span class="stat-label">Dependencies</span><span class="stat-value">0</span><span class="stat-sub">no build step</span></div>
         </div>
       </div>
     </section>
@@ -139,7 +142,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <!-- Topic 1 -->
-        <article class="card card-hover topic-card reveal" style="--topic-accent:#fb7185">
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#f8aebe">
           <span class="topic-num" aria-hidden="true">01</span>
           <span class="topic-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -160,7 +163,7 @@
         </article>
 
         <!-- Topic 2 -->
-        <article class="card card-hover topic-card reveal" style="--topic-accent:#fbbf24">
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#f6d36b">
           <span class="topic-num" aria-hidden="true">02</span>
           <span class="topic-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -181,7 +184,7 @@
         </article>
 
         <!-- Topic 3 -->
-        <article class="card card-hover topic-card reveal" style="--topic-accent:#a78bfa">
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#d5b8d8">
           <span class="topic-num" aria-hidden="true">03</span>
           <span class="topic-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -202,7 +205,7 @@
         </article>
 
         <!-- Topic 4 -->
-        <article class="card card-hover topic-card reveal" style="--topic-accent:#22d3ee">
+        <article class="card card-hover topic-card reveal" style="--topic-accent:#a8d3e0">
           <span class="topic-num" aria-hidden="true">04</span>
           <span class="topic-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -305,16 +308,16 @@
               <tr><th>Concept</th><th>Equation</th><th>Units</th><th>What it tells you</th></tr>
             </thead>
             <tbody>
-              <tr><td class="txt">Coulomb force</td><td>F = k·q<sub>1</sub>q<sub>2</sub> / r<sup>2</sup></td><td>N</td><td class="txt">Inverse square: 2× the distance → ¼ the force</td></tr>
-              <tr><td class="txt">Electric field</td><td>E = F/q = k·q / r<sup>2</sup></td><td>N/C = V/m</td><td class="txt">Force per unit positive test charge</td></tr>
-              <tr><td class="txt">Ohm’s law</td><td>V = I·R</td><td>V, A, Ω</td><td class="txt">Voltage drives current against resistance</td></tr>
-              <tr><td class="txt">Electrical power</td><td>P = VI = I<sup>2</sup>R = V<sup>2</sup>/R</td><td>W</td><td class="txt">Rate of energy conversion to heat/light</td></tr>
-              <tr><td class="txt">Series resistance</td><td>R<sub>eq</sub> = ΣR<sub>i</sub></td><td>Ω</td><td class="txt">Always bigger than the largest resistor</td></tr>
-              <tr><td class="txt">Parallel resistance</td><td>1/R<sub>eq</sub> = Σ1/R<sub>i</sub></td><td>Ω</td><td class="txt">Always smaller than the smallest branch</td></tr>
-              <tr><td class="txt">Magnetic force</td><td>F = q·v × B</td><td>N</td><td class="txt">Perpendicular to both v and B → does no work</td></tr>
-              <tr><td class="txt">Radius of orbit</td><td>r = mv / (|q|B)</td><td>m</td><td class="txt">Faster or heavier → wider circle</td></tr>
-              <tr><td class="txt">Magnetic flux</td><td>Φ = B·A·cosθ</td><td>Wb = T·m<sup>2</sup></td><td class="txt">How much field threads the loop</td></tr>
-              <tr><td class="txt">Faraday’s law</td><td>EMF = −N·dΦ/dt</td><td>V</td><td class="txt">Only a <em>changing</em> flux induces a voltage</td></tr>
+              <tr><td class="txt">Coulomb force</td><td><span data-tex="F = k q_1 q_2 / r^2">F = k·q<sub>1</sub>q<sub>2</sub> / r<sup>2</sup></span></td><td>N</td><td class="txt">Inverse square: 2× the distance → ¼ the force</td></tr>
+              <tr><td class="txt">Electric field</td><td><span data-tex="E = F/q = kq/r^2">E = F/q = k·q / r<sup>2</sup></span></td><td>N/C = V/m</td><td class="txt">Force per unit positive test charge</td></tr>
+              <tr><td class="txt">Ohm’s law</td><td><span data-tex="V = IR">V = I·R</span></td><td>V, A, Ω</td><td class="txt">Voltage drives current against resistance</td></tr>
+              <tr><td class="txt">Electrical power</td><td><span data-tex="P = VI = I^2R = V^2/R">P = VI = I<sup>2</sup>R = V<sup>2</sup>/R</span></td><td>W</td><td class="txt">Rate of energy conversion to heat/light</td></tr>
+              <tr><td class="txt">Series resistance</td><td><span data-tex="R_{\mathrm{eq}} = \textstyle\sum_i R_i">R<sub>eq</sub> = ΣR<sub>i</sub></span></td><td>Ω</td><td class="txt">Always bigger than the largest resistor</td></tr>
+              <tr><td class="txt">Parallel resistance</td><td><span data-tex="1/R_{\mathrm{eq}} = \textstyle\sum_i 1/R_i">1/R<sub>eq</sub> = Σ1/R<sub>i</sub></span></td><td>Ω</td><td class="txt">Always smaller than the smallest branch</td></tr>
+              <tr><td class="txt">Magnetic force</td><td><span data-tex="\vec{F} = q\,\vec{v} \times \vec{B}">F = q·v × B</span></td><td>N</td><td class="txt">Perpendicular to both v and B → does no work</td></tr>
+              <tr><td class="txt">Radius of orbit</td><td><span data-tex="r = mv/(|q|B)">r = mv / (|q|B)</span></td><td>m</td><td class="txt">Faster or heavier → wider circle</td></tr>
+              <tr><td class="txt">Magnetic flux</td><td><span data-tex="\Phi = BA\cos\theta">Φ = B·A·cosθ</span></td><td>Wb = T·m<sup>2</sup></td><td class="txt">How much field threads the loop</td></tr>
+              <tr><td class="txt">Faraday’s law</td><td><span data-tex="\mathcal{E} = -N\,d\Phi/dt">EMF = −N·dΦ/dt</span></td><td>V</td><td class="txt">Only a <em>changing</em> flux induces a voltage</td></tr>
             </tbody>
           </table>
         </div>
@@ -389,7 +392,7 @@
 
     <!-- ======================= QUIZ CTA ======================= -->
     <section class="section wrap">
-      <div class="card reveal" style="border-color:rgba(34,211,238,.35);background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(167,139,250,.08))">
+      <div class="card reveal">
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div style="flex:1 1 320px">
             <h2 class="h-sec" style="margin:0">Ready to test yourself?</h2>
@@ -409,10 +412,14 @@
     <div class="wrap footer-grid">
       <div>
         <span class="brand" style="pointer-events:none">
-          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke="#22d3ee" stroke-width="2"/>
-            <path d="M27 7 13 27h9l-3 14L35 20h-9z" fill="#22d3ee"/>
-          </svg>
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M15 15 C13 7 19 5 21 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <path d="M33 15 C35 7 29 5 27 11" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <ellipse cx="24" cy="27" rx="16" ry="15" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/>
+          <circle cx="18.5" cy="26" r="1.7" fill="#2b2d33"/><circle cx="29.5" cy="26" r="1.7" fill="#2b2d33"/>
+          <path d="M22 31 q2 2 4 0" stroke="#2b2d33" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <circle cx="13.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/><circle cx="34.5" cy="30" r="2.4" fill="#f8aebe" opacity=".85"/>
+        </svg>
           <span class="brand-name">EMC<em>Lab</em></span>
         </span>
         <p class="small muted" style="margin-top:.6rem">
@@ -452,6 +459,7 @@
     </div>
   </footer>
 
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script src="js/common.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/home.js"></script>
