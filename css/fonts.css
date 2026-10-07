@@ -1,34 +1,20 @@
 /* ==========================================================================
-   Self-hosted open fonts (SIL OFL) — guarantees the cute maru-gothic look on
-   ANY host (Vercel included) with no CDN and no licence questions:
-     * Mochiy Pop One   400  -> headings / brand   (sticker-pop)
-     * M PLUS Rounded 1c 400/700/800 -> body / UI  (rounded text face)
-   FOT-Yuruka Std (commercial, YOUR licence) is loaded at runtime by
-   js/common.js from vendor/fonts/fot-yuruka-std.ttf when present, and sits
-   FIRST in both stacks — so the moment you drop the .ttf in and push, every
-   page switches to it with no other change.
+   Site fonts — ALL committed, ALL SIL Open Font License 1.1, no CDN:
+     * G8321 Bold (700)          -> titles, headings, brand, UI labels/buttons
+     * Lilita One (400)          -> body copy (friendly rounded display face)
+     * M PLUS Rounded 1c 700/800 -> last-resort fallback behind G8321
+   Because these are committed woff2 files, every host (Vercel included)
+   renders the exact same type — nothing depends on a private licence.
+
+   Optional privately-licensed override: js/common.js reads
+   vendor/fonts/manifest.json and registers any listed face through the
+   FontFace API at boot (missing files degrade silently — zero 404 noise).
    ========================================================================== */
 
 @font-face {
-  font-family: 'M PLUS Rounded 1c';
-  src: url('../vendor/fonts/m-plus-rounded-1c-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'M PLUS Rounded 1c';
-  src: url('../vendor/fonts/m-plus-rounded-1c-700.woff2') format('woff2');
+  font-family: 'G8321';
+  src: url('../vendor/fonts/g8321-700.woff2') format('woff2');
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'M PLUS Rounded 1c';
-  src: url('../vendor/fonts/m-plus-rounded-1c-800.woff2') format('woff2');
-  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
@@ -47,10 +33,18 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
-  font-family: 'Mochiy Pop One';
-  src: url('../vendor/fonts/mochiy-pop-one-400.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'M PLUS Rounded 1c';
+  src: url('../vendor/fonts/m-plus-rounded-1c-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  src: url('../vendor/fonts/m-plus-rounded-1c-800.woff2') format('woff2');
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }

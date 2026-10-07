@@ -6,8 +6,8 @@
    Serves the project (python3 http.server) or uses your URL, then asserts the
    project's performance budgets on every page:
      * zero render-blocking scripts (everything is defer)
-     * local transfer (excluding licensed fonts) under 500 KB per page
-     * reports licensed-font payload and warns above 1.5 MB (run subset_font.py)
+     * local transfer (excluding font payloads) under 500 KB per page
+     * raw-TTF font payload under 500 KB (convert big TTFs to woff2 instead)
    Prints a per-page table of transfer, DOMContentLoaded and font bytes.
    ========================================================================== */
 import { resolve, dirname } from 'node:path';
@@ -85,17 +85,17 @@ for (const path of PAGES) {
     const res = performance.getEntriesByType('resource');
     const fonts = res.filter(r => r.initiatorType === 'font' || /\.(woff2?|ttf|otf)$/.test(r.name));
     const fontBytes = fonts.reduce((a, r) => a + (r.transferSize || 0), 0);
-    const licensed = fonts.filter(f => /yuruka|G8321/i.test(f.name)).reduce((a, r) => a + (r.transferSize || 0), 0);
+    const ttf = fonts.filter(f => /\.ttf($|\?)/i.test(f.name)).reduce((a, r) => a + (r.transferSize || 0), 0);
     const total = res.reduce((a, r) => a + (r.transferSize || 0), 0);
     const blocking = [...document.querySelectorAll('script[src]')].filter(s => !s.defer && !s.async).length;
     const nav = performance.getEntriesByType('navigation')[0];
-    return { total, fontBytes, licensed, blocking, dcl: Math.round(nav ? nav.domContentLoadedEventEnd : 0) };
+    return { total, fontBytes, ttf, blocking, dcl: Math.round(nav ? nav.domContentLoadedEventEnd : 0) };
   });
   const kb = n => (n / 1024).toFixed(0).padStart(6) + 'K';
   console.log(`${path.padEnd(24)} ${kb(m.total)}  ${kb(m.fontBytes)}  ${(m.dcl + 'ms').padStart(6)}  ${m.blocking}`);
   if (m.blocking > 0) fails.push(`${path}: ${m.blocking} render-blocking script(s)`);
   if (m.total - m.fontBytes > 500 * 1024) fails.push(`${path}: non-font transfer ${((m.total - m.fontBytes) / 1024).toFixed(0)} KB > 500 KB budget`);
-  if (m.licensed > 1.5 * 1024 * 1024) fails.push(`${path}: licensed font payload ${ (m.licensed / 1048576).toFixed(1) } MB - run tools/subset_font.py`);
+  if (m.ttf > 500 * 1024) fails.push(`${path}: raw TTF payload ${(m.ttf / 1024).toFixed(0)} KB - convert to woff2 (pip install fonttools brotli)`);
   await page.close();
 }
 await browser.close();

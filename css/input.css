@@ -10,10 +10,10 @@
    in the markup (mt-2, gap-4, font-bold...) always wins over a component or
    element rule of equal-or-lower specificity - no !important, no :where().
 
-   Type system (exactly as specified):
-     titles / bold  -> 'fot-yuruka-std'   (your licensed TTF, manifest-loaded)
-     normal text    -> 'LilitaOne-Regular'(your TTF; vendored woff2 fallback)
-     UI / labels    -> 'G8321'            (your Yuruka weight family)
+   Type system (two committed OFL faces, declared in css/fonts.css):
+     titles / bold  -> 'G8321' Bold 700     (vendor/fonts/g8321-700.woff2)
+     normal text    -> 'LilitaOne-Regular'  (vendor/fonts/lilita-one-400.woff2)
+     UI / labels    -> 'G8321' Bold 700     (same face as titles)
    ========================================================================== */
 
 @tailwind base;
@@ -50,10 +50,10 @@
     line-height: 1.75; min-height: 100vh; min-height: 100dvh;
     overflow-x: clip;
   }
-  /* titles + anything bold: the licensed face; normal text: Lilita; UI: G8321 */
+  /* titles + anything bold: G8321 Bold; normal text: Lilita One */
   h1, h2, h3, h4, h5, h6 {
     font-family: theme('fontFamily.title');
-    font-weight: 400;              /* Yuruka/Lilita are single-weight: no faux bold */
+    font-weight: 700;              /* the real G8321 Bold face — never synthesised */
     font-synthesis: none;
     line-height: 1.35; margin: 0; color: var(--text); letter-spacing: .01em;
   }
@@ -111,7 +111,7 @@
   /* -- header & dropdown nav -------------------------------------------- */
   .site-header { position: sticky; top: 0; z-index: 60; background: var(--bg); border-bottom: 1.5px solid var(--line); }
   .nav-inner { display: flex; align-items: center; gap: 1rem; min-height: var(--header-h); }
-  .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; color: var(--text); font-family: theme('fontFamily.title'); font-weight: 400; }
+  .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; color: var(--text); font-family: theme('fontFamily.title'); font-weight: 700; }
   .brand-mark { width: 34px; height: 34px; flex: none; }
   .brand-name { font-size: 1.05rem; line-height: 1.15; }
   .brand-name em { font-style: normal; color: var(--pk); }
@@ -281,7 +281,7 @@
   .prose ol { list-style: decimal; }
   .prose li { margin-bottom: .5rem; line-height: 1.7; }
   .prose li::marker { color: var(--pk); font-weight: 700; }
-  .prose strong { color: var(--text); font-family: theme('fontFamily.title'); font-weight: 400; }
+  .prose strong { color: var(--text); font-family: theme('fontFamily.title'); font-weight: 700; }
   .formula { display: flex; align-items: center; justify-content: center; gap: .8rem; flex-wrap: wrap; background: var(--panel-2); border: 1.5px solid var(--line); border-radius: var(--r-mid); padding: 1.1rem 1.25rem; margin: 1.1rem 0 1.25rem; text-align: center; overflow-x: auto; }
   .formula .eq { font-family: theme('fontFamily.mono'); font-size: clamp(1rem, 3vw, 1.2rem); font-weight: 700; color: #f4f1e8; }
   .formula .eq[data-display] { display: block; width: 100%; }

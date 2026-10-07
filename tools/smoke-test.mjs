@@ -592,18 +592,18 @@ console.log('\u2500'.repeat(66));
       [...html.matchAll(/<script[^>]*src=/g)].every(m => m[0].includes('defer')));
   }
   const fontsCss = readFileSync(join(ROOT, 'css/fonts.css'), 'utf8');
-  ok('open cute fonts are self-hosted (no CDN needed)',
-    /Mochiy Pop One/.test(fontsCss) && /M PLUS Rounded 1c/.test(fontsCss) &&
+  ok('site fonts are committed OFL woff2 (no CDN, no licence risk)',
+    /G8321/.test(fontsCss) && /M PLUS Rounded 1c/.test(fontsCss) &&
     /Lilita One/.test(fontsCss) &&
-    ['mochiy-pop-one-400.woff2', 'm-plus-rounded-1c-400.woff2', 'lilita-one-400.woff2'].every(f =>
+    ['g8321-700.woff2', 'm-plus-rounded-1c-700.woff2', 'lilita-one-400.woff2'].every(f =>
       existsSync(join(ROOT, 'vendor/fonts', f))));
   const manifest = JSON.parse(readFileSync(join(ROOT, 'vendor/fonts/manifest.json'), 'utf8'));
-  ok('font manifest ships the three specified families',
-    /fot-yuruka-std/.test(JSON.stringify(manifest)) && /G8321/.test(JSON.stringify(manifest)) &&
-    /LilitaOne-Regular/.test(JSON.stringify(manifest)));
-  ok('title stack leads with the licensed face',
-    /title: \['fot-yuruka-std'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')));
-  ok('common.js activates Yuruka at runtime when the ttf is present',
+  ok('font manifest parses and exposes the optional licensed[] slot',
+    manifest && Array.isArray(manifest.licensed));
+  ok('title + UI stacks lead with the committed G8321 Bold',
+    /title: \['G8321'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
+    /ui:    \['G8321'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')));
+  ok('common.js can still activate optional licensed faces at runtime',
     /loadLicensedFont/.test(readFileSync(join(ROOT, 'js/common.js'), 'utf8')));
 
   const js = readdirSync(join(ROOT, 'js')).filter(f => f.endsWith('.js'));
@@ -615,16 +615,23 @@ console.log('\u2500'.repeat(66));
   // strip comments first: the policy note in the header mentions these words
   let cssSrc = readFileSync(join(ROOT, 'css/input.css'), 'utf8')
     .replace(/\/\*[\s\S]*?\*\//g, '');
-  ok('type stacks lead with your three faces',
-    /title: \['fot-yuruka-std'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
+  ok('type stacks lead with the two chosen faces',
+    /title: \['G8321'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
     /sans:  \['LilitaOne-Regular'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
     /ui:    \['G8321'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')));
   ok('cascade is layer-based: base < components < utilities',
     /@layer base/.test(cssSrc) && /@layer components/.test(cssSrc) && /@tailwind utilities/.test(cssSrc));
-  ok('type system is exactly the three specified families',
-    /fontFamily:\s*{[\s\S]*title: \['fot-yuruka-std'[\s\S]*sans:  \['LilitaOne-Regular'[\s\S]*ui:    \['G8321'/
+  ok('type system is exactly the two specified families',
+    /fontFamily:\s*{[\s\S]*title: \['G8321'[\s\S]*sans:  \['LilitaOne-Regular'[\s\S]*ui:    \['G8321'/
       .test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&
     /theme\('fontFamily\.title'\)/.test(cssSrc) && /theme\('fontFamily\.ui'\)/.test(cssSrc) && /theme\('fontFamily\.sans'\)/.test(cssSrc));
+  // regression guard: an unquoted `M PLUS Rounded 1c` is an invalid declaration
+  // (ident can't start with a digit) and browsers silently drop the whole
+  // font-family rule. Valid compiled forms: quoted OR backslash-escaped.
+  const compiledCss = readFileSync(join(ROOT, 'css/site.css'), 'utf8');
+  ok('multi-word font families survive minification as valid CSS',
+    /"M PLUS Rounded 1c"|M PLUS Rounded\\ 1c/.test(compiledCss) &&
+    !/,M PLUS Rounded 1c[ ,;}]/.test(compiledCss));
   ok('mobile pass present (coarse-pointer targets, no sideways scroll)',
     /pointer: coarse/.test(cssSrc) && /overflow-x: clip/.test(cssSrc));
   ok('stylesheet contains no gradient/blur/glass effects',

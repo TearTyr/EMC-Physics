@@ -1,33 +1,37 @@
 # vendor/fonts
 
-## Self-hosted open fonts (already here, committed)
-mochiy-pop-one-400.woff2 and m-plus-rounded-1c-{400,700,800}.woff2 are SIL Open
-Font License faces downloaded from Google Fonts and served locally, so the
-cute maru-gothic look works on every host with no CDN.
+## The site's fonts — committed, OFL, identical on every host
+| file | family | role | licence |
+|---|---|---|---|
+| `g8321-700.woff2` | **G8321 Bold** | titles, headings, brand, UI labels/buttons | SIL OFL 1.1 — Coji Morishita (full text: `OFL-G8321.txt`) |
+| `lilita-one-400.woff2` | **Lilita One** | body copy | SIL OFL 1.1 — Juan Pablo del Peral / Huerta Tipográfica |
+| `m-plus-rounded-1c-700.woff2`, `m-plus-rounded-1c-800.woff2` | M PLUS Rounded 1c | last-resort fallback behind G8321 | SIL OFL 1.1 — M+ FONTS PROJECT |
 
-## Your licensed faces: FOT-Yuruka Std + Lilita One
-Recognised file names (any case):
-  * G8321-*.ttf or fot-yuruka-*.ttf  -> family "FOT-Yuruka Std"
-      weight is read from the name: Thin 100, Light 300, Regular 400,
-      Medium 500, SemiBold 600, Bold 700, ExtraBold 800, Black 900
-  * LilitaOne-*.ttf                  -> family "Lilita One" (display face)
-  * anything else                    -> ignored (open faces stay in charge)
+They are declared in `css/fonts.css` and lead the stacks in `tailwind.config.js`
+(`title`/`ui` → G8321, `sans` → Lilita One), so local dev, Vercel and a
+friend's laptop all render the exact same type. Total payload ≈ 71 KB.
+G8321 source: https://github.com/coz-m/G8321_FONTS (official webfont build).
 
-Steps:
-1. Drop the .ttf files into THIS folder.
-2. npm run font:scan        (rewrites manifest.json; duplicates at the same
-                            family+weight are resolved in favour of the
-                            larger, more complete file)
-3. git add vendor/fonts && git commit -m "fonts" && git push
+Because both faces are freely redistributable, nothing here depends on a
+private licence any more — the old paid FOT-Yuruka Std slot is unused.
 
-js/common.js registers every manifest entry through the FontFace API at boot;
-the console prints one info line per activated face. Roles: Lilita One on the
-hero/topic titles and score grade, FOT-Yuruka Std on headings/body/buttons,
-M PLUS Rounded 1c on small labels. Locally, test over http - Chrome blocks
-custom fonts on file://.
+## Optional slot for privately licensed faces
+Bought a font you may **not** redistribute? It can still style the site
+**on your machine only**:
+1. Drop the `.ttf` here — `.gitignore` keeps `vendor/fonts/*.ttf|*.otf` out
+   of the repo, so a paid face can never leak into a public push.
+2. `bun run font:scan` — rewrites `manifest.json` (recognises `fot-yuruka-*`;
+   teach it other names in `tools/add-font.mjs → familyOf()`).
+3. Put the family first in the stack you want it on (`tailwind.config.js`),
+   then `bun run build:css` and commit the config + `manifest.json`.
 
-If the file is absent (or a clone lacks it), the site silently falls back to
-the open fonts above - there is never a broken state or a console error.
+`js/common.js` registers every manifest entry through the FontFace API at
+boot and logs `[EMC] licensed font active: …`; `<html>` gets
+`data-licensed-font="active"`. Visitors without the file silently see the
+committed OFL faces above — never a 404, never an error.
 
-Licensing: only push the .ttf if your Fontworks licence permits redistribution
-(private repo / classroom Vercel is usually fine; public repos check first).
+## Notes
+- Serve the folder over http when testing (e.g. `bunx serve`) — Chrome
+  blocks custom fonts on `file://`.
+- Keep woff2 files small: convert any big TTF with
+  `pip install fonttools brotli`, then `TTFont(...).flavor = 'woff2'`.

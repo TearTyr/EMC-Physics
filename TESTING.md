@@ -11,10 +11,10 @@ headless Chrome 148 and jsdom on this build; the summary at the bottom records t
 ```bash
 bun install        # dev deps: jsdom (tests) + tailwindcss (CSS build). Website itself: none.
 bun run check      # static validator
-bun run test       # 206 runtime assertions
+bun run test       # 207 runtime assertions
 npm run build:css  # recompile Tailwind utilities -> css/site.css after markup changes
 npm run switch:cdn / npm run switch:built   # toggle the Play CDN tag (idempotent)
-npm run font:scan  # register licensed .ttf/.woff2 faces in vendor/fonts/manifest.json
+npm run font:scan  # re-scan vendor/fonts/ for OPTIONAL licensed cuts -> manifest.json
 npm run perf       # gzip transfer budgets + render-blocking + font payload audit
 ```
 
@@ -47,6 +47,29 @@ UI behaviour, including:
 | p5.js | with no p5 global the generator host shows the offline notice and the page still boots |
 | Cross-page | viewport meta, `lang`, skip link, labelled canvases, CDN + fallback stylesheet, exactly one `<h1>` |
 
+### 1.3 `tools/cleanup-repo.ps1` (Windows, no dependencies)
+Repo hygiene: **PLAN → CONFIRM → EXECUTE**, so nothing is written before you answer the prompt.
+
+```powershell
+.\tools\cleanup-repo.ps1 -DryRun                  # plan only - verified to change nothing
+.\tools\cleanup-repo.ps1 -Verify -Commit -Push    # clean, run bun checks, ship it
+```
+
+- [x] deletes `server/`, `api/`, `tools/subset_font.py`, `bun.lockb`, `package-lock.json`,
+      unused woff2 faces and OS/editor junk — to the **Recycle Bin** unless `-Permanent`
+- [x] untracks (`git rm --cached`, file kept on disk) `package-lock.json` and any tracked
+      `vendor/fonts/*.ttf|*.otf`, so the licensed Yuruka backup can never reach the public repo
+- [x] refuses to delete anything `css/fonts.css` references, or anything hard-protected
+      (`css/site.css`, `bun.lock`, the four committed OFL woff2 faces, HTML pages, configs)
+- [x] repairs `.gitignore` when a required rule is missing (appends, never rewrites)
+- [x] reports without changing: `lockfileVersion: 2` in `bun.lock`, missing `css/site.css`,
+      a stray `public/` folder, `outputDirectory` in `vercel.json`, tracked `node_modules`,
+      tracked files > 1 MB, and licensed binaries still reachable in git **history**
+- [x] idempotent — a second run reports "The repo is already clean"
+- [x] `-CheckLive` probes the deployment: `/api/health` must not be 200; `g8321-700.woff2`,
+      `lilita-one-400.woff2`, `css/site.css` and `/` must be 200
+- exit codes: `0` clean · `1` aborted at the prompt · `2` not the EMC Lab repo · `3` a step failed
+
 ---
 
 ## 2. Manual functional checklist
@@ -62,9 +85,10 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
       *in flow* between the Topics button and the pink CTA; nothing overlaps.
 - [ ] Coulomb sim at 390px: hint / E(mid) arrow / F caption / charges / r label / q1 / q2 form
       seven separated rows — no text sits on top of the charge glyphs.
-- [ ] Fonts: with `vendor/fonts/fot-yuruka-std.ttf`, `G8321-*.ttf` and `LilitaOne-Regular.ttf`
-      present, DevTools > Rendering shows titles in fot-yuruka-std, body in LilitaOne-Regular,
-      buttons/labels in G8321; without them the rounded open-font fallbacks appear.
+- [ ] Fonts: `vendor/fonts/g8321-700.woff2` + `lilita-one-400.woff2` are committed, so on
+      ANY host DevTools > Rendered Fonts shows titles/headings/buttons/labels in G8321
+      (Bold 700) and body copy in Lilita One; M PLUS Rounded 1c only appears if a woff2
+      fails to load.
 
 ### 2.1 Navigation & layout
 - [ ] Home → each topic → quiz links all navigate; the active nav item is highlighted
@@ -79,10 +103,11 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Equations render as typeset maths (KaTeX fractions/integrals) — KaTeX is vendored in
       `vendor/katex/`, so this must hold **with the network fully blocked** as well
 - [ ] No gradient or glow is visible anywhere: flat pastel charges/magnets/bulbs on the plates
-- [ ] Fonts load as Cabin (body) / Open Sans (headings); with the font CDN blocked the system
-      stack takes over with no layout jump beyond family substitution
+- [ ] Font swap is smooth: on a throttled connection the stack's fallback renders first, then
+      `font-display: swap` replaces it with G8321 / Lilita One with no layout jump beyond
+      family substitution (everything is self-hosted — zero third-party font requests)
 - [ ] `npm run perf` passes: 0 blocking scripts per page, < 500 KB compressed non-font
-      transfer, licensed font payload under 1.5 MB (else run `tools/subset_font.py`)
+      transfer, and no raw-TTF payload (the repo ships ~71 KB of woff2 only)
 - [ ] The bonus p5 lab does not download p5 at all until scrolled near (DevTools -> Network)
 - [ ] Canvases redraw crisply when the window is resized (no blur, no stretching)
 - [ ] Topic pages read as ONE aligned column: breadcrumb, mascot, title, lede, objectives card
@@ -90,12 +115,12 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Mobile (390 px, touch): no horizontal scrolling anywhere; slider thumbs are the large
       coarse-pointer size; hero buttons stack full-width; KaTeX display maths scrolls inside its
       card instead of overflowing the page; the open nav menu clears the home-indicator area
-- [ ] Font manifest flow: with licensed `.ttf`s (G8321-*, LilitaOne-*, fot-yuruka-*) plus a
-      scanned manifest served over http(s), the console logs one info line per activated face;
-      h1 computed family = "Lilita One", body = "FOT-Yuruka Std", labels = "M PLUS Rounded 1c";
-      with the manifest empty the site falls back with a single *info* line and
-      **no 404s and no errors**; on `file://` Chrome falls back silently (custom fonts are
-      blocked there by design)
+- [ ] Optional licensed slot: with `manifest.json` listing a private cut (e.g. drop
+      `fot-yuruka-std.ttf` in locally — `vendor/fonts/*.ttf` is gitignored) served over
+      http(s), the console logs `[EMC] licensed font active: …` and `<html>` gets
+      `data-licensed-font="active"`; with the shipped EMPTY manifest the loader stays
+      silent (`data-licensed-font="bundled"`, **no 404s and no errors**); on `file://`
+      Chrome falls back silently (custom fonts are blocked there by design)
 - [ ] Exponents never scatter: bullet lists use an absolutely-positioned marker (flex/grid on
       an `<li>` would promote every `<sub>`/`<sup>` to its own item - the historical cause of
       "scattered" exponents), and `sup`/`sub` are CSS-positioned rather than font-metric based;
@@ -216,7 +241,7 @@ Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
 | Check | Result |
 |---|---|
 | `node tools/check-links.mjs` | **0 errors, 0 warnings** (9 advisory `[data-*]` notes, all guarded in code) |
-| `node tools/smoke-test.mjs` | **206 / 206 assertions passed** |
+| `node tools/smoke-test.mjs` | **207 / 207 assertions passed** |
 | Built-CSS mode, all external requests blocked | layout identical (2-col grid, type scale), **0 console errors** |
 | Headless Chrome with live CDNs | Chart.js charts + p5.js generator render; **0 console errors** |
 | Headless Chrome 148, all 6 pages, desktop + mobile | **0 console errors, 0 failed requests** |

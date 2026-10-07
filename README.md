@@ -74,15 +74,15 @@ emc-physics-tutorial/
 │   ├── check-links.mjs            Static validator (links, ids, data-hooks, CSS coverage)
 │   ├── smoke-test.mjs             Runtime test harness (jsdom, optional dev dependency)
 │   ├── perf-audit.mjs             Transfer-size / blocking-script / font-payload budgets
-│   ├── add-font.mjs               Registers licensed .ttf faces in vendor/fonts/manifest.json
-│   ├── subset_font.py             Subsets the 4.5 MB fot-yuruka-std.ttf down to a ~50 KB woff2
-│   └── switch-css.mjs             Swaps Tailwind delivery mode (cdn <-> built)
+│   ├── add-font.mjs               Registers OPTIONAL licensed faces in vendor/fonts/manifest.json
+│   ├── switch-css.mjs             Swaps Tailwind delivery mode (cdn <-> built)
+│   └── cleanup-repo.ps1           Windows repo-hygiene script: plan -> confirm -> clean (see §9)
 ├── vercel.json                    Vercel config: install/build commands + cache headers
 ├── tailwind.config.js             Tailwind pipeline config (bun run build:css)
 ├── vendor/
 │   ├── katex/                     Locally vendored KaTeX (js + css + woff2) — no CDN needed
-│   └── fonts/                     Drop-in slot for YOUR licensed fot-yuruka-std.ttf
-│                                  (instructions: vendor/fonts/README.md + css/input.css header)
+│   └── fonts/                     Committed OFL woff2 faces: G8321 Bold + Lilita One
+│                                  (+ optional licensed slot: vendor/fonts/README.md)
 ├── package.json                   Dev scripts: check / test / build:css / perf / font:scan
 ├── README.md                      This file
 ├── TESTING.md                     Manual + automated testing checklist
@@ -140,9 +140,9 @@ the maths rather than being scripted.
 bun install          # installs the single dev dependency (tailwindcss) -> bun.lock
 bun run build:css    # css/input.css -> css/site.css (minified, ~36 kB)
 bun run check        # static validator (links, ids, utility coverage)
-bun run test         # 206-assertion jsdom + browser harness
+bun run test         # 207-assertion jsdom + browser harness
 bun run perf         # gzip transfer / font payload / blocking-script budgets
-bun run font:scan    # re-read vendor/fonts/ and rewrite the font manifest
+bun run font:scan    # re-scan vendor/fonts/ for OPTIONAL licensed cuts -> manifest.json
 ```
 
 Everything else is plain static files; Bun and Node produce identical output, but the
@@ -204,19 +204,21 @@ the whole specificity-conflict story, solved by architecture instead of `!import
 `bun run check` proves coverage: it lists every utility class used in the six pages and
 verifies each one exists in the compiled `css/site.css`.
 
-### Type system (exactly three families)
+### Type system (two committed OFL families)
 
 | Role | Family | Source |
 |---|---|---|
-| Titles / bold text | `fot-yuruka-std` | your licensed `fot-yuruka-std.ttf` (or its woff2 subset), loaded at runtime from `vendor/fonts/manifest.json` |
-| Normal text | `LilitaOne-Regular` | your `LilitaOne-Regular.ttf`; vendored `lilita-one-400.woff2` answers to the same family as fallback |
-| UI, labels, buttons | `G8321` | your `G8321-*.ttf` weight family (Thin…Black), manifest-loaded |
+| Titles / headings / bold | `G8321` (Bold 700) | committed `vendor/fonts/g8321-700.woff2` (SIL OFL 1.1, Coji Morishita) |
+| Normal text | `LilitaOne-Regular` | committed `vendor/fonts/lilita-one-400.woff2` (SIL OFL 1.1) |
+| UI, labels, buttons | `G8321` (Bold 700) | the same committed face as titles |
 
 The stacks live once in `tailwind.config.js` (`fontFamily.title / sans / ui`) and are pulled
-into CSS with `theme('fontFamily.…')`, so config and output can never disagree. Open rounded
-faces (Mochiy Pop One, M PLUS Rounded 1c) remain only as last-resort fallbacks for machines
-without your licensed files. Run `python3 tools/subset_font.py` once to turn the 4.5 MB Yuruka
-TTF into a ~50 kB woff2 that the manifest prefers automatically.
+into CSS with `theme('fontFamily.…')`, so config and output can never disagree. M PLUS
+Rounded 1c (700/800, also committed woff2) is the last-resort fallback behind G8321.
+Because every face is freely redistributable, the deployed site renders **exactly** the same
+type as local dev — no licence risk, no runtime manifest needed, ~71 KB of fonts total.
+A privately licensed face (one you may not commit) can still be registered on your machine
+only through the optional `vendor/fonts/manifest.json` slot — see `vendor/fonts/README.md`.
 
 ## 8. Engineering notes
 
@@ -227,15 +229,14 @@ TTF into a ~50 kB woff2 that the manifest prefers automatically.
   above each topic title, and as the brand mark. The palette is a warm charcoal base with the
   reference site's own candy pastels (pink `#f8aebe`, lilac `#d5b8d8`, green `#b5d777`,
   blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography is a
-  three-family rounded system — diverse but coherent: **Lilita One** for poster moments
-  (hero title, topic titles, score grade), **FOT-Yuruka Std** in real weights (Thin 100 …
-  Black 900, recognised via the `G8321-*` family code) for headings, body and buttons, and
-  **M PLUS Rounded 1c** for small labels and tags. Licensed faces activate through a
-  committed manifest: drop the `.ttf`s into `vendor/fonts/`, `npm run font:scan`, commit and
-  push — `js/common.js` registers every entry via the FontFace API and logs one info line per
-  face; duplicate family+weight entries resolve to the larger, more complete file. Without
-  the licensed faces, the vendored open fallbacks (Mochiy Pop One + M PLUS Rounded 1c, woff2
-  in `vendor/fonts/`, no CDN) carry the identical design. `sup`/`sub` are positioned by CSS
+  two-family system, and both faces are committed OFL woff2 files (~71 KB total, zero
+  licence risk): **G8321 Bold** for headings, brand, buttons and labels, and **Lilita One**
+  for body copy — its soft rounded display character keeps long paragraphs friendly, while
+  M PLUS Rounded 1c (700/800) waits in the stacks as a last-resort fallback. Every host —
+  local dev, Vercel, a friend's laptop — renders identical type. A privately licensed face
+  can still be registered on your machine only through the optional
+  `vendor/fonts/manifest.json` slot; `js/common.js` loads it via the FontFace API and logs
+  one info line per activated face. `sup`/`sub` are positioned by CSS
   rather than font metrics, so no activated face can ever scatter exponents. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
@@ -291,11 +292,11 @@ TTF into a ~50 kB woff2 that the manifest prefers automatically.
 ```bash
 bun install          # dev deps only: jsdom (tests) + tailwindcss (CSS build)
 bun run check        # static validation: links, ids, data-hooks, CSS coverage
-bun run test         # 206 runtime assertions across all six pages (skips politely
+bun run test         # 207 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
 bun run build:css    # recompile css/input.css -> css/site.css after markup changes
 bun run perf         # gzip transfer / font payload / blocking-script budgets
-bun run font:scan    # register your licensed .ttf/.woff2 faces in the font manifest
+bun run font:scan    # re-scan vendor/fonts/ for optional licensed cuts -> manifest.json
 bun run switch:cdn   # optional: add the Play CDN tag (rubric demands "Tailwind via CDN")
 bun run switch:built # optional: back to the shipped default (compiled site.css)
 ```
@@ -303,18 +304,49 @@ bun run switch:built # optional: back to the shipped default (compiled site.css)
 The website itself still has **zero required dependencies**: every CDN library
 (Chart.js, p5.js) has a tested fallback, and the compiled Tailwind CSS is committed.
 
+### Repo hygiene (Windows)
+
+`tools/cleanup-repo.ps1` automates the tidy-up that a hand-written checklist keeps
+forgetting. It runs **PLAN → CONFIRM → EXECUTE**, so nothing is touched until you
+answer the prompt (`-DryRun` never writes, `-Force` skips the prompt).
+
+```powershell
+.\tools\cleanup-repo.ps1 -DryRun                     # show me everything first
+.\tools\cleanup-repo.ps1                             # plan, ask, then clean
+.\tools\cleanup-repo.ps1 -Verify -Commit -Push       # clean + bun checks + ship it
+.\tools\cleanup-repo.ps1 -RepoPath D:\VS\EMC-Physics -CheckLive -PurgeNodeModules
+```
+
+* **deletes** the dead `server/` + `api/` backends, `tools/subset_font.py`,
+  `bun.lockb`, `package-lock.json`, unused woff2 faces, and OS/editor junk
+  (`Thumbs.db`, `desktop.ini`, `.DS_Store`, `*.bak`, `*.orig`, …) — into the
+  **Recycle Bin** unless you pass `-Permanent`;
+* **untracks but never deletes** your licensed `.ttf`/`.otf` backups, and repairs
+  `.gitignore` if the `vendor/fonts/*.ttf|*.otf` rules went missing;
+* **refuses** to delete anything `css/fonts.css` references or anything in its
+  hard-protected list (`css/site.css`, `bun.lock`, the committed OFL woff2 files,
+  the HTML pages, the configs);
+* **reports** (never silently "fixes") a `lockfileVersion: 2` `bun.lock`, a missing
+  `css/site.css`, a stray `public/` folder or `outputDirectory` in `vercel.json`
+  (the two things behind Vercel's *"No Output Directory named public"*), tracked
+  `node_modules`, tracked files over 1 MB, and private font binaries still
+  reachable in **git history** — `.gitignore` does not rewrite history;
+* `-CheckLive` then probes the deployment: `/api/health` must **not** be 200 while
+  the fonts, `css/site.css` and `/` must be.
+
+Exit codes: `0` clean · `1` you aborted · `2` not the EMC Lab repo · `3` a step failed.
+
 ### Performance tooling
 * every `<script>` tag is `defer`; `preconnect` hints exist only on pages that use a CDN;
 * **p5.js lazy-injects** when the bonus generator lab approaches the viewport, so pages that
   never scroll to it never pay for it;
-* KaTeX and all open fonts are self-hosted (no third-party round trips);
+* KaTeX and all fonts are self-hosted (no third-party round trips);
 * `npm run perf` (`tools/perf-audit.mjs`) serves the site with gzip like a real host and
   enforces budgets: **0 render-blocking scripts**, **< 500 KB compressed transfer per page**
-  excluding licensed fonts, and **fails if a licensed face ships > 1.5 MB** — current numbers
-  are ~250-280 KB per page including fonts;
-* if that licensed-font budget ever trips (your full Japanese Yuruka TTF is ~4.5 MB), run
-  `pip install fonttools brotli && python3 tools/subset_font.py && npm run font:scan`:
-  it emits a ~50 KB latin/greek/maths woff2 subset and the manifest prefers it automatically.
+  excluding the font payload, and **fails if raw-TTF fonts ever exceed 500 KB** (the repo
+  ships woff2 only, ~71 KB) — current numbers are ~250-280 KB per page including fonts;
+* if you ever add a big TTF, convert it once with `pip install fonttools brotli` and
+  `TTFont(...).flavor = 'woff2'` — only woff2 belongs in the repo.
 
 ---
 

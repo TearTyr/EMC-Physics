@@ -540,17 +540,18 @@ window.EMC = (function () {
     return n;
   }
 
-  /* * Activate the user's licensed FOT-Yuruka Std if the font file is present. * Uses the FontFace API rather than a static @font-face rule so that a * missing file degrades with ZERO console noise (a plain @font-face would * log a 404 on every page load on hosts without the binary). */
+  /* * Optional: activate PRIVATELY licensed faces listed in vendor/fonts/manifest.json. * The site's own fonts (G8321 Bold + Lilita One, both SIL OFL) are committed * woff2 files declared in css/fonts.css - they render on any host with no * runtime work. This hook exists for faces you may NOT redistribute: drop the * file into vendor/fonts/ (gitignored), list it in the manifest, and it gets * registered locally via the FontFace API - a missing file degrades with ZERO * console noise (a plain @font-face would log a 404 on every page load). */
   function loadLicensedFont() {
     // vendor/fonts/manifest.json (always committed, always 200) lists the
-    // licensed faces present in the repo, so we never probe for files that
-    // might not exist: no 404 noise on hosts without the font.
+    // licensed faces present locally, so we never probe for files that
+    // might not exist: no 404 noise on hosts without them.
     const cssLink = document.querySelector('link[href$="css/site.css"]') ||
                   document.querySelector('link[href$="css/fonts.css"]');
     const base = cssLink ? cssLink.getAttribute('href').replace(/css\/[^/]+$/, '') : '';
     const note = msg => console.info('[EMC] ' + msg);
+    const mark = state => { document.documentElement.dataset.licensedFont = state; };
     if (typeof window.fetch !== 'function') {          // e.g. jsdom test harness
-      document.documentElement.dataset.yuruka = 'fallback';
+      mark('bundled');
       return;
     }
     fetch(base + 'vendor/fonts/manifest.json', { cache: 'no-store' })
@@ -558,19 +559,22 @@ window.EMC = (function () {
       .then(man => {
         const cuts = (man && Array.isArray(man.licensed) ? man.licensed : [])
           .filter(c => c && typeof c.file === 'string');
-        if (!cuts.length || typeof window.FontFace !== 'function') {
-          document.documentElement.dataset.yuruka = 'fallback';
-          note('licensed font not registered - using bundled rounded fallbacks');
+        if (!cuts.length) {
+          // normal state: the committed OFL faces ARE the site fonts
+          mark('bundled');
           return;
         }
-        let activated = false;
-        // manifest may list alternates for one weight (subset woff2 first,
-        // full ttf second): register only the first entry that actually loads
+        if (typeof window.FontFace !== 'function') { mark('fallback'); return; }
+        // the manifest may list alternates for one family+weight (subset woff2
+        // first, full ttf second): register only the first entry that loads
         const claimed = new Set();
         cuts.forEach(c => {
           const url = base + 'vendor/fonts/' + c.file;
-          const family = c.family || 'FOT-Yuruka Std';
-          const face = new window.FontFace(family, `url(${url}) format('truetype')`,
+          const family = c.family || 'Licensed Face';
+          const fmt = /\.woff2$/i.test(c.file) ? 'woff2'
+                    : /\.woff$/i.test(c.file) ? 'woff'
+                    : /\.otf$/i.test(c.file) ? 'opentype' : 'truetype';
+          const face = new window.FontFace(family, `url(${url}) format('${fmt}')`,
             { weight: String(c.weight || 400), style: 'normal', display: 'swap' });
           face.load()
             .then(loaded => {
@@ -578,23 +582,15 @@ window.EMC = (function () {
               if (claimed.has(family + w)) return;      // an alternate won
               claimed.add(family + w);
               document.fonts.add(loaded);
-              if (family === 'FOT-Yuruka Std' && (c.weight || 400) === 400) {
-                activated = true;
-                document.documentElement.dataset.yuruka = 'active';
-              }
-              note(`font active: ${family} ${c.weight || 400} (${c.file})`);
+              mark('active');
+              note(`licensed font active: ${family} ${w} (${c.file})`);
             })
-            .catch(() => {
-              if (!activated && (c.weight || 400) === 400) {
-                document.documentElement.dataset.yuruka = 'fallback';
-                note('Yuruka cut not found or undecodable - trying alternates/fallbacks');
-              }
-            });
+            .catch(() => note(`licensed cut not loadable (${c.file}) - keeping the bundled faces`));
         });
       })
       .catch(() => {
-        document.documentElement.dataset.yuruka = 'fallback';
-        note('font manifest unreadable - using bundled rounded fallbacks');
+        mark('fallback');
+        note('font manifest unreadable - keeping the bundled faces');
       });
   }
 
