@@ -563,6 +563,9 @@ window.EMC = (function () {
           return;
         }
         let activated = false;
+        // manifest may list alternates for one weight (subset woff2 first,
+        // full ttf second): register only the first entry that actually loads
+        const claimed = new Set();
         cuts.forEach(c => {
           const url = base + 'vendor/fonts/' + c.file;
           const family = c.family || 'FOT-Yuruka Std';
@@ -570,6 +573,9 @@ window.EMC = (function () {
             { weight: String(c.weight || 400), style: 'normal', display: 'swap' });
           face.load()
             .then(loaded => {
+              const w = c.weight || 400;
+              if (claimed.has(family + w)) return;      // an alternate won
+              claimed.add(family + w);
               document.fonts.add(loaded);
               if (family === 'FOT-Yuruka Std' && (c.weight || 400) === 400) {
                 activated = true;
@@ -580,7 +586,7 @@ window.EMC = (function () {
             .catch(() => {
               if (!activated && (c.weight || 400) === 400) {
                 document.documentElement.dataset.yuruka = 'fallback';
-                note('Yuruka file failed to decode - using bundled rounded fallbacks');
+                note('Yuruka cut not found or undecodable - trying alternates/fallbacks');
               }
             });
         });

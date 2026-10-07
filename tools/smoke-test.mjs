@@ -361,9 +361,9 @@ console.log('\u2500'.repeat(66));
   await frames(win, 4);
   ok('no runtime errors', problems.length === 0, problems.join(' | '));
   ok('induction canvas rendered', drawCalls(win, '#sim-induction') > 150);
-  ok('p5.js lab degrades to a notice when the CDN is absent',
-    /could not be loaded/.test(doc.getElementById('p5-gen-host').textContent),
-    doc.getElementById('p5-gen-host').textContent.slice(0, 60));
+  ok('p5.js lab lazy-loads (injects on approach, notice if blocked)',
+    /could not be loaded/.test(doc.getElementById('p5-gen-host').textContent) ||
+    doc.getElementById('p5-gen-host').dataset.p5 === 'loading');
 
   // stationary magnet -> no EMF at all
   eq('a stationary magnet induces nothing', parseSI(txt(win, 'ind-emf')), 0);
@@ -588,6 +588,8 @@ console.log('\u2500'.repeat(66));
     ok(`${p}: links the compiled Tailwind sheet (and the CDN tag by default)`,
       /css\/site\.css/.test(html) && /cdn\.tailwindcss\.com/.test(html));
     ok(`${p}: exactly one <h1>`, (html.match(/<h1[\s>]/g) || []).length === 1);
+    ok(`${p}: every script tag is defer (no render-blocking)`,
+      [...html.matchAll(/<script[^>]*src=/g)].every(m => m[0].includes('defer')));
   }
   const fontsCss = readFileSync(join(ROOT, 'css/fonts.css'), 'utf8');
   ok('open cute fonts are self-hosted (no CDN needed)',
@@ -595,6 +597,10 @@ console.log('\u2500'.repeat(66));
     /Lilita One/.test(fontsCss) &&
     ['mochiy-pop-one-400.woff2', 'm-plus-rounded-1c-400.woff2', 'lilita-one-400.woff2'].every(f =>
       existsSync(join(ROOT, 'vendor/fonts', f))));
+  const manifest = JSON.parse(readFileSync(join(ROOT, 'vendor/fonts/manifest.json'), 'utf8'));
+  ok('font manifest ships the licensed Yuruka cuts',
+    manifest.licensed.some(c => c.family === 'FOT-Yuruka Std' && c.weight === 400) &&
+    manifest.licensed.some(c => c.weight === 700));
   ok('licensed FOT-Yuruka Std sits first in both stacks',
     /--font: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')) &&
     /--font-head: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')));

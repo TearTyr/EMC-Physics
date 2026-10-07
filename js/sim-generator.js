@@ -3,12 +3,11 @@
   const host = document.getElementById('p5-gen-host');
   if (!host) return;
 
-  if (!window.p5) {
+  function showNotice() {
     host.innerHTML =
       '<div class="sim-note" style="margin:1rem">p5.js could not be loaded from the CDN, so the ' +
       'bonus generator lab is hidden. Everything else on this page \u2014 including the main ' +
       'magnet-through-a-coil simulation \u2014 works offline.</div>';
-    return;
   }
 
   const { clamp, unit, fixed, bindRange } = EMC;
@@ -175,9 +174,35 @@
     };
   };
 
-  new window.p5(sketch);
+  /* ---- boot: p5 may arrive late (lazy) or never (blocked CDN) ----------- */
+  function boot() {
+    if (!window.p5) { showNotice(); return; }
+    new window.p5(sketch);
+  }
+  if (window.p5) {
+    boot();
+  } else {
+    let injected = false;
+    const inject = () => {
+      if (injected) return;
+      injected = true;
+      host.dataset.p5 = 'loading';
+      const tag = document.createElement('script');
+      tag.src = 'https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js';
+      tag.onload = boot;
+      tag.onerror = showNotice;
+      document.head.appendChild(tag);
+    };
+    // only pay for p5 when the lab is about to enter the viewport
+    if (typeof IntersectionObserver === 'function') {
+      const io = new IntersectionObserver(es => {
+        if (es.some(e => e.isIntersecting)) { io.disconnect(); inject(); }
+      }, { rootMargin: '600px 0px' });
+      io.observe(host);
+    } else inject();
+  }
 
-  /* ---- controls -------------------------------------------------------- */
+  /* ---- controls (work even before p5 arrives) --------------------------- */
   bindRange('gen-N', 'gen-Nv', v => { state.N = Math.round(v); updateDom(); }, v => `${Math.round(v)} turns`);
   bindRange('gen-B', 'gen-Bv', v => { state.B = v; updateDom(); }, v => `${fixed(v, 2)} T`);
   bindRange('gen-f', 'gen-fv', v => { state.f = v; updateDom(); }, v => `${fixed(v, 1)} Hz`);

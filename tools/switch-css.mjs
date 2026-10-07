@@ -13,7 +13,7 @@ const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '..');
 const mode = process.argv[2];
 if (mode !== 'cdn' && mode !== 'built') { console.error('usage: switch-css.mjs [cdn|built]'); process.exit(1); }
 const PAGES = ['index.html','quiz.html','topics/charges.html','topics/current.html','topics/magnetism.html','topics/induction.html'];
-const TAG = '  <script src="https://cdn.tailwindcss.com"></script>\n';
+const TAG = '  <script defer src="https://cdn.tailwindcss.com"></script>\n';
 let changed = 0;
 for (const page of PAGES) {
   const file = join(ROOT, page);

@@ -23,8 +23,7 @@ const WEIGHTS = [
 function familyOf(file) {
   const f = file.toLowerCase();
   if (f.startsWith('g8321') || f.includes('yuruka')) return 'FOT-Yuruka Std';
-  if (f.includes('lilita')) return 'Lilita One';
-  return null;                       // unknown ttf: ignored on purpose
+  return null;   // Lilita One is vendored as woff2 in css/fonts.css; unknown files ignored
 }
 function weightOf(file) {
   const f = file.toLowerCase().replace(/\.ttf$/, '');
@@ -37,19 +36,26 @@ function weightOf(file) {
 const dir = join(dirname(new URL(import.meta.url).pathname), '..', 'vendor', 'fonts');
 import { statSync } from 'node:fs';
 const cuts = readdirSync(dir)
-  .filter(f => f.toLowerCase().endsWith('.ttf'))
+  .filter(f => /\.(ttf|woff2)$/i.test(f))
   .map(f => ({ family: familyOf(f), file: f, weight: weightOf(f), size: statSync(join(dir, f)).size }))
   .filter(e => e.family);
-// two cuts claiming the same family+weight (e.g. fot-yuruka-std.ttf AND
-// G8321-Regular.ttf): keep the LARGER file - more complete character coverage
+// Alternates for one family+weight: prefer woff2 (smaller), then larger file.
+// All alternates are kept in the manifest (loader picks the first that loads).
 const best = new Map();
 for (const c of cuts) {
   const key = c.family + '@' + c.weight;
-  if (!best.has(key) || c.size > best.get(key).size) best.set(key, c);
+  const cur = best.get(key);
+  const better = !cur ||
+    (c.file.endsWith('.woff2') && !cur.file.endsWith('.woff2')) ||
+    (c.file.endsWith('.woff2') === cur.file.endsWith('.woff2') && c.size > cur.size);
+  if (better) best.set(key, c);
 }
-const licensed = [...best.values()]
+const licensed = cuts
   .map(({ family, file, weight }) => ({ family, file, weight }))
-  .sort((a, b) => (a.family + a.weight).localeCompare(b.family + b.weight));
+  .sort((a, b) => {
+    const k = (a.family + a.weight).localeCompare(b.family + b.weight);
+    return k !== 0 ? k : (a.file.endsWith('.woff2') ? -1 : 1);   // woff2 first
+  });
 
 writeFileSync(join(dir, 'manifest.json'), JSON.stringify({ licensed }, null, 2) + '\n');
 if (licensed.length) {

@@ -111,6 +111,7 @@ Total: ~8,000 lines across 6 pages, 2 stylesheets and 11 scripts. No framework, 
 | Predict-then-run challenges | The circuit builder and the induction lab ask you to predict an outcome; the **simulator itself computes the answer** from its live analysis, then a "Try it" button performs the change so the readouts confirm it |
 | Chart.js score visualisation | Doughnut (correct/incorrect), horizontal bars (score per topic), line (attempt history) on the score card; CSS-bar fallback when the CDN is unreachable |
 | p5.js simulation | Bonus AC-generator lab on Topic 4 (`js/sim-generator.js`, p5 instance mode); notice fallback offline |
+| Lazy bonus lab | the p5.js generator downloads only when scrolled near; blocked CDN shows a notice |
 | Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; degrades gracefully to memory when storage is blocked. Deliberately backend-free |
 | Cross-browser (Chrome / Firefox / Edge) | No exotic APIs; feature-guarded `ResizeObserver`, `IntersectionObserver`, Web Animations; vendor-prefixed range-input styling for both engines |
 
@@ -276,7 +277,20 @@ npm run test:vercel  # contract test for the api/ serverless functions
 ```
 
 The website itself still has **zero required dependencies**: every CDN library (Tailwind,
-Chart.js, p5.js) has a tested fallback, and the server is purely additive.
+Chart.js, p5.js) has a tested fallback.
+
+### Performance tooling
+* every `<script>` tag is `defer`; `preconnect` hints exist only on pages that use a CDN;
+* **p5.js lazy-injects** when the bonus generator lab approaches the viewport, so pages that
+  never scroll to it never pay for it;
+* KaTeX and all open fonts are self-hosted (no third-party round trips);
+* `npm run perf` (`tools/perf-audit.mjs`) serves the site with gzip like a real host and
+  enforces budgets: **0 render-blocking scripts**, **< 500 KB compressed transfer per page**
+  excluding licensed fonts, and **fails if a licensed face ships > 1.5 MB** — current numbers
+  are ~250-280 KB per page including fonts;
+* if that licensed-font budget ever trips (your full Japanese Yuruka TTF is ~4.5 MB), run
+  `pip install fonttools brotli && python3 tools/subset_font.py && npm run font:scan`:
+  it emits a ~50 KB latin/greek/maths woff2 subset and the manifest prefers it automatically.
 
 ---
 

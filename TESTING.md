@@ -14,7 +14,8 @@ npm run check      # static validator
 npm test           # 195 runtime assertions
 npm run build:css  # recompile Tailwind utilities -> css/site.css after markup changes
 npm run switch:cdn / npm run switch:built   # toggle the Play CDN tag (idempotent)
-npm run font:scan  # register licensed .ttf faces in vendor/fonts/manifest.json
+npm run font:scan  # register licensed .ttf/.woff2 faces in vendor/fonts/manifest.json
+npm run perf       # gzip transfer budgets + render-blocking + font payload audit
 ```
 
 ### 1.1 `tools/check-links.mjs` (no dependencies)
@@ -67,6 +68,9 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] No gradient or glow is visible anywhere: flat pastel charges/magnets/bulbs on the plates
 - [ ] Fonts load as Cabin (body) / Open Sans (headings); with the font CDN blocked the system
       stack takes over with no layout jump beyond family substitution
+- [ ] `npm run perf` passes: 0 blocking scripts per page, < 500 KB compressed non-font
+      transfer, licensed font payload under 1.5 MB (else run `tools/subset_font.py`)
+- [ ] The bonus p5 lab does not download p5 at all until scrolled near (DevTools -> Network)
 - [ ] Canvases redraw crisply when the window is resized (no blur, no stretching)
 - [ ] Topic pages read as ONE aligned column: breadcrumb, mascot, title, lede, objectives card
       and prose all share the same left edge at 1440 px and 1024 px
