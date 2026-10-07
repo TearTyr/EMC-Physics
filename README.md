@@ -311,10 +311,19 @@ forgetting. It runs **PLAN → CONFIRM → EXECUTE**, so nothing is touched unti
 answer the prompt (`-DryRun` never writes, `-Force` skips the prompt).
 
 ```powershell
+# PowerShell / Windows Terminal, from the repo root
 .\tools\cleanup-repo.ps1 -DryRun                     # show me everything first
 .\tools\cleanup-repo.ps1                             # plan, ask, then clean
 .\tools\cleanup-repo.ps1 -Verify -Commit -Push       # clean + bun checks + ship it
 .\tools\cleanup-repo.ps1 -RepoPath D:\VS\EMC-Physics -CheckLive -PurgeNodeModules
+```
+
+```bash
+# Git Bash / MSYS, from the repo root -- forward slashes, or the backslashes are
+# eaten as escapes and PowerShell gets the single word "toolscleanup-repo.ps1"
+# ("The argument ... to the -File parameter does not exist").
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -DryRun
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -Verify -Commit -Push
 ```
 
 * **deletes** the dead `server/` + `api/` backends, `tools/subset_font.py`,

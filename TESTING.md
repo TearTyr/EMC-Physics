@@ -55,6 +55,12 @@ Repo hygiene: **PLAN → CONFIRM → EXECUTE**, so nothing is written before you
 .\tools\cleanup-repo.ps1 -Verify -Commit -Push    # clean, run bun checks, ship it
 ```
 
+```bash
+# Git Bash equivalent (forward slashes - a backslash path reaches PowerShell as
+# one mangled word and fails with "argument ... to the -File parameter does not exist")
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -DryRun
+```
+
 - [x] deletes `server/`, `api/`, `tools/subset_font.py`, `bun.lockb`, `package-lock.json`,
       unused woff2 faces and OS/editor junk — to the **Recycle Bin** unless `-Permanent`
 - [x] untracks (`git rm --cached`, file kept on disk) `package-lock.json` and any tracked

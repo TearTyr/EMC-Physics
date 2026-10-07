@@ -68,8 +68,34 @@
     Probe the deployment: /api/health must NOT be 200; the two committed woff2
     files, css/site.css and / must be 200.
 
+.NOTES
+    Which shell are you in? The path separator matters and nothing else does.
+
+      PowerShell / Windows Terminal (from the repo root):
+          .\tools\cleanup-repo.ps1 -DryRun
+
+      Git Bash / MSYS (from the repo root) - forward slashes, no backslashes.
+      A backslash is an escape character there, so `tools\cleanup-repo.ps1`
+      arrives at PowerShell as the single word `toolscleanup-repo.ps1` and you
+      get "The argument ... to the -File parameter does not exist":
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -DryRun
+      (`pwsh` instead of `powershell.exe` if you have PowerShell 7.)
+
+      cmd.exe (from the repo root):
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\cleanup-repo.ps1 -DryRun
+
+    From anywhere else, point -RepoPath at the repo with a QUOTED Windows path:
+          powershell -NoProfile -ExecutionPolicy Bypass -File "D:\VS\EMC-Physics\tools\cleanup-repo.ps1" -RepoPath "D:\VS\EMC-Physics" -DryRun
+    In Git Bash that same absolute path must be written /d/VS/EMC-Physics,
+    because MSYS rewrites leading-slash arguments before PowerShell sees them.
+
 .EXAMPLE
+    # PowerShell / cmd, from the repo root
     .\tools\cleanup-repo.ps1 -DryRun
+
+.EXAMPLE
+    # Git Bash, from the repo root
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -DryRun
 
 .EXAMPLE
     .\tools\cleanup-repo.ps1 -Verify -Commit -Push
@@ -156,7 +182,8 @@ try {
     $RepoPath = (Resolve-Path -LiteralPath $RepoPath -ErrorAction Stop).ProviderPath
 } catch {
     Write-Host "  [xx] Path not found: $RepoPath" -ForegroundColor Red
-    Write-Host '       Re-run with -RepoPath D:\VS\EMC-Physics' -ForegroundColor Red
+    Write-Host '       Re-run with a quoted Windows path: -RepoPath "D:\VS\EMC-Physics"' -ForegroundColor Red
+    Write-Host '       (In Git Bash the same folder is /d/VS/EMC-Physics.)' -ForegroundColor DarkGray
     exit 2
 }
 
