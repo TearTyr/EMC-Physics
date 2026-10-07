@@ -1,37 +1,41 @@
-# vendor/fonts
+# Fonts
 
-## The site's fonts — committed, OFL, identical on every host
-| file | family | role | licence |
+One family for the whole site: **G8321** by Coji Morishita — SIL OFL 1.1.
+Three weights are committed here as `.woff2` (see `OFL-G8321.txt`) and declared
+in `css/fonts.css`; they render identically on every host — local, Vercel,
+GitHub Pages:
+
+| File | Family | Used for | Licence |
 |---|---|---|---|
-| `g8321-700.woff2` | **G8321 Bold** | titles, headings, brand, UI labels/buttons | SIL OFL 1.1 — Coji Morishita (full text: `OFL-G8321.txt`) |
-| `lilita-one-400.woff2` | **Lilita One** | body copy | SIL OFL 1.1 — Juan Pablo del Peral / Huerta Tipográfica |
-| `m-plus-rounded-1c-700.woff2`, `m-plus-rounded-1c-800.woff2` | M PLUS Rounded 1c | last-resort fallback behind G8321 | SIL OFL 1.1 — M+ FONTS PROJECT |
+| `g8321-100.woff2` | **G8321 Thin** | oversized display numerals (quiz grade, topic-card watermark, progress ring %, home stat strip) | SIL OFL 1.1 — © Coji Morishita |
+| `g8321-400.woff2` | **G8321 Regular** | body copy, prose, labels — the site default | SIL OFL 1.1 — © Coji Morishita |
+| `g8321-700.woff2` | **G8321 Bold** | headings, brand, buttons, nav, micro-labels | SIL OFL 1.1 — © Coji Morishita |
 
-They are declared in `css/fonts.css` and lead the stacks in `tailwind.config.js`
-(`title`/`ui` → G8321, `sans` → Lilita One), so local dev, Vercel and a
-friend's laptop all render the exact same type. Total payload ≈ 71 KB.
-G8321 source: https://github.com/coz-m/G8321_FONTS (official webfont build).
+Titles (`fontFamily.title`) additionally lead with `fot-yuruka-std` — see the
+optional licensed slot below. On machines without it, titles render G8321 Bold:
+same family as the body, fully consistent everywhere.
 
-Because both faces are freely redistributable, nothing here depends on a
-private licence any more — the old paid FOT-Yuruka Std slot is unused.
+## Optional: privately licensed faces (local machines only)
 
-## Optional slot for privately licensed faces
-Bought a font you may **not** redistribute? It can still style the site
-**on your machine only**:
-1. Drop the `.ttf` here — `.gitignore` keeps `vendor/fonts/*.ttf|*.otf` out
-   of the repo, so a paid face can never leak into a public push.
-2. `bun run font:scan` — rewrites `manifest.json` (recognises `fot-yuruka-*`;
-   teach it other names in `tools/add-font.mjs → familyOf()`).
-3. Put the family first in the stack you want it on (`tailwind.config.js`),
-   then `bun run build:css` and commit the config + `manifest.json`.
+Some fonts cannot be redistributed — notably **FOT-Yuruka Std** (Fontworks),
+which is a *paid* licence and must never be committed to a public repository.
+This folder supports those faces locally with **zero console noise**:
 
-`js/common.js` registers every manifest entry through the FontFace API at
-boot and logs `[EMC] licensed font active: …`; `<html>` gets
-`data-licensed-font="active"`. Visitors without the file silently see the
-committed OFL faces above — never a 404, never an error.
+1. Drop the font file here (`vendor/fonts/*.ttf` and `*.otf` are gitignored;
+   `.woff2` is **not** — never commit a licensed font as woff2 either).
+2. Run `bun run font:scan` — it rewrites `manifest.json`, mapping
+   `fot-yuruka-*.ttf|woff2` to the family name `fot-yuruka-std`.
+3. Keep the local `manifest.json` change out of the public repo:
+   `git update-index --skip-worktree vendor/fonts/manifest.json`
+   (undo anytime with `--no-skip-worktree`).
+4. `js/common.js` reads `manifest.json`, registers each listed face through the
+   `FontFace` API, and stamps `<html data-licensed-font="bundled|active|fallback">`.
+   The title stack lists `fot-yuruka-std` first, so headings switch to it
+   automatically — everything else stays G8321 by design.
 
-## Notes
-- Serve the folder over http when testing (e.g. `bunx serve`) — Chrome
-  blocks custom fonts on `file://`.
-- Keep woff2 files small: convert any big TTF with
-  `pip install fonttools brotli`, then `TTFont(...).flavor = 'woff2'`.
+The committed `manifest.json` ships with `"licensed": []`, so a fresh clone or
+the deployed site performs no extra requests and logs nothing.
+
+> A plain `@font-face { src: url(fot-yuruka-std.woff2) }` pointing at a
+> gitignored file would 404 on every page load. The manifest + `FontFace`
+> approach never issues that request unless the font is actually present.

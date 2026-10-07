@@ -82,7 +82,7 @@ emc-physics-tutorial/
 ├── tailwind.config.js             Tailwind pipeline config (bun run build:css)
 ├── vendor/
 │   ├── katex/                     Locally vendored KaTeX (js + css + woff2) — no CDN needed
-│   └── fonts/                     Committed OFL woff2 faces: G8321 Bold + Lilita One
+│   └── fonts/                     Committed OFL woff2 faces: G8321 Thin / Regular / Bold
 │                                  (+ optional licensed slot: vendor/fonts/README.md)
 ├── package.json                   Dev scripts: check / test / build:css / perf / font:scan
 ├── README.md                      This file
@@ -141,7 +141,7 @@ the maths rather than being scripted.
 bun install          # installs the single dev dependency (tailwindcss) -> bun.lock
 bun run build:css    # css/input.css -> css/site.css (minified, ~36 kB)
 bun run check        # static validator (links, ids, utility coverage)
-bun run test         # 207-assertion jsdom + browser harness
+bun run test         # 208-assertion jsdom + browser harness
 bun run perf         # gzip transfer / font payload / blocking-script budgets
 bun run font:scan    # re-scan vendor/fonts/ for OPTIONAL licensed cuts -> manifest.json
 ```
@@ -212,21 +212,21 @@ the whole specificity-conflict story, solved by architecture instead of `!import
 `bun run check` proves coverage: it lists every utility class used in the six pages and
 verifies each one exists in the compiled `css/site.css`.
 
-### Type system (two committed OFL families)
+### Type system (one committed OFL family, three weights)
 
-| Role | Family | Source |
+| Role | Face | Source |
 |---|---|---|
-| Titles / headings / bold | `G8321` (Bold 700) | committed `vendor/fonts/g8321-700.woff2` (SIL OFL 1.1, Coji Morishita) |
-| Normal text | `LilitaOne-Regular` | committed `vendor/fonts/lilita-one-400.woff2` (SIL OFL 1.1) |
-| UI, labels, buttons | `G8321` (Bold 700) | the same committed face as titles |
+| Titles / headings / buttons / labels | `fot-yuruka-std` → **G8321 Bold 700** | licensed face locally (`vendor/fonts/manifest.json` slot); committed fallback `vendor/fonts/g8321-700.woff2` |
+| Body copy / prose | **G8321 Regular 400** | committed `vendor/fonts/g8321-400.woff2` |
+| Display numerals (grade, watermark, ring %, stat strip) | **G8321 Thin 100** | committed `vendor/fonts/g8321-100.woff2` |
 
-The stacks live once in `tailwind.config.js` (`fontFamily.title / sans / ui`) and are pulled
-into CSS with `theme('fontFamily.…')`, so config and output can never disagree. M PLUS
-Rounded 1c (700/800, also committed woff2) is the last-resort fallback behind G8321.
-Because every face is freely redistributable, the deployed site renders **exactly** the same
-type as local dev — no licence risk, no runtime manifest needed, ~71 KB of fonts total.
-A privately licensed face (one you may not commit) can still be registered on your machine
-only through the optional `vendor/fonts/manifest.json` slot — see `vendor/fonts/README.md`.
+All three weights are G8321 by Coji Morishita (SIL OFL 1.1) — the whole site is one
+family, so local dev and the deployed site are guaranteed consistent. The stacks live once
+in `tailwind.config.js` (`fontFamily.title / sans / ui`) and are pulled into CSS with
+`theme('fontFamily.…')`, so config and output can never disagree. Titles lead with
+`fot-yuruka-std`, a *paid* face that is never committed: on machines that hold it locally
+it renders headings; everywhere else titles fall back to G8321 Bold — still the site's
+family, no licence risk. ~45 KB of fonts total.
 
 ## 8. Engineering notes
 
@@ -237,14 +237,14 @@ only through the optional `vendor/fonts/manifest.json` slot — see `vendor/font
   above each topic title, and as the brand mark. The palette is a warm charcoal base with the
   reference site's own candy pastels (pink `#f8aebe`, lilac `#d5b8d8`, green `#b5d777`,
   blue `#a8d3e0`, yellow `#f6d36b`) used sparingly as the only accents. Typography is a
-  two-family system, and both faces are committed OFL woff2 files (~71 KB total, zero
-  licence risk): **G8321 Bold** for headings, brand, buttons and labels, and **Lilita One**
-  for body copy — its soft rounded display character keeps long paragraphs friendly, while
-  M PLUS Rounded 1c (700/800) waits in the stacks as a last-resort fallback. Every host —
-  local dev, Vercel, a friend's laptop — renders identical type. A privately licensed face
-  can still be registered on your machine only through the optional
-  `vendor/fonts/manifest.json` slot; `js/common.js` loads it via the FontFace API and logs
-  one info line per activated face. `sup`/`sub` are positioned by CSS
+  single-family system — G8321 (SIL OFL 1.1) in three committed weights (~45 KB total,
+  zero licence risk): **Thin 100** for oversized display numerals, **Regular 400** for
+  body copy, **Bold 700** for headings, buttons and labels. Titles additionally try the
+  privately licensed *FOT-Yuruka Std* first, which only machines holding that paid font
+  can render; everywhere else they fall back to G8321 Bold, keeping every host consistent.
+  `js/common.js` activates such local-only faces through the optional
+  `vendor/fonts/manifest.json` slot (FontFace API, one info log line per face, zero
+  console noise when absent). `sup`/`sub` are positioned by CSS
   rather than font metrics, so no activated face can ever scatter exponents. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
@@ -300,7 +300,7 @@ only through the optional `vendor/fonts/manifest.json` slot — see `vendor/font
 ```bash
 bun install          # dev deps only: jsdom (tests) + tailwindcss (CSS build)
 bun run check        # static validation: links, ids, data-hooks, CSS coverage
-bun run test         # 207 runtime assertions across all six pages (skips politely
+bun run test         # 208 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
 bun run build:css    # recompile css/input.css -> css/site.css after markup changes
 bun run perf         # gzip transfer / font payload / blocking-script budgets

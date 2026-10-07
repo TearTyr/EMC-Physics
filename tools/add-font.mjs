@@ -58,6 +58,6 @@ if (licensed.length) {
   console.log('note: put the family first in a tailwind.config.js stack to use it, then bun run build:css');
 } else {
   console.log('no licensed cuts in vendor/fonts/ - manifest cleared.');
-  console.log('the site uses its committed OFL faces: G8321 Bold (titles/UI) + Lilita One (body).');
+  console.log('the site uses its committed OFL face: G8321 (Thin numerals / Regular body / Bold headings+UI).');
 }
 console.log('reminder: *.ttf/*.otf stay local (.gitignore); only manifest.json is committed.');

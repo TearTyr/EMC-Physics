@@ -270,8 +270,8 @@ $hardProtect = @(
     'bun.lock', 'package.json', 'tailwind.config.js', 'vercel.json',
     'index.html', 'quiz.html', '.gitignore', 'README.md', 'TESTING.md',
     'PRESENTATION-NOTES.md',
-    'vendor/fonts/g8321-700.woff2', 'vendor/fonts/lilita-one-400.woff2',
-    'vendor/fonts/m-plus-rounded-1c-700.woff2', 'vendor/fonts/m-plus-rounded-1c-800.woff2',
+    'vendor/fonts/g8321-100.woff2', 'vendor/fonts/g8321-400.woff2',
+    'vendor/fonts/g8321-700.woff2',
     'vendor/fonts/manifest.json', 'vendor/fonts/ofl-g8321.txt',
     'vendor/fonts/readme.md', 'vendor/fonts/.gitkeep'
 )
@@ -820,7 +820,7 @@ if ($CheckLive) {
     $probes = @(
         @{ Url = "$LiveUrl/api/health";                        Want = 'not-200'; Label = '/api/health must be gone (expect 404)' }
         @{ Url = "$LiveUrl/vendor/fonts/g8321-700.woff2";      Want = '200';     Label = 'G8321 Bold woff2 (~15 KB)' }
-        @{ Url = "$LiveUrl/vendor/fonts/lilita-one-400.woff2"; Want = '200';     Label = 'Lilita One woff2 (~10 KB)' }
+        @{ Url = "$LiveUrl/vendor/fonts/g8321-400.woff2";      Want = '200';     Label = 'G8321 Regular woff2 (~15 KB)' }
         @{ Url = "$LiveUrl/css/site.css";                      Want = '200';     Label = 'committed Tailwind build' }
         @{ Url = "$LiveUrl/";                                  Want = '200';     Label = 'home page' }
     )

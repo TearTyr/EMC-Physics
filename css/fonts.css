@@ -1,50 +1,32 @@
-/* ==========================================================================
-   Site fonts — ALL committed, ALL SIL Open Font License 1.1, no CDN:
-     * G8321 Bold (700)          -> titles, headings, brand, UI labels/buttons
-     * Lilita One (400)          -> body copy (friendly rounded display face)
-     * M PLUS Rounded 1c 700/800 -> last-resort fallback behind G8321
-   Because these are committed woff2 files, every host (Vercel included)
-   renders the exact same type — nothing depends on a private licence.
+/* EMC Physics - self-hosted webfonts.
+   ONE family for the whole site: G8321 by Coji Morishita (SIL OFL 1.1),
+   three committed weights:
+     100 Thin    - oversized display numerals (score grade, topic watermark, ring %)
+     400 Regular - body copy, prose, labels (the site's default)
+     700 Bold    - headings, buttons, nav, micro-labels
+   Titles additionally lead with 'fot-yuruka-std': a PRIVATELY licensed face
+   that only machines holding it locally can render (see vendor/fonts/README.md) -
+   everywhere else titles cleanly fall back to G8321 Bold, the same family as
+   the body. No other webfonts are used. */
 
-   Optional privately-licensed override: js/common.js reads
-   vendor/fonts/manifest.json and registers any listed face through the
-   FontFace API at boot (missing files degrade silently — zero 404 noise).
-   ========================================================================== */
-
+@font-face {
+  font-family: 'G8321';
+  src: url('../vendor/fonts/g8321-100.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'G8321';
+  src: url('../vendor/fonts/g8321-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 @font-face {
   font-family: 'G8321';
   src: url('../vendor/fonts/g8321-700.woff2') format('woff2');
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'LilitaOne-Regular';
-  src: url('../vendor/fonts/lilita-one-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Lilita One';
-  src: url('../vendor/fonts/lilita-one-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'M PLUS Rounded 1c';
-  src: url('../vendor/fonts/m-plus-rounded-1c-700.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'M PLUS Rounded 1c';
-  src: url('../vendor/fonts/m-plus-rounded-1c-800.woff2') format('woff2');
-  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }

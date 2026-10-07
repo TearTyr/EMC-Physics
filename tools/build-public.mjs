@@ -65,10 +65,9 @@ const MUST_EXIST = [
   'topics/induction.html',
   'vendor/katex/katex.min.js',
   'vendor/katex/katex.min.css',
+  'vendor/fonts/g8321-100.woff2',
+  'vendor/fonts/g8321-400.woff2',
   'vendor/fonts/g8321-700.woff2',
-  'vendor/fonts/lilita-one-400.woff2',
-  'vendor/fonts/m-plus-rounded-1c-700.woff2',
-  'vendor/fonts/m-plus-rounded-1c-800.woff2',
   'vendor/fonts/manifest.json',
 ];
 

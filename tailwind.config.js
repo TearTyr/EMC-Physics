@@ -1,10 +1,12 @@
 /* Tailwind config — single source for screens, fonts and content scanning.
    screens match the component layer exactly: 640 / 900 / 1200.
-   fontFamily mirrors the two-font type system (both committed OFL woff2,
-   declared in css/fonts.css — they render identically on every host):
-     title -> G8321 Bold 700          [headings, brand, strong text]
-     sans  -> LilitaOne-Regular 400   [body copy]
-     ui    -> G8321 Bold 700          [buttons, labels, chips]
+   fontFamily: ONE family for the whole site — G8321 by Coji Morishita
+   (SIL OFL 1.1), committed woff2 in 100 / 400 / 700, declared in css/fonts.css:
+     title -> 'fot-yuruka-std' (private, local machines only) -> G8321
+     sans  -> G8321 Regular 400 (body copy, labels)
+     ui    -> G8321 (bold micro-labels / thin display numerals)
+   On the public deploy titles fall back to G8321 Bold, so every host sees
+   the same family throughout.
    blocklist protects hand-written component class names from being
    shadowed by generated utilities (it is a TOP-LEVEL option — inside
    `content` it is invalid and triggers the purge/content warning).    */
@@ -17,11 +19,11 @@ export default {
     extend: {
       fontFamily: {
         // multi-word family names MUST carry their own quotes: Tailwind joins
-        // this array raw, and an unquoted `M PLUS Rounded 1c` is an invalid
-        // declaration (ident can't start with a digit) that browsers DROP.
-        title: ['G8321', '"M PLUS Rounded 1c"', '"Hiragino Maru Gothic ProN"', '"Segoe UI"', 'system-ui', 'sans-serif'],
-        sans:  ['LilitaOne-Regular', '"Lilita One"', '"M PLUS Rounded 1c"', '"Segoe UI"', 'system-ui', 'sans-serif'],
-        ui:    ['G8321', '"M PLUS Rounded 1c"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        // this array raw, and an unquoted multi-word ident with digits or
+        // spaces is an invalid declaration that browsers DROP.
+        title: ['fot-yuruka-std', 'G8321', '"Hiragino Maru Gothic ProN"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        sans:  ['G8321', '"Hiragino Maru Gothic ProN"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        ui:    ['G8321', '"Hiragino Maru Gothic ProN"', '"Segoe UI"', 'system-ui', 'sans-serif'],
         mono:  ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace']
       }
     }
