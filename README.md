@@ -157,8 +157,11 @@ Plain static files, so hosting is two minutes:
    Output Directory left **empty** → **Deploy**.
 3. Done: `https://emc-physics.vercel.app`. Every later `git push` redeploys automatically.
 
-`vercel.json` contributes the only tuning worth having: cache headers (`/css/` and `/js/` for
-one hour, HTML revalidated). Progress is localStorage-only by design — there is no backend to
+`vercel.json` contributes the only tuning worth having: `/css/` and `/js/` are served
+  `no-cache` (revalidate every hit, 304 when unchanged) so a fresh HTML can never pair with a
+  stale stylesheet; `/vendor/` (KaTeX, fonts) caches for a day. Each page also carries one line
+  of inline critical CSS that keeps the Topics dropdown collapsed even if a stale stylesheet
+  were ever served. Progress is localStorage-only by design — there is no backend to
 configure, no database, and nothing that can incur cost.
 
 ## 7. Tailwind: how it is wired (and how to see it)

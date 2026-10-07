@@ -134,7 +134,9 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 ### 2.6 Vercel deployment (static)
 - [ ] `npx vercel` or Git import deploys with framework preset *Other*; the preview URL renders
 - [ ] With all CDNs reachable: fonts, Tailwind, Chart.js and p5.js load; no console errors
-- [ ] Cache headers from `vercel.json`: `/css/*` and `/js/*` carry `max-age=3600`; HTML revalidates
+- [ ] Cache headers from `vercel.json`: `/css/*` and `/js/*` are `no-cache` (revalidate, 304 when
+      unchanged), `/vendor/*` caches for a day; after a deploy, a plain reload never shows a
+      new-HTML/old-CSS mismatch
 - [ ] `/api/...` returns 404 (the backend module was removed — nothing should answer there)
 - [ ] Progress ring, quiz scoring and localStorage work exactly as on localhost
 
