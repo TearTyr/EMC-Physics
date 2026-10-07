@@ -250,7 +250,7 @@ window.EMC = (function () {
   }
 
   /** Arrow from (x1,y1) to (x2,y2) with a filled head. */
-  function arrow(ctx, x1, y1, x2, y2, { color = '#22d3ee', width = 2.5, head = 9, dash = null } = {}) {
+  function arrow(ctx, x1, y1, x2, y2, { color = '#a8d3e0', width = 2.5, head = 9, dash = null } = {}) {
     const ang = Math.atan2(y2 - y1, x2 - x1);
     const len = Math.hypot(x2 - x1, y2 - y1);
     if (len < 0.5) return;
@@ -283,26 +283,17 @@ window.EMC = (function () {
     ctx.restore();
   }
 
-  /** Draw a point charge: filled disc, glow, and a + or - sign. */
+  /** Draw a point charge as a flat sticker: pastel disc, cream ring, dark sign.
+      No gradients and no glow, per the flat-art policy. */
   function chargeGlyph(ctx, x, y, r, q, { pulse = 0 } = {}) {
     const pos = q >= 0;
-    const c1 = pos ? '#fb7185' : '#38bdf8';
-    const c2 = pos ? '#e11d48' : '#0284c7';
     ctx.save();
-    const glow = ctx.createRadialGradient(x, y, r * 0.4, x, y, r * (2.6 + pulse));
-    glow.addColorStop(0, pos ? 'rgba(251,113,133,.42)' : 'rgba(56,189,248,.42)');
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(x, y, r * (2.6 + pulse), 0, Math.PI * 2); ctx.fill();
-
-    const g = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
-    g.addColorStop(0, c1); g.addColorStop(1, c2);
-    ctx.fillStyle = g;
+    ctx.fillStyle = pos ? '#f8aebe' : '#a8d3e0';
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.stroke();
+    ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(246,241,229,.85)'; ctx.stroke();
 
     // sign
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = Math.max(2, r * 0.18); ctx.lineCap = 'round';
+    ctx.strokeStyle = '#2b2d33'; ctx.lineWidth = Math.max(2, r * 0.18); ctx.lineCap = 'round';
     const s = r * 0.46;
     ctx.beginPath(); ctx.moveTo(x - s, y); ctx.lineTo(x + s, y); ctx.stroke();
     if (pos) { ctx.beginPath(); ctx.moveTo(x, y - s); ctx.lineTo(x, y + s); ctx.stroke(); }
@@ -544,7 +535,7 @@ window.EMC = (function () {
         document.body.appendChild(host);
       }
       const el = document.createElement('div');
-      const color = kind === 'ok' ? '#34d399' : kind === 'warn' ? '#fbbf24' : '#22d3ee';
+      const color = kind === 'ok' ? '#b5d777' : kind === 'warn' ? '#f6d36b' : '#a8d3e0';
       el.style.cssText = `background:#141414;border:1px solid ${color};color:#fff;
         padding:.55rem .95rem;border-radius:999px;font-size:.86rem;font-weight:600;
         box-shadow:0 16px 34px -18px #000;opacity:0;transform:translateY(8px);

@@ -163,9 +163,9 @@
       EMC.roundRect(ctx, -w / 2 - lead - 6, -h - 8, w + 2 * lead + 12, 2 * h + 16, 8);
       ctx.stroke(); ctx.restore();
     }
-    ctx.strokeStyle = hot ? '#fda4af' : '#e2e8f0';
-    ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    if (hot) { ctx.shadowColor = 'rgba(251,113,133,.85)'; ctx.shadowBlur = 14; }
+    ctx.strokeStyle = hot ? '#fac0cd' : '#e2e8f0';
+    ctx.lineWidth = hot ? 3.2 : 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    if (hot) { ctx.strokeStyle = '#f8aebe'; }
     ctx.beginPath();
     ctx.moveTo(-w / 2 - lead, 0); ctx.lineTo(-w / 2, 0);
     const peaks = 5, pw = w / peaks;
@@ -189,8 +189,8 @@
     ctx.lineWidth = 4.6;
     ctx.beginPath(); ctx.moveTo(x - 7, y + 16); ctx.lineTo(x + 7, y + 16); ctx.stroke();
     ctx.restore();
-    label(ctx, '+', x + 21, y - 12, { color: '#fb7185', size: 13, weight: '800' });
-    label(ctx, `${fixed(V, 1)} V`, x - 8, y + 38, { color: '#fcd34d', size: 12, weight: '700', align: 'center' });
+    label(ctx, '+', x + 21, y - 12, { color: '#f8aebe', size: 13, weight: '800' });
+    label(ctx, `${fixed(V, 1)} V`, x - 8, y + 38, { color: '#f6d36b', size: 12, weight: '700', align: 'center' });
   }
 
   function drawBulb(ctx, x, y, P) {
@@ -198,13 +198,10 @@
     const r = 15;
     ctx.save();
     if (b > 0.02) {
-      const g = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * (1.8 + b * 3.6));
-      g.addColorStop(0, `rgba(255,226,150,${0.12 + b * 0.6})`);
-      g.addColorStop(1, 'rgba(255,200,90,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(x, y, r * (1.8 + b * 3.6), 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(246,211,107,${0.05 + b * 0.17})`;
+      ctx.beginPath(); ctx.arc(x, y, r * (1.8 + b * 1.7), 0, Math.PI * 2); ctx.fill();
     }
-    ctx.fillStyle = `rgba(255,${Math.round(216 + b * 39)},${Math.round(150 + b * 105)},${0.12 + b * 0.6})`;
+    ctx.fillStyle = `rgba(246,211,107,${0.14 + b * 0.6})`;
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2.2;
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
@@ -237,7 +234,7 @@
     const speed = clamp(50 + 320 * frac, 30, 380);     // px per second
     const phase = (t * speed / total) % 1;
     ctx.save();
-    ctx.fillStyle = 'rgba(251,191,36,.95)';
+    ctx.fillStyle = '#f6d36b';
     for (let i = 0; i < n; i++) {
       let d = (((i / n) + phase) % 1) * total, px = points[0][0], py = points[0][1];
       for (let s = 0; s < lens.length; s++) {
@@ -273,10 +270,10 @@
         const lx = vertical ? c.x + 34 : c.x;
         const ly = vertical ? c.y - 4 : c.y - 26;
         label(ctx, `R${c.idx + 1} = ${fixed(c.R, 0)} \u03A9`, lx, ly,
-          { color: c.idx === state.selected ? '#67e8f9' : '#a5f3fc', size: 11.5, weight: '700',
+          { color: c.idx === state.selected ? '#cfe9f2' : '#cfe9f2', size: 11.5, weight: '700',
             align: vertical ? 'left' : 'center' });
         label(ctx, `I = ${eng(c.I, 2)} A`, lx, ly + (vertical ? 16 : -16),
-          { color: '#fcd34d', size: 10.5, weight: '600', align: vertical ? 'left' : 'center' });
+          { color: '#f6d36b', size: 10.5, weight: '600', align: vertical ? 'left' : 'center' });
       } else if (c.type === 'battery') drawBattery(ctx, c.x, c.y, c.V);
       else if (c.type === 'bulb') drawBulb(ctx, c.x, c.y, c.P);
       else if (c.type === 'node') drawNode(ctx, c.x, c.y);
@@ -285,7 +282,7 @@
 
     // headline numbers on the canvas
     label(ctx, `I(total) = ${eng(A.Itotal, 3)} A`, w / 2, h - 12,
-      { color: '#67e8f9', size: 12.5, weight: '800' });
+      { color: '#cfe9f2', size: 12.5, weight: '800' });
     label(ctx, `R(eq) = ${fixed(A.Rbank, 2)} \u03A9`, w - 12, 16,
       { color: '#a7f3d0', size: 12, weight: '800', align: 'right' });
   }

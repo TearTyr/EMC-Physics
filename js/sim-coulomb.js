@@ -93,7 +93,7 @@
     const L = arrowLength(F, maxLen);
     const product = state.q1 * state.q2;
     const repel = product > 0, attract = product < 0;
-    const col = repel ? '#fb7185' : attract ? '#34d399' : '#64748b';
+    const col = repel ? '#f8aebe' : attract ? '#b5d777' : '#8b897f';
 
     if (product !== 0 && L > 0) {
       const dir1 = repel ? -1 : 1;           // direction of force ON q1
@@ -110,9 +110,9 @@
     chargeGlyph(ctx, x1, midY, r1, state.q1);
     chargeGlyph(ctx, x2, midY, r2, state.q2);
     label(ctx, `q1 = ${state.q1 > 0 ? '+' : ''}${state.q1.toFixed(1)} \u00B5C`,
-      x1, midY + r1 + 24, { color: '#fda4af', size: 12 });
+      x1, midY + r1 + 24, { color: '#fac0cd', size: 12 });
     label(ctx, `q2 = ${state.q2 > 0 ? '+' : ''}${state.q2.toFixed(1)} \u00B5C`,
-      x2, midY + r2 + 24, { color: '#7dd3fc', size: 12 });
+      x2, midY + r2 + 24, { color: '#cfe9f2', size: 12 });
 
     /* --- net field at the midpoint --- */
     if (state.showE && Math.abs(fieldAtMidpoint()) > 0) {
@@ -121,8 +121,8 @@
       const eLen = clamp(14 + (Math.log10(Math.abs(E)) + 6) * 9, 14, 60);
       const s = Math.sign(E);
       arrow(ctx, mx - s * eLen / 2, midY - 46, mx + s * eLen / 2, midY - 46,
-        { color: '#fbbf24', width: 3, head: 10 });
-      label(ctx, `E(mid) = ${unit(Math.abs(E), 'N/C', 2)}`, mx, midY - 70, { color: '#fcd34d', size: 11.5 });
+        { color: '#f6d36b', width: 3, head: 10 });
+      label(ctx, `E(mid) = ${unit(Math.abs(E), 'N/C', 2)}`, mx, midY - 70, { color: '#f6d36b', size: 11.5 });
     }
 
     label(ctx, 'Drag either charge to change r', w / 2, 18,

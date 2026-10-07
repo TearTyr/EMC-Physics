@@ -38,9 +38,9 @@
   const e = CONST.E;
 
   const PARTICLES = {
-    proton:   { name: 'proton',   q: +e,   m: CONST.M_PROTON,   color: '#fb7185' },
-    electron: { name: 'electron', q: -e,   m: CONST.M_ELECTRON, color: '#38bdf8' },
-    alpha:    { name: 'alpha (He\u00B2\u207A)', q: +2 * e, m: 6.644657e-27, color: '#fbbf24' }
+    proton:   { name: 'proton',   q: +e,   m: CONST.M_PROTON,   color: '#f8aebe' },
+    electron: { name: 'electron', q: -e,   m: CONST.M_ELECTRON, color: '#a8d3e0' },
+    alpha:    { name: 'alpha (He\u00B2\u207A)', q: +2 * e, m: 6.644657e-27, color: '#f6d36b' }
   };
   const DIRS = { right: 0, up: 90, left: 180, down: 270 };   // degrees, physics axes
   const REV_PER_SEC = 0.16;                                   // visual rotation rate
@@ -190,7 +190,7 @@
     ctx.moveTo(C.x, C.y - 5); ctx.lineTo(C.x, C.y + 5); ctx.stroke();
     ctx.restore();
     label(ctx, `r = ${eng(ph.r, 2)} m`, (C.x + X.x) / 2 + 6, (C.y + X.y) / 2 - 8,
-      { color: '#fcd34d', size: 11, align: 'left', weight: '700' });
+      { color: '#f6d36b', size: 11, align: 'left', weight: '700' });
 
     // velocity + force vectors (both are unit directions in PHYSICS axes;
     // a physics vector (x, y) is drawn on canvas as (x, -y))
@@ -200,28 +200,24 @@
       // times the sign of the rotation rate.
       const tx = -Math.sin(phi) * sgn, ty = Math.cos(phi) * sgn;
       const vlen = 46;
-      arrow(ctx, X.x, X.y, X.x + tx * vlen, X.y - ty * vlen, { color: '#34d399', width: 3, head: 11 });
-      label(ctx, 'v', X.x + tx * (vlen + 13), X.y - ty * (vlen + 13), { color: '#6ee7b7', size: 13, weight: '800' });
+      arrow(ctx, X.x, X.y, X.x + tx * vlen, X.y - ty * vlen, { color: '#b5d777', width: 3, head: 11 });
+      label(ctx, 'v', X.x + tx * (vlen + 13), X.y - ty * (vlen + 13), { color: '#cdeaa8', size: 13, weight: '800' });
 
       // The force always points at the centre, so it rotates with the particle.
       const fdir = forceDirection();               // unit force vector at t = 0
       const ca = Math.cos(state.phase), sa = Math.sin(state.phase);
       const fx = fdir.x * ca - fdir.y * sa;
       const fy = fdir.x * sa + fdir.y * ca;
-      arrow(ctx, X.x, X.y, X.x + fx * 44, X.y - fy * 44, { color: '#fb7185', width: 3, head: 11 });
-      label(ctx, 'F', X.x + fx * 57, X.y - fy * 57, { color: '#fda4af', size: 13, weight: '800' });
+      arrow(ctx, X.x, X.y, X.x + fx * 44, X.y - fy * 44, { color: '#f8aebe', width: 3, head: 11 });
+      label(ctx, 'F', X.x + fx * 57, X.y - fy * 57, { color: '#fac0cd', size: 13, weight: '800' });
     }
 
     // the particle
     const col = P().color;
     ctx.save();
-    const g = ctx.createRadialGradient(X.x, X.y, 1, X.x, X.y, 20);
-    g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.globalAlpha = .45; ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(X.x, X.y, 20, 0, Math.PI * 2); ctx.fill();
-    ctx.globalAlpha = 1; ctx.fillStyle = col;
+    ctx.fillStyle = col;
     ctx.beginPath(); ctx.arc(X.x, X.y, 7, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.strokeStyle = 'rgba(246,241,229,.85)'; ctx.lineWidth = 2; ctx.stroke();
     ctx.restore();
     label(ctx, P().name, X.x, X.y - 19, { color: '#e8eefb', size: 11.5, weight: '700' });
 

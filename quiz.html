@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
 </head>
 
 <body class="emc">
@@ -63,8 +63,8 @@
   <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
   <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
-      <span class="eyebrow eyebrow-amber" style="margin-top:.7rem">Assessment</span>
-      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Electromagnetics quiz</h1>
+      <span class="eyebrow eyebrow-amber" style="margin-top:.45rem">Assessment</span>
+      <h1 class="h-topic" style="margin:.4rem 0 .35rem">Electromagnetics quiz</h1>
       <p class="lede">
         <span id="quiz-total">20</span> multiple-choice questions covering all four topics, each
         with a worked explanation. Scoring is automatic; your best result is saved in this browser.
@@ -193,7 +193,7 @@
   <!-- Chart.js via CDN for the score visualisation; js/quiz.js falls back to
        dependency-free CSS bars when the CDN cannot be reached -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="vendor/katex/katex.min.js"></script>
   <script src="js/common.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/quiz-data.js"></script>

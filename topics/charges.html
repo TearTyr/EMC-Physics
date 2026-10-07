@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 </head>
 
 <body class="emc">
@@ -64,8 +64,8 @@
   <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
   <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
-      <span class="eyebrow" style="margin-top:.7rem">Topic 1 of 4</span>
-      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Electric charges &amp; electric fields</h1>
+      <span class="eyebrow" style="margin-top:.45rem">Topic 1 of 4</span>
+      <h1 class="h-topic" style="margin:.4rem 0 .35rem">Electric charges &amp; electric fields</h1>
       <p class="lede">
         Charge is the property of matter that makes it feel the electromagnetic force.
         Charges create <strong>electric fields</strong> in the space around them, and those
@@ -73,7 +73,7 @@
         generators — follows from that one idea.
       </p>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <h2 class="h-sub" style="margin-top:0">Learning objectives</h2>
         <ul class="objectives">
           <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>State Coulomb’s law and calculate the force between two point charges.</span></li>
@@ -311,11 +311,11 @@
             <canvas id="sim-coulomb" class="sim-canvas grab" role="img"
                     aria-label="Two draggable point charges showing the Coulomb force between them"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#fb7185"></i> positive charge</span>
-              <span><i class="swatch" style="background:#38bdf8"></i> negative charge</span>
-              <span><i class="swatch" style="background:#34d399"></i> attractive force</span>
-              <span><i class="swatch" style="background:#fb7185"></i> repulsive force</span>
-              <span><i class="swatch" style="background:#fbbf24"></i> net field at the midpoint</span>
+              <span><i class="swatch" style="background:#f8aebe"></i> positive charge</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> negative charge</span>
+              <span><i class="swatch" style="background:#b5d777"></i> attractive force</span>
+              <span><i class="swatch" style="background:#f8aebe"></i> repulsive force</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> net field at the midpoint</span>
             </div>
           </div>
           <div class="panel-body">
@@ -389,10 +389,10 @@
             <canvas id="sim-efield" class="sim-canvas tall" role="img"
                     aria-label="Interactive electric field lines and vectors for user-placed charges"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#fb7185"></i> positive</span>
-              <span><i class="swatch" style="background:#38bdf8"></i> negative</span>
-              <span><i class="swatch" style="background:#a5f3fc"></i> field line / vector</span>
-              <span><i class="swatch" style="background:#fbbf24"></i> force on the +1 nC probe</span>
+              <span><i class="swatch" style="background:#f8aebe"></i> positive</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> negative</span>
+              <span><i class="swatch" style="background:#cfe9f2"></i> field line / vector</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> force on the +1 nC probe</span>
             </div>
           </div>
           <div class="panel-body">
@@ -462,7 +462,7 @@
         <div class="answer"><b>Polarisation (charging by induction).</b> The balloon’s charge pushes like charges in the wall’s surface atoms slightly away and pulls opposite charges slightly closer. The nearer opposite charge wins because the field is stronger at shorter distance, giving a net attraction.</div>
       </details>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="font-bold">Finished with Topic 1?</h3>
@@ -525,7 +525,7 @@
     </div>
   </footer>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="../vendor/katex/katex.min.js"></script>
   <script src="../js/common.js"></script>
   <script src="../js/sync.js"></script>
   <script src="../js/sim-coulomb.js"></script>

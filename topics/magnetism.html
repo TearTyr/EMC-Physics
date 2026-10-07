@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 </head>
 
 <body class="emc">
@@ -63,8 +63,8 @@
   <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
   <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
-      <span class="eyebrow eyebrow-violet" style="margin-top:.7rem">Topic 3 of 4</span>
-      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Magnetism</h1>
+      <span class="eyebrow eyebrow-violet" style="margin-top:.45rem">Topic 3 of 4</span>
+      <h1 class="h-topic" style="margin:.4rem 0 .35rem">Magnetism</h1>
       <p class="lede">
         Magnetism is what electricity looks like when charges are <strong>moving</strong>. A
         magnet produces a <strong>magnetic field B</strong>, and that field pushes sideways on
@@ -72,7 +72,7 @@
         profound consequence: magnetic forces can bend a path but can never change a speed.
       </p>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <h2 class="h-sub" style="margin-top:0">Learning objectives</h2>
         <ul class="objectives">
           <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Describe magnetic field lines and state the rules they obey around a bar magnet.</span></li>
@@ -304,10 +304,10 @@
             <canvas id="sim-magnet" class="sim-canvas tall grab" role="img"
                     aria-label="Bar magnet with field lines, compasses, vectors and iron filings"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#f43f5e"></i> north pole</span>
-              <span><i class="swatch" style="background:#0ea5e9"></i> south pole</span>
-              <span><i class="swatch" style="background:#a78bfa"></i> field lines</span>
-              <span><i class="swatch" style="background:#fbbf24"></i> probe direction</span>
+              <span><i class="swatch" style="background:#f8aebe"></i> north pole</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> south pole</span>
+              <span><i class="swatch" style="background:#d5b8d8"></i> field lines</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> probe direction</span>
             </div>
           </div>
           <div class="panel-body">
@@ -381,10 +381,10 @@
             <canvas id="sim-lorentz" class="sim-canvas tall" role="img"
                     aria-label="A charged particle moving in a circle in a uniform magnetic field"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#a78bfa"></i> B field symbols</span>
-              <span><i class="swatch" style="background:#34d399"></i> velocity v</span>
-              <span><i class="swatch" style="background:#fb7185"></i> force F (always perpendicular to v)</span>
-              <span><i class="swatch" style="background:#fbbf24"></i> radius to the centre</span>
+              <span><i class="swatch" style="background:#d5b8d8"></i> B field symbols</span>
+              <span><i class="swatch" style="background:#b5d777"></i> velocity v</span>
+              <span><i class="swatch" style="background:#f8aebe"></i> force F (always perpendicular to v)</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> radius to the centre</span>
             </div>
           </div>
           <div class="panel-body">
@@ -496,7 +496,7 @@
         <div class="answer"><b>Equal in magnitude, opposite in direction</b> — because |q| is the same (e) for both. Their <em>accelerations</em>, though, differ by the mass ratio 1836: the electron is deflected far more sharply, which is why the aurora and CRT beams are dominated by electron motion.</div>
       </details>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="font-bold">Finished with Topic 3?</h3>
@@ -559,7 +559,7 @@
     </div>
   </footer>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="../vendor/katex/katex.min.js"></script>
   <script src="../js/common.js"></script>
   <script src="../js/sync.js"></script>
   <script src="../js/sim-magnetfield.js"></script>

@@ -137,10 +137,7 @@
           }
           if (terminatedOnCharge) break;
         }
-        const grad = ctx.createLinearGradient(p.x, p.y, x, y);
-        grad.addColorStop(0, c.q > 0 ? 'rgba(251,113,133,.85)' : 'rgba(56,189,248,.85)');
-        grad.addColorStop(1, 'rgba(34,211,238,.42)');
-        ctx.strokeStyle = grad;
+        ctx.strokeStyle = c.q > 0 ? 'rgba(248,174,190,.7)' : 'rgba(168,211,224,.7)';
         ctx.stroke();
 
         // Tangent arrow at a fixed fraction ALONG THE TRACED PATH (using the
@@ -222,9 +219,9 @@
         ctx.beginPath(); ctx.arc(state.probe.x, state.probe.y, 9, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
         arrow(ctx, state.probe.x, state.probe.y, state.probe.x + ux * len, state.probe.y + uy * len,
-          { color: '#fbbf24', width: 2.4, head: 8 });
+          { color: '#f6d36b', width: 2.4, head: 8 });
         label(ctx, '+1 nC test charge', state.probe.x, state.probe.y - 18,
-          { color: '#fcd34d', size: 10.5, weight: '500' });
+          { color: '#f6d36b', size: 10.5, weight: '500' });
       }
     }
 
@@ -233,7 +230,7 @@
       const p = px(c, w, h);
       chargeGlyph(ctx, p.x, p.y, chargeRadius(c.q), c.q);
       label(ctx, `${c.q > 0 ? '+' : ''}${c.q.toFixed(1)} \u00B5C`, p.x, p.y + chargeRadius(c.q) + 15,
-        { color: c.q > 0 ? '#fecdd3' : '#bae6fd', size: 11 });
+        { color: c.q > 0 ? '#fac0cd' : '#cfe9f2', size: 11 });
     }
   }
 

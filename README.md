@@ -84,6 +84,7 @@ emc-physics-tutorial/
 │   └── progress/[id].js           GET|PUT /api/progress/:id
 ├── vercel.json                    Vercel config: cache headers + function settings
 ├── tailwind.config.js             Optional production Tailwind build (npm run build:css)
+├── vendor/katex/                  Locally vendored KaTeX (js + css + woff2) — no CDN needed
 ├── package.json                   Dev/server scripts: check / test / server / bench / …
 ├── README.md                      This file
 ├── TESTING.md                     Manual + automated testing checklist
@@ -276,11 +277,17 @@ same layout (2-column topic grid, correct type scale, zero console errors). The 
   via Google Fonts, falling back to system faces offline. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
-* **Equations are real LaTeX.** Every displayed equation carries its source in a `data-tex`
-  attribute and is typeset at boot by **KaTeX** (CDN): `F = k\,\frac{|q_1q_2|}{r^2}`,
-  `\mathcal{E} = -N\,\frac{d\Phi}{dt}`, and so on — 19 display equations plus the home-page
-  formula table (inline mode). If the KaTeX CDN is unreachable, each element keeps its
-  hand-readable plain-text fallback, so nothing ever shows raw TeX or empty boxes.
+* **Equations are real LaTeX, with zero network risk.** **KaTeX is vendored locally**
+  (`vendor/katex/`: js, css and woff2 fonts, ~600 kB), so typesetting works offline, on
+  `file://`, and on any host including Vercel. Every displayed equation carries its source in a
+  `data-tex` attribute (`F = k\,\frac{|q_1q_2|}{r^2}`, `\mathcal{E} = -N\,\frac{d\Phi}{dt}`, …)
+  and is typeset by `EMC.katexify()` at boot and again on `window.load`; the home-page formula
+  table uses inline mode. Each element also keeps hand-readable plain text, so even a totally
+  broken script degrades to legible equations, never raw TeX.
+* **Flat-art policy.** No gradient or glow exists anywhere in the codebase — not in the CSS and
+  not in the canvas code (charges, magnets, bulbs and particles are flat pastel stickers).
+  `tools/smoke-test.mjs` enforces this: it fails if `createLinearGradient`,
+  `createRadialGradient`, `shadowBlur`, `backdrop-filter` or a CSS gradient ever reappear.
 * **Styling.** Tailwind is loaded from `https://cdn.tailwindcss.com` as required, and is used for
   layout utilities in the markup. All component design (panels, cards, sliders, readouts, quiz)
   lives in `css/styles.css`, which is linked *after* the CDN script so its class selectors win

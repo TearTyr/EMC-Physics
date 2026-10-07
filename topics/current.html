@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 </head>
 
 <body class="emc">
@@ -63,8 +63,8 @@
   <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
   <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
-      <span class="eyebrow eyebrow-amber" style="margin-top:.7rem">Topic 2 of 4</span>
-      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Current electricity</h1>
+      <span class="eyebrow eyebrow-amber" style="margin-top:.45rem">Topic 2 of 4</span>
+      <h1 class="h-topic" style="margin:.4rem 0 .35rem">Current electricity</h1>
       <p class="lede">
         Topic 1 dealt with charges at rest. Now let them move. A steady flow of charge is a
         <strong>current</strong>, and the three quantities that describe any simple circuit —
@@ -72,7 +72,7 @@
         electrical engineering.
       </p>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <h2 class="h-sub" style="margin-top:0">Learning objectives</h2>
         <ul class="objectives">
           <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Define current, potential difference and resistance, and state their SI units.</span></li>
@@ -270,11 +270,11 @@
             <canvas id="sim-ohm-chart" class="sim-canvas chart" role="img"
                     aria-label="Current against voltage characteristic, a straight line with gradient 1 over R"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#fbbf24"></i> conventional current</span>
-              <span><i class="swatch" style="background:#38bdf8"></i> electron flow</span>
-              <span><i class="swatch" style="background:#22d3ee"></i> I–V line (gradient 1/R)</span>
-              <span><i class="swatch" style="background:#a78bfa"></i> 2R reference</span>
-              <span><i class="swatch" style="background:#34d399"></i> R/2 reference</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> conventional current</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> electron flow</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> I–V line (gradient 1/R)</span>
+              <span><i class="swatch" style="background:#d5b8d8"></i> 2R reference</span>
+              <span><i class="swatch" style="background:#b5d777"></i> R/2 reference</span>
             </div>
           </div>
           <div class="panel-body">
@@ -350,9 +350,9 @@
             <canvas id="sim-circuit" class="sim-canvas tall" role="img"
                     aria-label="Interactive circuit with a battery, bulb and resistors arranged in the selected topology"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#fbbf24"></i> moving charge (density scales with current)</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> moving charge (density scales with current)</span>
               <span><i class="swatch" style="background:#e2e8f0"></i> resistor</span>
-              <span><i class="swatch" style="background:#fde68a"></i> bulb (glow scales with power)</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> bulb (glow scales with power)</span>
             </div>
           </div>
           <div class="panel-body">
@@ -430,7 +430,7 @@
         <div class="answer">A <b>voltmeter is connected in parallel</b> and must draw almost no current, or it would change the voltage it is measuring. An <b>ammeter is connected in series</b> and must add almost no resistance, or it would reduce the current it is measuring. Both are about not disturbing the circuit under test.</div>
       </details>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="font-bold">Finished with Topic 2?</h3>
@@ -493,7 +493,7 @@
     </div>
   </footer>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="../vendor/katex/katex.min.js"></script>
   <script src="../js/common.js"></script>
   <script src="../js/sync.js"></script>
   <script src="../js/sim-ohm.js"></script>

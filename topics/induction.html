@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Open+Sans:wght@600;700;800&display=swap">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 </head>
 
 <body class="emc">
@@ -63,8 +63,8 @@
   <circle cx="36" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/><circle cx="84" cy="66" r="5.5" fill="#f8aebe" opacity=".85"/>
   <path d="M63 78 l-9 13 h6 l-3 11 11-14 h-6 z" fill="#f6d36b" stroke="#3a3d45" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
-      <span class="eyebrow" style="margin-top:.7rem">Topic 4 of 4</span>
-      <h1 class="h-topic" style="margin:.6rem 0 .5rem">Electromagnetic induction</h1>
+      <span class="eyebrow" style="margin-top:.45rem">Topic 4 of 4</span>
+      <h1 class="h-topic" style="margin:.4rem 0 .35rem">Electromagnetic induction</h1>
       <p class="lede">
         In 1831 Michael Faraday discovered that a <strong>changing</strong> magnetic field
         creates an electric field — and therefore a voltage in a wire. That single discovery
@@ -72,7 +72,7 @@
         transformers, wireless chargers, induction hobs and guitar pickups all run on it.
       </p>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <h2 class="h-sub" style="margin-top:0">Learning objectives</h2>
         <ul class="objectives">
           <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Define magnetic flux Φ = BA cosθ and state its unit.</span></li>
@@ -333,10 +333,10 @@
             <canvas id="sim-induction-chart" class="sim-canvas chart" role="img"
                     aria-label="Strip chart of flux linkage and induced EMF against time"></canvas>
             <div class="legend">
-              <span><i class="swatch" style="background:#f43f5e"></i> N pole</span>
-              <span><i class="swatch" style="background:#0ea5e9"></i> S pole</span>
-              <span><i class="swatch" style="background:#22d3ee"></i> flux linkage λ = NΦ</span>
-              <span><i class="swatch" style="background:#fbbf24"></i> induced EMF</span>
+              <span><i class="swatch" style="background:#f8aebe"></i> N pole</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> S pole</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> flux linkage λ = NΦ</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> induced EMF</span>
               <span>dot / cross = current out of / into the page</span>
             </div>
           </div>
@@ -438,9 +438,9 @@
           <div>
             <div id="p5-gen-host" style="width:100%;min-height:340px;background:#0e1116;border-bottom:1px solid var(--line)"></div>
             <div class="legend">
-              <span><i class="swatch" style="background:#a78bfa"></i> uniform field B</span>
-              <span><i class="swatch" style="background:#22d3ee"></i> spinning coil</span>
-              <span><i class="swatch" style="background:#fbbf24"></i> EMF(t)</span>
+              <span><i class="swatch" style="background:#d5b8d8"></i> uniform field B</span>
+              <span><i class="swatch" style="background:#a8d3e0"></i> spinning coil</span>
+              <span><i class="swatch" style="background:#f6d36b"></i> EMF(t)</span>
               <span>dot / cross = induced current direction</span>
             </div>
           </div>
@@ -508,7 +508,7 @@
         <div class="answer"><b>No to the first, yes to the second.</b> EMF = −N·dΦ/dt depends only on the geometry and the motion. But I = EMF/R, so a lower resistance gives a larger current, more heating and a stronger braking force — which is why eddy-current brakes use thick copper rather than steel.</div>
       </details>
 
-      <div class="card mt-6">
+      <div class="card mt-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="font-bold">That’s the module — well done.</h3>
@@ -575,7 +575,7 @@
   <!-- p5.js via CDN for the bonus generator lab; the page degrades gracefully
        (a notice replaces the canvas) when the CDN cannot be reached -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="../vendor/katex/katex.min.js"></script>
   <script src="../js/common.js"></script>
   <script src="../js/sync.js"></script>
   <script src="../js/sim-induction.js"></script>

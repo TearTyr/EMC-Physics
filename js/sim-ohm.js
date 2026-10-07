@@ -98,9 +98,9 @@
       ctx.beginPath(); ctx.moveTo(x - 8, cy - gap + 6); ctx.lineTo(x + 8, cy - gap + 6); ctx.stroke(); // short (-)
       ctx.lineWidth = 3;
     }
-    label(ctx, '+', x + 22, y - 16, { color: '#fb7185', size: 14, weight: '800' });
-    label(ctx, '\u2212', x + 22, y + 14, { color: '#7dd3fc', size: 16, weight: '800' });
-    label(ctx, `${fixed(V, 1)} V`, x - 6, y + 44, { color: '#fcd34d', size: 12.5, weight: '700' });
+    label(ctx, '+', x + 22, y - 16, { color: '#f8aebe', size: 14, weight: '800' });
+    label(ctx, '\u2212', x + 22, y + 14, { color: '#cfe9f2', size: 16, weight: '800' });
+    label(ctx, `${fixed(V, 1)} V`, x - 6, y + 44, { color: '#f6d36b', size: 12.5, weight: '700' });
     ctx.restore();
   }
 
@@ -119,10 +119,10 @@
       ctx.lineTo(sx + pw, y);
     }
     ctx.lineTo(x + w / 2 + lead, y);
-    if (hot) { ctx.shadowColor = 'rgba(251,113,133,.9)'; ctx.shadowBlur = 16; ctx.strokeStyle = '#fda4af'; }
+    if (hot) { ctx.strokeStyle = '#f8aebe'; ctx.lineWidth = 3.2; }
     ctx.stroke();
     ctx.restore();
-    label(ctx, `R = ${eng(R, 3)}\u03A9`, x, y - 30, { color: '#a5f3fc', size: 12.5, weight: '700' });
+    label(ctx, `R = ${eng(R, 3)}\u03A9`, x, y - 30, { color: '#cfe9f2', size: 12.5, weight: '700' });
   }
 
   /** Incandescent bulb: glow and filament colour scale with dissipated power. */
@@ -130,14 +130,12 @@
     const b = clamp(P / 6, 0, 1);            // 6 W = "full brightness" reference
     const r = 17;
     ctx.save();
+    // flat halo: one translucent disc whose alpha tracks power (no gradient)
     if (b > 0.02) {
-      const g = ctx.createRadialGradient(x, y, r * 0.4, x, y, r * (2 + b * 3.4));
-      g.addColorStop(0, `rgba(255,225,150,${0.10 + b * 0.55})`);
-      g.addColorStop(1, 'rgba(255,200,90,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(x, y, r * (2 + b * 3.4), 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(246,211,107,${0.05 + b * 0.16})`;
+      ctx.beginPath(); ctx.arc(x, y, r * (1.9 + b * 1.6), 0, Math.PI * 2); ctx.fill();
     }
-    ctx.fillStyle = `rgba(${Math.round(255)},${Math.round(214 + b * 40)},${Math.round(150 + b * 105)},${0.12 + b * 0.55})`;
+    ctx.fillStyle = `rgba(246,211,107,${0.14 + b * 0.6})`;
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2.2;
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
@@ -176,7 +174,7 @@
     }
     // needle
     const na = Math.PI + frac * Math.PI;
-    ctx.strokeStyle = '#fb7185'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+    ctx.strokeStyle = '#f8aebe'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(x, y);
     ctx.lineTo(x + Math.cos(na) * r * 0.7, y + Math.sin(na) * r * 0.7); ctx.stroke();
     ctx.fillStyle = '#e8eefb'; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill();
@@ -202,7 +200,7 @@
     for (let i = 0; i < nDots; i++) {
       const s = ((i / nDots) + phase * dir) % 1;
       const [px, py] = pointOnLoop(L.loop, s);
-      ctx.fillStyle = state.electrons ? 'rgba(56,189,248,.95)' : 'rgba(251,191,36,.95)';
+      ctx.fillStyle = state.electrons ? '#a8d3e0' : '#f6d36b';
       ctx.beginPath(); ctx.arc(px, py, 3.1, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();
@@ -214,7 +212,7 @@
 
     // current readout above the meter
     label(ctx, `I = ${unit(I, 'A', 3)}`, L.meter.x, L.meter.y - L.meter.r - 20,
-      { color: '#67e8f9', size: 13.5, weight: '800' });
+      { color: '#cfe9f2', size: 13.5, weight: '800' });
 
     // flow-direction caption
     label(ctx, state.electrons ? 'electron flow (\u2212 \u2192 +)' : 'conventional current (+ \u2192 \u2212)',
@@ -271,7 +269,7 @@
 
       // the actual characteristic I = V/R
       ctx.save();
-      ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 2.6; ctx.shadowColor = 'rgba(34,211,238,.6)'; ctx.shadowBlur = 10;
+      ctx.strokeStyle = '#a8d3e0'; ctx.lineWidth = 2.6;
       ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(Vmax), Y(Vmax / state.R)); ctx.stroke();
       ctx.restore();
 
@@ -279,11 +277,11 @@
       const ox = X(state.V), oy = Y(I);
       if (oy >= pad.t - 2) {
         ctx.save();
-        ctx.fillStyle = '#fbbf24'; ctx.strokeStyle = '#0b1220'; ctx.lineWidth = 2;
+        ctx.fillStyle = '#f6d36b'; ctx.strokeStyle = '#0b1220'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(ox, oy, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         ctx.restore();
         label(ctx, `(${fixed(state.V, 1)} V, ${eng(I, 2)} A)`, clamp(ox, pad.l + 40, w - 50), oy - 14,
-          { color: '#fcd34d', size: 11, weight: '700' });
+          { color: '#f6d36b', size: 11, weight: '700' });
       }
 
       label(ctx, 'V (volts) \u2192', pad.l + pw / 2, h - 8, { color: '#7b8db0', size: 10.5, weight: '600' });

@@ -572,7 +572,16 @@ console.log('\u2500'.repeat(66));
     ok(`${p}: exactly one <h1>`, (html.match(/<h1[\s>]/g) || []).length === 1);
   }
   const js = readdirSync(join(ROOT, 'js')).filter(f => f.endsWith('.js'));
-  ok('all simulation scripts are present', js.length >= 10, js.join(', '));
+  ok('all simulation scripts are present', js.length >= 12, js.join(', '));
+  // flat-art policy: no canvas gradients and no glow shadows anywhere
+  const jsSrc = js.map(f => readFileSync(join(ROOT, 'js', f), 'utf8')).join('\n');
+  ok('simulation art is flat (no gradients, no glow shadows)',
+    !/createLinearGradient|createRadialGradient|shadowBlur/.test(jsSrc));
+  // strip comments first: the policy note in the header mentions these words
+  const cssSrc = readFileSync(join(ROOT, 'css/styles.css'), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+  ok('stylesheet contains no gradient/blur/glass effects',
+    !/gradient|backdrop-filter|blur\(/.test(cssSrc));
 }
 
 /* ---------------- summary ---------------- */

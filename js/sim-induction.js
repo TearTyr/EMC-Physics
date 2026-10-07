@@ -106,8 +106,8 @@
     const ccw = phys.emf >= 0;
     const glow = clamp(Math.abs(phys.I) / state.iScale, 0, 1);
     const wireColor = glow > 0.02
-      ? `rgba(${ccw ? '52,211,153' : '251,191,36'},${0.55 + glow * 0.45})`
-      : 'rgba(148,163,184,.85)';
+      ? (ccw ? '#b5d777' : '#f6d36b')
+      : 'rgba(185,183,174,.85)';
 
     ctx.save();
     ctx.lineWidth = 2.6;
@@ -121,11 +121,9 @@
       ctx.stroke();
       // ... then the near half in the live wire colour (glows with current)
       ctx.strokeStyle = wireColor;
-      if (glow > 0.05) { ctx.shadowColor = wireColor; ctx.shadowBlur = 10 * glow; }
       ctx.beginPath();
       ctx.ellipse(x, G.cy, rx, G.aPx, 0, Math.PI * 1.5, Math.PI * 0.5);
       ctx.stroke();
-      ctx.shadowBlur = 0;
     }
     ctx.restore();
 
@@ -162,21 +160,15 @@
   function drawMagnet(ctx, G) {
     const x = G.magnetX, y = G.cy, L = G.magLen, T = G.magThick;
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = 14;
-    // S half (left, blue)
+    // S half (left, pastel blue)
     roundRect(ctx, x - L / 2, y - T / 2, L / 2, T, 4);
-    let g = ctx.createLinearGradient(x - L / 2, y - T / 2, x, y + T / 2);
-    g.addColorStop(0, '#0ea5e9'); g.addColorStop(1, '#0369a1');
-    ctx.fillStyle = g; ctx.fill();
-    // N half (right, red) — the N pole leads when the magnet moves right
+    ctx.fillStyle = '#a8d3e0'; ctx.fill();
+    // N half (right, pastel pink) — the N pole leads when the magnet moves right
     roundRect(ctx, x, y - T / 2, L / 2, T, 4);
-    g = ctx.createLinearGradient(x, y - T / 2, x + L / 2, y + T / 2);
-    g.addColorStop(0, '#f43f5e'); g.addColorStop(1, '#be123c');
-    ctx.fillStyle = g; ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.2;
+    ctx.fillStyle = '#f8aebe'; ctx.fill();
+    ctx.strokeStyle = 'rgba(246,241,229,.45)'; ctx.lineWidth = 1.2;
     roundRect(ctx, x - L / 2, y - T / 2, L, T, 4); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.font = `800 ${Math.max(11, T * 0.5)}px ui-sans-serif, system-ui, sans-serif`;
+    ctx.fillStyle = '#2b2d33'; ctx.font = `800 ${Math.max(11, T * 0.5)}px ui-sans-serif, system-ui, sans-serif`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('S', x - L / 4, y + 1);
     ctx.fillText('N', x + L / 4, y + 1);
@@ -235,7 +227,7 @@
       ctx.stroke();
     });
     const na = Math.PI * 1.5 + frac * Math.PI * 0.32;
-    ctx.strokeStyle = frac >= 0 ? '#34d399' : '#fbbf24'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+    ctx.strokeStyle = frac >= 0 ? '#b5d777' : '#f6d36b'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(x, y);
     ctx.lineTo(x + Math.cos(na) * r * 0.66, y + Math.sin(na) * r * 0.66); ctx.stroke();
     ctx.fillStyle = '#e8eefb'; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill();
@@ -312,9 +304,9 @@
 
     // live headline numbers on the canvas
     label(ctx, `EMF = ${unit(phys.emf, 'V', 3)}`, 12, 18,
-      { color: '#fcd34d', size: 13, align: 'left', weight: '800' });
+      { color: '#f6d36b', size: 13, align: 'left', weight: '800' });
     label(ctx, `I = ${unit(phys.I, 'A', 3)}`, 12, 38,
-      { color: '#67e8f9', size: 13, align: 'left', weight: '800' });
+      { color: '#cfe9f2', size: 13, align: 'left', weight: '800' });
     label(ctx, `v = ${fixed(state.v, 2)} m/s`, w - 12, 18,
       { color: '#a7f3d0', size: 12, align: 'right', weight: '700' });
 
@@ -373,14 +365,14 @@
         trace('lambda', maxL, 'rgba(34,211,238,.95)', false);   // always positive -> bottom baseline
         trace('emf', maxE, 'rgba(251,191,36,.95)', true);       // bipolar -> centre baseline
         label(ctx, `\u03BB max ${eng(maxL, 2)}Wb`, pad.l + 6, pad.t + 10,
-          { color: '#67e8f9', size: 10, align: 'left', weight: '700' });
+          { color: '#cfe9f2', size: 10, align: 'left', weight: '700' });
         label(ctx, `EMF max \u00B1${eng(maxE, 2)}V`, pad.l + pw - 6, pad.t + 10,
-          { color: '#fcd34d', size: 10, align: 'right', weight: '700' });
+          { color: '#f6d36b', size: 10, align: 'right', weight: '700' });
       }
       label(ctx, 'time \u2192 (last 7 s)', pad.l + pw / 2, h - 7,
         { color: '#7b8db0', size: 10, weight: '600' });
-      label(ctx, '\u03BB', pad.l - 8, pad.t + 12, { color: '#67e8f9', size: 11, align: 'right', weight: '800' });
-      label(ctx, 'EMF', pad.l - 8, midY, { color: '#fcd34d', size: 11, align: 'right', weight: '800' });
+      label(ctx, '\u03BB', pad.l - 8, pad.t + 12, { color: '#cfe9f2', size: 11, align: 'right', weight: '800' });
+      label(ctx, 'EMF', pad.l - 8, midY, { color: '#f6d36b', size: 11, align: 'right', weight: '800' });
     });
   }
 

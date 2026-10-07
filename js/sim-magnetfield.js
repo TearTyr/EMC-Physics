@@ -117,11 +117,7 @@
         if (x < -60 || x > w + 60 || y < -60 || y > h + 60) break;
         if (Math.hypot(x - g.S.x, y - g.S.y) < poleR * 0.7) { hitS = true; break; }
       }
-      const grad = ctx.createLinearGradient(g.N.x, g.N.y, x, y);
-      grad.addColorStop(0, 'rgba(251,113,133,.9)');
-      grad.addColorStop(0.55, 'rgba(167,139,250,.6)');
-      grad.addColorStop(1, hitS ? 'rgba(56,189,248,.9)' : 'rgba(167,139,250,.18)');
-      ctx.strokeStyle = grad;
+      ctx.strokeStyle = hitS ? 'rgba(168,211,224,.75)' : 'rgba(213,184,216,.5)';
       ctx.stroke();
       // tangent arrow showing the N -> S direction
       const t = 0.35;
@@ -150,7 +146,7 @@
         if (f.mag > 0) {
           const ux = f.dx / f.mag, uy = f.dy / f.mag;
           ctx.lineWidth = 2; ctx.lineCap = 'round';
-          ctx.strokeStyle = '#fb7185';                       // north-seeking half
+          ctx.strokeStyle = '#f8aebe';                       // north-seeking half
           ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + ux * r * 0.78, y + uy * r * 0.78); ctx.stroke();
           ctx.strokeStyle = '#cbd5e1';                       // south-seeking half
           ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - ux * r * 0.78, y - uy * r * 0.78); ctx.stroke();
@@ -201,21 +197,15 @@
     ctx.save();
     ctx.translate(g.cx, g.cy);
     ctx.rotate(-g.th);                     // canvas y is flipped, so negate
-    ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 14;
-    // S half (left, blue)
+    // S half (left, pastel blue)
     roundRect(ctx, -half, -thick, half, thick * 2, 5);
-    const gs = ctx.createLinearGradient(-half, -thick, 0, thick);
-    gs.addColorStop(0, '#0ea5e9'); gs.addColorStop(1, '#0369a1');
-    ctx.fillStyle = gs; ctx.fill();
-    // N half (right, red)
+    ctx.fillStyle = '#a8d3e0'; ctx.fill();
+    // N half (right, pastel pink)
     roundRect(ctx, 0, -thick, half, thick * 2, 5);
-    const gn = ctx.createLinearGradient(0, -thick, half, thick);
-    gn.addColorStop(0, '#f43f5e'); gn.addColorStop(1, '#be123c');
-    ctx.fillStyle = gn; ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1.2;
+    ctx.fillStyle = '#f8aebe'; ctx.fill();
+    ctx.strokeStyle = 'rgba(246,241,229,.45)'; ctx.lineWidth = 1.2;
     roundRect(ctx, -half, -thick, half * 2, thick * 2, 5); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.font = '800 15px ui-sans-serif, system-ui, sans-serif';
+    ctx.fillStyle = '#2b2d33'; ctx.font = '800 15px ui-sans-serif, system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('S', -half / 2, 1);
     ctx.fillText('N', half / 2, 1);
@@ -240,7 +230,7 @@
         const len = clamp(12 + (Math.log10(f.mag) + 5) * 6, 12, 46);
         arrow(ctx, state.probe.x, state.probe.y,
               state.probe.x + (f.dx / f.mag) * len, state.probe.y + (f.dy / f.mag) * len,
-              { color: '#fbbf24', width: 2.4, head: 8 });
+              { color: '#f6d36b', width: 2.4, head: 8 });
         ctx.save();
         ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(251,191,36,.55)'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.arc(state.probe.x, state.probe.y, 8, 0, Math.PI * 2); ctx.stroke();

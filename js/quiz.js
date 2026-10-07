@@ -335,7 +335,7 @@
         labels: ['Correct', 'Incorrect'],
         datasets: [{
           data: [right, total - right],
-          backgroundColor: ['#34d399', '#f87171'],
+          backgroundColor: ['#b5d777', '#f87171'],
           borderColor: '#0c1526', borderWidth: 3, hoverOffset: 6
         }]
       },
@@ -356,7 +356,7 @@
     });
     activeCharts.push(new C(el('chart-topics'), {
       type: 'bar',
-      data: { labels, datasets: [{ data: vals, backgroundColor: '#22d3ee', borderRadius: 5, maxBarThickness: 18 }] },
+      data: { labels, datasets: [{ data: vals, backgroundColor: '#a8d3e0', borderRadius: 5, maxBarThickness: 18 }] },
       options: {
         indexAxis: 'y', maintainAspectRatio: false,
         scales: { x: { min: 0, max: 100, ticks: { callback: v => v + '%' } } },
@@ -372,8 +372,8 @@
         labels: hist.map((h, i) => '#' + (i + 1)),
         datasets: [{
           label: 'score %', data: hist.map(h => h.pct),
-          borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,.16)',
-          fill: true, tension: .35, pointRadius: 3, pointBackgroundColor: '#fbbf24'
+          borderColor: '#f6d36b', backgroundColor: 'rgba(251,191,36,.16)',
+          fill: true, tension: .35, pointRadius: 3, pointBackgroundColor: '#f6d36b'
         }]
       },
       options: {
