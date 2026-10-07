@@ -183,5 +183,57 @@ window.EMC_QUIZ = [
               'zero only if the coil has an even number of turns'],
     answer: 1,
     explain: 'A large, constant flux still gives d\u03A6/dt = 0, so <b>EMF = 0</b> and no current flows. Induction needs <b>change</b> \u2014 a stationary magnet inside a coil produces nothing, which is exactly why generators must rotate.'
+  },
+
+  /* ------------- flow questions: one gentle step per chapter ------------- */
+  {
+    id: 21, topic: 'charges', label: 'Charges & fields',
+    q: 'An atom of carbon is electrically neutral. Why?',
+    options: ['It contains no charged particles at all',
+              'It has equal numbers of protons and electrons',
+              'Protons and electrons are the same particle',
+              'Its neutrons cancel out the protons'],
+    answer: 1,
+    explain: 'Neutrality is a <b>balance</b>, not an absence: six protons (+6e) and six electrons (\u22126e) sum to zero. Rub the atom\u2019s material and you move electrons around \u2014 that imbalance <i>is</i> static charge, and it is where Topic 1 begins.'
+  },
+  {
+    id: 22, topic: 'current', label: 'Current electricity',
+    q: 'A household circuit breaker \u201Ctrips\u201D (switches off) after you plug in a heater, a kettle and a microwave at once. What actually happened?',
+    options: ['The mains voltage rose until it became dangerous',
+              'Adding appliances in parallel lowered the equivalent resistance, so the total current exceeded the safe rating',
+              'One of the appliances broke the circuit',
+              'The electricity meter ran out of credit'],
+    answer: 1,
+    explain: 'Every appliance is another <b>parallel</b> path across the same voltage, and parallel paths always lower R<sub>eq</sub>. With V fixed, I = V/R<sub>eq</sub> rises \u2014 and the cables would heat as I<sup>2</sup>R. The breaker opens before that heat becomes a fire. This is Topic 2\u2019s parallel rule protecting your house.'
+  },
+  {
+    id: 23, topic: 'magnetism', label: 'Magnetism',
+    q: 'A free compass needle settles pointing roughly north. The best explanation is:',
+    options: ['Gravity pulls the needle north',
+              'Static electricity in the air aligns it',
+              'Earth\u2019s magnetic field exerts a torque on the needle\u2019s tiny dipole, turning it into line with the field',
+              'The needle is always pointing at the nearest magnet'],
+    answer: 2,
+    explain: 'The needle is a small bar magnet, and a field exerts a <b>torque</b> on a dipole until it lies along the field lines \u2014 exactly what the compass grid shows in the Topic 3 lab. Bonus fact: the pole near geographic north is magnetically a <b>south</b> pole, which is why the needle\u2019s north end is attracted there.'
+  },
+  {
+    id: 24, topic: 'induction', label: 'Electromagnetic induction',
+    q: 'A coil spinning at a steady rate in a steady magnetic field produces ALTERNATING current. Why does the current keep reversing?',
+    options: ['The magnets inside the generator flip over twice per turn',
+              'The coil heats up and cools down as it spins',
+              'The flux linkage rises then falls (and changes sense) every half turn, so d\u03A6/dt keeps changing sign',
+              'Carbon brushes swap the wires at random'],
+    answer: 2,
+    explain: '\u03A6 = NBA\u00B7cos(\u03C9t): as the coil turns, the flux swings from maximum one way, through zero, to maximum the other way. The <b>derivative</b> of that swing \u2014 the EMF \u2014 is a sine wave, positive half the time and negative the other half. Steady spin, alternating output: that is the grid.'
+  },
+  {
+    id: 25, topic: 'induction', label: 'Electromagnetic induction',
+    q: 'Which chain best describes a hydroelectric power station, from reservoir to socket?',
+    options: ['Gravitational potential \u2192 kinetic energy of water \u2192 mechanical turn of a turbine \u2192 electrical energy by electromagnetic induction',
+              'Chemical \u2192 thermal \u2192 electrical energy by induction',
+              'Kinetic energy of water \u2192 static charge on the turbine \u2192 electrical energy',
+              'Gravitational potential \u2192 light \u2192 electrical energy by the photoelectric effect'],
+    answer: 0,
+    explain: 'Falling water converts <b>gravitational potential</b> into <b>kinetic</b> energy; the stream turns a turbine (<b>mechanical</b>); the turbine spins a coil in a field, and <b>Faraday\u2019s law</b> does the last step. Every topic in this module appears in that chain except optics \u2014 which is why induction is the finale.'
   }
 ];

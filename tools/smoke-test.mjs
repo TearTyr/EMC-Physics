@@ -16,7 +16,7 @@
 
    Exits 1 if any assertion fails.
    ========================================================================== */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
@@ -276,6 +276,14 @@ console.log('\u2500'.repeat(66));
   const rows = [...doc.querySelectorAll('#circ-table tr')].slice(0, 3).map(tr => tr.children[3].textContent);
   ok('series current is the same through every resistor', new Set(rows).size === 1, rows.join(' / '));
 
+  // --- predict-then-run strip grades against the simulator itself ---
+  ok('circuit challenge strip is live', (txt(win, 'circ-chal-text') || '').length > 20, txt(win, 'circ-chal-text'));
+  eq('three prediction choices offered', doc.querySelectorAll('#circ-chal-opts button').length, 3);
+  doc.querySelector('#circ-chal-opts button').dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+  ok('prediction feedback appears', doc.getElementById('circ-chal-fb').className.includes('feedback') &&
+    !doc.getElementById('circ-chal-fb').className.includes('is-hidden'));
+  ok('try-it button revealed after answering', doc.getElementById('circ-chal-try').hidden === false);
+
   // --- editing a resistor updates the analysis ---
   const firstSlider = doc.getElementById('circ-r0');
   firstSlider.value = '50';
@@ -395,6 +403,9 @@ console.log('\u2500'.repeat(66));
     [...new Set(dirs)].join(' / '));
   ok('I = EMF/R at every sample', emfs.every((emf, i) => Math.abs(currents[i] - emf / 10) < 1e-9));
 
+  ok('induction challenge strip is live', (txt(win, 'ind-chal-text') || '').length > 20, txt(win, 'ind-chal-text'));
+  eq('three induction prediction choices', doc.querySelectorAll('#ind-chal-opts button').length, 3);
+
   // Faraday scaling: EMF is proportional to N. Use the deterministic
   // oscillation so both runs sample exactly the same motion.
   const runOscillation = async () => {
@@ -430,18 +441,18 @@ console.log('\u2500'.repeat(66));
   await frames(win, 2);
   ok('no runtime errors', problems.length === 0, problems.join(' | '));
   const bank = win.EMC_QUIZ;
-  eq('question bank size', bank.length, 20);
-  eq('every question rendered', doc.querySelectorAll('.q-card').length, 20);
+  eq('question bank size', bank.length, 25);
+  eq('every question rendered', doc.querySelectorAll('.q-card').length, 25);
   eq('four options each', doc.querySelectorAll('.q-card').length * 4, doc.querySelectorAll('.opt').length);
   ok('every question has a valid answer index',
     bank.every(q => Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length));
   ok('every question has an explanation', bank.every(q => q.explain && q.explain.length > 20));
   ok('all four topics are covered',
     new Set(bank.map(q => q.topic)).size === 4, [...new Set(bank.map(q => q.topic))].join(','));
-  eq('topic filter counts — charges', bank.filter(q => q.topic === 'charges').length, 5);
-  eq('topic filter counts — current', bank.filter(q => q.topic === 'current').length, 6);
-  eq('topic filter counts — magnetism', bank.filter(q => q.topic === 'magnetism').length, 4);
-  eq('topic filter counts — induction', bank.filter(q => q.topic === 'induction').length, 5);
+  eq('topic filter counts — charges', bank.filter(q => q.topic === 'charges').length, 6);
+  eq('topic filter counts — current', bank.filter(q => q.topic === 'current').length, 7);
+  eq('topic filter counts — magnetism', bank.filter(q => q.topic === 'magnetism').length, 5);
+  eq('topic filter counts — induction', bank.filter(q => q.topic === 'induction').length, 7);
 
   const answerAll = (pickWrong) => {
     doc.querySelectorAll('.q-card').forEach(card => {
@@ -454,20 +465,20 @@ console.log('\u2500'.repeat(66));
   // blank guard: submitting with nothing answered must warn, not grade
   click(win, doc.getElementById('quiz-submit'));
   ok('submitting a blank quiz warns first', doc.getElementById('quiz-score').hidden === true);
-  ok('progress text counts answers', /0 of 20 answered/.test(txt(win, 'quiz-progress-text')), txt(win, 'quiz-progress-text'));
+  ok('progress text counts answers', /0 of 25 answered/.test(txt(win, 'quiz-progress-text')), txt(win, 'quiz-progress-text'));
 
   // all correct -> 100%
   answerAll(false);
-  eq('all 20 recorded', txt(win, 'quiz-progress-text'), '20 of 20 answered');
+  eq('all 25 recorded', txt(win, 'quiz-progress-text'), '25 of 25 answered');
   click(win, doc.getElementById('quiz-submit'));
   ok('score card is revealed', doc.getElementById('quiz-score').hidden === false);
   ok('without the Chart.js CDN the CSS-bar fallback is used',
     doc.getElementById('quiz-charts').hidden === true &&
     doc.getElementById('quiz-fallback-bars').hidden === false);
   ok('perfect score is 100%', txt(win, 'quiz-score').includes('100%'), txt(win, 'quiz-score').slice(0, 80));
-  ok('every card marked correct', doc.querySelectorAll('.q-card.answered-correct').length === 20);
-  ok('explanations are shown', doc.querySelectorAll('.feedback.good').length === 20);
-  ok('options are locked after grading', doc.querySelectorAll('.opt:disabled').length === 80);
+  ok('every card marked correct', doc.querySelectorAll('.q-card.answered-correct').length === 25);
+  ok('explanations are shown', doc.querySelectorAll('.feedback.good').length === 25);
+  ok('options are locked after grading', doc.querySelectorAll('.opt:disabled').length === 100);
 
   // stored progress
   const stored = JSON.parse(win.localStorage.getItem('emc.progress.v1'));
@@ -480,15 +491,15 @@ console.log('\u2500'.repeat(66));
   answerAll(true);
   click(win, doc.getElementById('quiz-submit'));
   ok('all-wrong score is 0%', txt(win, 'quiz-score').includes('0%'), txt(win, 'quiz-score').slice(0, 60));
-  ok('wrong answers highlighted', doc.querySelectorAll('.q-card.answered-wrong').length === 20);
-  ok('correct option still shown for learning', doc.querySelectorAll('.opt.correct').length === 20);
+  ok('wrong answers highlighted', doc.querySelectorAll('.q-card.answered-wrong').length === 25);
+  ok('correct option still shown for learning', doc.querySelectorAll('.opt.correct').length === 25);
   const stored2 = JSON.parse(win.localStorage.getItem('emc.progress.v1'));
   eq('best score is kept across attempts', stored2.quizBest, 100);
   eq('attempts incremented', stored2.quizAttempts, 2);
 
   // review-incorrect filter
   click(win, doc.getElementById('quiz-wrong'));
-  eq('review mode shows only the 20 wrong ones', doc.querySelectorAll('.q-card').length, 20);
+  eq('review mode shows only the wrong ones', doc.querySelectorAll('.q-card').length, 25);
 
   // retake and check a partial score: 10 of 20 correct = 50%
   click(win, doc.getElementById('quiz-retake'));
@@ -498,24 +509,28 @@ console.log('\u2500'.repeat(66));
     card.querySelector(`.opt[data-opt="${idx}"]`).dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
   });
   click(win, doc.getElementById('quiz-submit'));
-  ok('half correct scores 50%', txt(win, 'quiz-score').includes('50%'), txt(win, 'quiz-score').slice(0, 60));
-  ok('10 of 20 reported', /10 \/ 20 correct/.test(txt(win, 'quiz-score')), '');
+  ok('10 of 25 correct scores 40%', txt(win, 'quiz-score').includes('40%'), txt(win, 'quiz-score').slice(0, 60));
+  ok('10 of 25 reported', /10 \/ 25 correct/.test(txt(win, 'quiz-score')), '');
+  ok('quiz clock was started by answering and frozen at submit',
+    doc.getElementById('quiz-timer').hidden === false && /\d+:\d\d/.test(txt(win, 'quiz-timer')));
+  ok('score card reports time and best-streak tags',
+    /time \d+:\d\d/.test(txt(win, 'quiz-score')) && /best streak \u00D7/.test(txt(win, 'quiz-score')));
 
   // attempt history is stored for the Chart.js line chart
   const hist = win.EMC.Progress.read().quizHistory;
   eq('three attempts recorded in history', hist.length, 3);
-  eq('history keeps the scores in order', hist.map(h => h.pct).join(','), '100,0,50');
+  eq('history keeps the scores in order', hist.map(h => h.pct).join(','), '100,0,40');
 
   // shuffle keeps the bank intact
   click(win, doc.getElementById('quiz-retake'));
   click(win, doc.getElementById('quiz-shuffle'));
-  eq('shuffle keeps all 20 questions', doc.querySelectorAll('.q-card').length, 20);
+  eq('shuffle keeps all 25 questions', doc.querySelectorAll('.q-card').length, 25);
 
   // topic filter
   click(win, doc.querySelector('[data-quiz-filter="magnetism"]'));
-  eq('magnetism filter shows 4 questions', doc.querySelectorAll('.q-card').length, 4);
+  eq('magnetism filter shows 5 questions', doc.querySelectorAll('.q-card').length, 5);
   click(win, doc.querySelector('[data-quiz-filter="all"]'));
-  eq('all filter restores 20', doc.querySelectorAll('.q-card').length, 20);
+  eq('all filter restores 25', doc.querySelectorAll('.q-card').length, 25);
 
   // instant mode marks as you go
   click(win, doc.querySelector('#quiz-mode [data-value="instant"]'));
@@ -523,6 +538,13 @@ console.log('\u2500'.repeat(66));
   const firstQ = bank.find(x => x.id === Number(firstCard.dataset.qid));
   firstCard.querySelector(`.opt[data-opt="${firstQ.answer}"]`).dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
   ok('instant mode marks immediately', doc.querySelectorAll('.q-card.answered-correct').length >= 1);
+  // answer a second question correctly -> streak chip shows x2 + burst ring
+  const cards2 = doc.querySelectorAll('.q-card');
+  const q2 = bank.find(x => x.id === Number(cards2[1].dataset.qid));
+  cards2[1].querySelector(`.opt[data-opt="${q2.answer}"]`).dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+  eq('streak chip shows x2', txt(win, 'quiz-streak'), 'streak \u00D72');
+  ok('correct option got the burst ring', doc.querySelectorAll('.opt.burst').length >= 1);
+  ok('graded feedback carries a reacting mascot', doc.querySelectorAll('.feedback .mreact').length >= 1);
   win.close();
 }
 
@@ -567,6 +589,17 @@ console.log('\u2500'.repeat(66));
       /cdn\.tailwindcss\.com/.test(html) && /tailwind-fallback\.css/.test(html));
     ok(`${p}: exactly one <h1>`, (html.match(/<h1[\s>]/g) || []).length === 1);
   }
+  const fontsCss = readFileSync(join(ROOT, 'css/fonts.css'), 'utf8');
+  ok('open cute fonts are self-hosted (no CDN needed)',
+    /Mochiy Pop One/.test(fontsCss) && /M PLUS Rounded 1c/.test(fontsCss) &&
+    ['mochiy-pop-one-400.woff2', 'm-plus-rounded-1c-400.woff2'].every(f =>
+      existsSync(join(ROOT, 'vendor/fonts', f))));
+  ok('licensed FOT-Yuruka Std sits first in both stacks',
+    /--font: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')) &&
+    /--font-head: 'FOT-Yuruka Std'/.test(readFileSync(join(ROOT, 'css/styles.css'), 'utf8')));
+  ok('common.js activates Yuruka at runtime when the ttf is present',
+    /loadLicensedFont/.test(readFileSync(join(ROOT, 'js/common.js'), 'utf8')));
+
   const js = readdirSync(join(ROOT, 'js')).filter(f => f.endsWith('.js'));
   ok('all simulation scripts are present', js.length >= 12, js.join(', '));
   // flat-art policy: no canvas gradients and no glow shadows anywhere

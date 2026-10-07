@@ -24,6 +24,12 @@
 
   /* ---- state ---------------------------------------------------------- */
   let activeCharts = [];          // Chart.js instances (destroyed on re-grade)
+  let timerHandle = 0;            // 1 s ticker for the quiz clock
+
+  /* Denki-chan reaction faces for graded feedback (inline SVG, no library) */
+  const FACE_HAPPY = '<svg class="mreact" viewBox="0 0 60 56" aria-hidden="true"><path d="M19 13 C17 4 23 2 24.5 8" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><path d="M41 13 C43 4 37 2 35.5 8" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><ellipse cx="30" cy="32" rx="21" ry="20" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><path d="M20 30 q3 -4 6 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M34 30 q3 -4 6 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M27 37 q3 3 6 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="15" cy="35" r="3" fill="#f8aebe" opacity=".85"/><circle cx="45" cy="35" r="3" fill="#f8aebe" opacity=".85"/></svg>';
+  const FACE_OOPS = '<svg class="mreact" viewBox="0 0 60 56" aria-hidden="true"><path d="M19 13 C17 4 23 2 24.5 8" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><path d="M41 13 C43 4 37 2 35.5 8" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><ellipse cx="30" cy="32" rx="21" ry="20" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><circle cx="23" cy="29" r="2.4" fill="#2b2d33"/><circle cx="37" cy="29" r="2.4" fill="#2b2d33"/><path d="M26 39 q4 -3 8 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="15" cy="35" r="3" fill="#f8aebe" opacity=".85"/><circle cx="45" cy="35" r="3" fill="#f8aebe" opacity=".85"/><path d="M46 18 q3 5 0 7 q-3 -2 0 -7" fill="#a8d3e0"/></svg>';
+
   const S = {
     order: BANK.slice(),          // current question order (shuffle changes this)
     filter: 'all',                // 'all' | topic id | 'wrong'
@@ -31,7 +37,14 @@
     marked: new Map(),            // question id -> true/false (only once graded)
     submitted: false,
     instant: false,
-    blankWarned: false
+    blankWarned: false,
+    t0: 0,                 // quiz clock start (ms, 0 = not started)
+    lastMark: 0,           // timestamp of the previously answered question
+    times: new Map(),      // question id -> seconds spent on it
+    streak: 0,             // live streak (instant mode)
+    bestStreak: 0,         // longest consecutive-correct run (question order)
+    totalTime: 0,          // seconds, frozen at submit
+    activeCard: null       // card nearest the viewport centre (keyboard target)
   };
 
   const el = id => document.getElementById(id);
@@ -64,8 +77,11 @@
 
     let fb = '';
     if (isMarked) {
+      const secs = S.times.get(q.id);
       fb = `<div class="feedback ${correct ? 'good' : 'bad'}">
-              <b>${correct ? 'Correct.' : 'Not quite.'}</b> ${q.explain}
+              ${correct ? FACE_HAPPY : FACE_OOPS}
+              <span><b>${correct ? 'Correct.' : 'Not quite.'}</b> ${q.explain}${
+                secs ? ` <span class="tiny faint">(answered in ${secs}s)</span>` : ''}</span>
             </div>`;
     } else if (chosen >= 0) {
       fb = `<div class="feedback">Answer recorded: <b>${KEYS[chosen]}</b>. ${
@@ -124,6 +140,71 @@
     }
   }
 
+  /* ---- clock, streaks, keyboard ---------------------------------------- */
+  const fmtTime = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+  function startTimer() {
+    if (S.t0) return;
+    S.t0 = performance.now(); S.lastMark = S.t0;
+    const elT = el('quiz-timer');
+    if (elT) elT.hidden = false;
+    timerHandle = setInterval(() => {
+      if (elT && S.t0 && !S.submitted) elT.textContent = fmtTime(Math.round((performance.now() - S.t0) / 1000));
+    }, 1000);
+  }
+  function stopTimer() {
+    clearInterval(timerHandle); timerHandle = 0;
+    if (S.t0) S.totalTime = Math.round((performance.now() - S.t0) / 1000);
+  }
+  function recordTime(qid) {
+    if (!S.t0) return;
+    const now = performance.now();
+    S.times.set(qid, Math.max(1, Math.round((now - S.lastMark) / 1000)));
+    S.lastMark = now;
+  }
+  function bumpStreak(correct) {
+    S.streak = correct ? S.streak + 1 : 0;
+    S.bestStreak = Math.max(S.bestStreak, S.streak);
+    const elS = el('quiz-streak');
+    if (elS) { elS.hidden = S.streak < 2; elS.textContent = `streak \u00D7${S.streak}`; }
+  }
+  function computeBestStreak() {
+    let run = 0, best = 0;
+    for (const q of S.order) {
+      if (S.marked.get(q.id) === true) { run++; best = Math.max(best, run); } else run = 0;
+    }
+    return best;
+  }
+  function initKeyboardAndFocus() {
+    if (typeof IntersectionObserver === 'function') {
+      const io = new IntersectionObserver(entries => {
+        for (const en of entries) if (en.isIntersecting && en.intersectionRatio >= 0.4) S.activeCard = en.target;
+      }, { threshold: [0.4, 0.7] });
+      const watch = () => host.querySelectorAll('.q-card').forEach(c => io.observe(c));
+      watch();
+      new MutationObserver(watch).observe(host, { childList: true });
+    }
+    document.addEventListener('keydown', e => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t && /INPUT|TEXTAREA|SELECT|SUMMARY|BUTTON/.test(t.tagName)) return;
+      const card = S.activeCard;
+      if (!card) return;
+      const key = e.key.toLowerCase();
+      const idx = '1234'.indexOf(e.key) >= 0 ? '1234'.indexOf(e.key)
+        : 'abcd'.indexOf(key) >= 0 ? 'abcd'.indexOf(key) : -1;
+      if (idx >= 0 && !S.submitted) {
+        const opt = card.querySelectorAll('.opt:not([disabled])')[idx];
+        if (opt) { opt.click(); e.preventDefault(); }
+      } else if (e.key === 'Enter' && !S.submitted) {
+        const sb = el('quiz-submit'); if (sb && !sb.disabled) { sb.click(); e.preventDefault(); }
+      } else if (key === 'n' && !S.submitted) {
+        const blank = visible().find(q => !S.answers.has(q.id));
+        if (blank) EMC.scrollToEl(document.getElementById(`q-${blank.id}`));
+        e.preventDefault();
+      }
+    });
+  }
+
   /* ---- answering ------------------------------------------------------- */
   host.addEventListener('click', e => {
     const btn = e.target.closest('.opt');
@@ -134,11 +215,19 @@
     if (!q || S.marked.has(qid)) return;
 
     S.answers.set(qid, Number(btn.dataset.opt));
+    startTimer();
+    recordTime(qid);
 
     if (S.instant) {
-      S.marked.set(qid, S.answers.get(qid) === q.answer);
-      if (S.marked.get(qid)) toast('Correct!');
+      const right = S.answers.get(qid) === q.answer;
+      S.marked.set(qid, right);
+      bumpStreak(right);
       render();
+      if (right) {
+        const winOpt = document.querySelector(`#q-${qid} .opt.correct`);
+        if (winOpt) winOpt.classList.add('burst');
+        toast(S.streak >= 3 ? `Correct \u2014 streak \u00D7${S.streak}!` : 'Correct!');
+      }
       EMC.scrollToEl(document.getElementById(`q-${qid}`));
     } else {
       // light-touch update: no full re-render, so scroll position is preserved
@@ -201,9 +290,11 @@
     }
 
     S.submitted = true;
+    stopTimer();
     S.filter = 'all';
     syncFilterButtons();
     S.order.forEach(q => { S.marked.set(q.id, S.answers.has(q.id) && S.answers.get(q.id) === q.answer); });
+    if (!S.instant) S.bestStreak = computeBestStreak();
     render();
 
     // record FIRST so the score card can quote the updated best/attempts
@@ -272,6 +363,11 @@
             aria-label="Line chart of the score across recent quiz attempts"></canvas></div>
         </div>
       </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <span class="tag">time ${fmtTime(S.totalTime)}</span>
+        <span class="tag tag-amber">best streak \u00D7${S.bestStreak}</span>
+        <span class="tag tag-cyan">${total ? Math.round(S.totalTime / total) : 0}s per question</span>
+      </div>
       <div class="flex flex-wrap gap-2 mt-4">
         <button class="btn btn-primary" id="quiz-retake" type="button">Retake the quiz</button>
         <button class="btn" id="quiz-wrong" type="button">Review incorrect only</button>
@@ -293,6 +389,10 @@
     const retake = el('quiz-retake');
     if (retake) retake.addEventListener('click', () => {
       S.answers.clear(); S.marked.clear(); S.submitted = false; S.blankWarned = false;
+      S.t0 = 0; S.lastMark = 0; S.times.clear(); S.streak = 0; S.bestStreak = 0; S.totalTime = 0;
+      clearInterval(timerHandle); timerHandle = 0;
+      const elT = el('quiz-timer'); if (elT) { elT.hidden = true; elT.textContent = '0:00'; }
+      const elS = el('quiz-streak'); if (elS) elS.hidden = true;
       S.filter = 'all'; syncFilterButtons();
       activeCharts.forEach(c => { try { c.destroy(); } catch (e) {} });
       activeCharts = [];
@@ -442,4 +542,5 @@
   /* ---- boot ------------------------------------------------------------ */
   syncFilterButtons();
   render();
+  initKeyboardAndFocus();
 })();

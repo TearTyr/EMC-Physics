@@ -51,7 +51,7 @@
   --r-mid:  14px;
   --r-ctl:  12px;
   --header-h: 56px;
-  --maxw: 1120px;
+  --maxw: 1280px;
   /* Cute anime / maru-gothic pairing: Mochiy Pop One for headings and the
      brand (sticker-pop, already heavy at weight 400), M PLUS Rounded 1c for
      body text. Both cover Latin; offline they fall back to system rounded
@@ -91,7 +91,7 @@ body.emc {
 .emc-main { flex: 1 0 auto; }
 
 .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 1.25rem; }
-.wrap-narrow { max-width: 860px; }
+.wrap-narrow { max-width: 980px; }
 .wrap-narrow .lede { max-width: 100%; }
 
 .section { padding-block: 1.7rem; }
@@ -498,6 +498,27 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .feedback.good { border-color: var(--mi); background: rgba(181,215,119,.07); }
 .feedback.bad { border-color: var(--pk); background: rgba(248,174,190,.07); }
 
+.feedback { display: flex; gap: .6rem; align-items: flex-start; }
+.feedback > span { flex: 1 1 auto; min-width: 0; }
+.mreact { width: 36px; height: auto; flex: none; margin-top: .1rem; }
+
+/* pastel ring burst when an answer is marked correct (instant mode) */
+.opt.burst { position: relative; }
+.opt.burst::after {
+  content: ""; position: absolute; inset: -3px; border-radius: 12px;
+  border: 3px solid var(--mi); opacity: 0; pointer-events: none;
+  animation: burst .55s ease-out 1;
+}
+@keyframes burst {
+  0% { opacity: .9; transform: scale(.96); }
+  100% { opacity: 0; transform: scale(1.06); }
+}
+.mascot-cheer { width: 22px; height: auto; display: inline-block; vertical-align: -6px; animation: bob 1s ease-in-out 2; }
+
+/* predict-then-run challenge strips on the simulations */
+.challenge { border-top: 1.5px solid var(--line); background: var(--bg-soft); }
+.challenge .q-prompt { font-weight: 700; font-size: .93rem; color: var(--text); }
+
 .score-card { display: flex; gap: 1.4rem; align-items: center; flex-wrap: wrap; }
 .grade { font-size: 2.5rem; font-weight: 800; font-family: var(--mono); line-height: 1; }
 .score-bar { flex: 1 1 220px; min-width: 200px; }
@@ -534,18 +555,20 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 .hero-stack { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .8rem; }
 .hero-stack .lede { margin-inline: auto; }
 .btn-row { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; }
-.hero-visual { width: 100%; max-width: 780px; margin-top: .8rem; }
+.hero-visual { width: 100%; max-width: 980px; margin-top: .8rem; }
 .hero-visual canvas {
-  display: block; width: 100%; height: 320px; border-radius: var(--r-card);
+  display: block; width: 100%; height: 380px; border-radius: var(--r-card);
   border: 2px solid var(--line); background: var(--plate);
 }
-.stat-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; width: 100%; max-width: 780px; }
+.stat-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1.2rem; width: 100%; max-width: 980px; }
 @media (min-width: 620px) { .stat-strip { grid-template-columns: repeat(4, 1fr); } }
 .stat-strip .stat { text-align: center; }
 .stat-strip .stat-value { font-size: 1.45rem; }
 
 .steps { display: grid; gap: .9rem; grid-template-columns: 1fr; counter-reset: step; }
 @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+/* four topic stickers across on wide screens */
+@media (min-width: 1200px) { .topic-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .step { position: relative; padding: .95rem; }
 .step::before {
   counter-increment: step; content: "0" counter(step);
@@ -568,6 +591,11 @@ figure.fig figcaption { font-size: .8rem; color: var(--text-faint); margin-top: 
 /* --------------------------------------------------------------------------
    15. Small screens
    -------------------------------------------------------------------------- */
+@media (min-width: 1280px) {
+  body.emc { font-size: 17px; }
+  .h-hero { font-size: 2.6rem; }
+}
+
 @media (max-width: 640px) {
   body.emc { font-size: 15.5px; }
   .section { padding-block: 1.5rem; }
@@ -626,47 +654,13 @@ body.emc { overflow-x: clip; }
 }
 
 /* ==========================================================================
-   >>>  YOUR FONT GOES HERE — FOT-Yuruka Std  <<<
+   FOT-Yuruka Std (your licensed .ttf)
    --------------------------------------------------------------------------
-   You own a copy: fot-yuruka-std.ttf. Two steps and it is live:
-
-   STEP 1 — put the file at this exact path (the folder already exists):
-              vendor/fonts/fot-yuruka-std.ttf
-
-   STEP 2 — uncomment the @font-face block just below (delete the leading
-            "/*" line and the trailing "*/" line). That is ALL: the font
-            stacks at the top of this file already list 'FOT-Yuruka Std'
-            first for both body text and headings, so every page switches
-            over automatically — no HTML or JS changes needed.
-
-   Notes
-     * One .ttf = one weight (Regular). Bold text (<strong>, buttons, stat
-       labels) will be synthesised by the browser, which looks fine in this
-       design. If you also own a Bold .ttf, uncomment the second face too.
-     * The site degrades gracefully: while the font file is absent (or on a
-       machine you shared the repo with), the free rounded fallbacks
-       (Mochiy Pop One / M PLUS Rounded 1c / system maru gothic) render
-       instead. Nothing ever breaks.
-     * If your licence forbids redistribution, keep the .ttf out of public
-       Git hosts — vendor/fonts/README.md explains how.
-     * Verify: DevTools -> Network -> filter "Font" -> reload; or just look
-       for Yuruka's soft rounded letterforms in the headings.
+   Loaded at runtime by js/common.js (EMC boot) from
+       vendor/fonts/fot-yuruka-std.ttf        (or ../vendor/... on topic pages)
+   using the FontFace API: if the file is present it becomes the primary face
+   everywhere instantly; if absent the request fails SILENTLY (no console
+   noise) and the self-hosted open fonts in css/fonts.css carry the look.
+   To activate: copy your ttf to vendor/fonts/fot-yuruka-std.ttf and push.
+   Bold cut (optional): vendor/fonts/fot-yuruka-std-bold.ttf is picked up too.
    ========================================================================== */
-/*
-@font-face {
-  font-family: 'FOT-Yuruka Std';
-  src: url('../vendor/fonts/fot-yuruka-std.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-*/
-/* Own the Bold cut as well? Uncomment this too:
-@font-face {
-  font-family: 'FOT-Yuruka Std';
-  src: url('../vendor/fonts/fot-yuruka-std-bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-*/

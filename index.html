@@ -15,12 +15,9 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/tailwind-fallback.css">
-  <!-- Optional: if you licence FOT-Yuruka Std via Adobe Fonts, paste your kit:
-       <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css"> -->
-  <!-- Type: cute anime / maru-gothic pair — Mochiy Pop One (heads) + M PLUS Rounded 1c (body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap">
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
+       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <link rel="stylesheet" href="css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
 </head>
@@ -78,7 +75,7 @@
         <span class="eyebrow">Calculus-based Physics II · Module EMC</span>
         <h1 class="h-hero">See electricity and magnetism move.</h1>
         <p class="lede">
-          Four tutorial chapters, eight live simulations and a 20-question scored quiz.
+          Four tutorial chapters, eight live simulations and a 25-question scored quiz.
           Drag a charge, build a circuit, push a magnet through a coil and watch the
           induced EMF appear on the graph — every number on screen is computed from
           the real equations, not faked.
@@ -98,7 +95,7 @@
         <div class="stat-strip">
           <div class="stat"><span class="stat-label">Topics</span><span class="stat-value hl-cyan">4</span></div>
           <div class="stat"><span class="stat-label">Simulations</span><span class="stat-value hl-amber">8</span></div>
-          <div class="stat"><span class="stat-label">Quiz questions</span><span class="stat-value hl-emerald">20</span></div>
+          <div class="stat"><span class="stat-label">Quiz questions</span><span class="stat-value hl-emerald">25</span></div>
           <div class="stat"><span class="stat-label">Dependencies</span><span class="stat-value">0</span><span class="stat-sub">no build step</span></div>
         </div>
       </div>
@@ -125,7 +122,7 @@
         <div class="card step reveal">
           <h3 class="font-bold">Prove it in the quiz</h3>
           <p class="small muted" style="margin:.35rem 0 0">
-            Twenty multiple-choice questions with worked explanations. Your best score is
+            Twenty-five multiple-choice questions with worked explanations. Your best score is
             saved in this browser so you can track improvement.
           </p>
         </div>
@@ -141,7 +138,7 @@
         <span class="tag tag-cyan" id="dashTopicsChip">0 of 4 topics studied</span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 topic-grid-4 gap-4">
 
         <!-- Topic 1 -->
         <article class="card card-hover topic-card reveal" style="--topic-accent:#f8aebe">
@@ -381,7 +378,7 @@
           <div style="flex:1 1 320px">
             <h2 class="h-sec" style="margin:0">Ready to test yourself?</h2>
             <p class="muted small" style="margin:.3rem 0 0">
-              20 questions, instant or exam marking, worked explanations for every answer,
+              25 questions, instant or exam marking, worked explanations for every answer,
               and a per-topic breakdown so you know exactly what to revise.
             </p>
           </div>
@@ -420,7 +417,7 @@
           <li><a href="topics/current.html">2 · Current electricity</a></li>
           <li><a href="topics/magnetism.html">3 · Magnetism</a></li>
           <li><a href="topics/induction.html">4 · Electromagnetic induction</a></li>
-          <li><a href="quiz.html">Quiz (20 questions)</a></li>
+          <li><a href="quiz.html">Quiz (25 questions)</a></li>
         </ul>
       </div>
       <div>

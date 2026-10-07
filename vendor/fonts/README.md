@@ -1,22 +1,20 @@
-# vendor/fonts — your licensed FOT-Yuruka Std goes here
+# vendor/fonts
 
-1. Copy your file into **this folder** with this exact name:
-   `fot-yuruka-std.ttf`
-2. Open `css/styles.css`, scroll to the very bottom — the big banner that
-   says **"YOUR FONT GOES HERE"** — and uncomment the `@font-face` block.
-3. Reload the site. Headings and body text now render in Yuruka everywhere.
+## Self-hosted open fonts (already here, committed)
+mochiy-pop-one-400.woff2 and m-plus-rounded-1c-{400,700,800}.woff2 are SIL Open
+Font License faces downloaded from Google Fonts and served locally, so the
+cute maru-gothic look works on every host with no CDN.
 
-## Licensing note
-FOT-Yuruka Std is a commercial Fontworks face. If your licence does not allow
-redistribution, **do not push the .ttf to a public repository** (add
-`vendor/fonts/*.ttf` to `.gitignore` before committing). The website is built
-to degrade gracefully: on any machine without the file, the free rounded
-fallbacks (Mochiy Pop One / M PLUS Rounded 1c / system maru gothic) render
-instead, so sharing the repo without the font is always safe — and your
-Vercel deploy will simply use the fallbacks unless you deploy the font too.
+## Your licensed face: FOT-Yuruka Std
+1. Copy your file into THIS folder as exactly:  fot-yuruka-std.ttf
+   (optional Bold cut:                            fot-yuruka-std-bold.ttf)
+2. Commit and push it:
+       git add vendor/fonts/fot-yuruka-std.ttf && git commit -m "add licensed Yuruka" && git push
+3. Done. js/common.js probes for the file at boot and, when present, makes it
+   the primary face on every page via the FontFace API. No CSS editing needed.
 
-## Optional Bold cut
-If you also own `FOT-Yuruka Std Bold`, save it as `fot-yuruka-std-bold.ttf`
-here and uncomment the second `@font-face` block in `css/styles.css`.
-Without it, the browser synthesises bold from the Regular face, which looks
-fine in this design.
+If the file is absent (or a clone lacks it), the site silently falls back to
+the open fonts above - there is never a broken state or a console error.
+
+Licensing: only push the .ttf if your Fontworks licence permits redistribution
+(private repo / classroom Vercel is usually fine; public repos check first).

@@ -483,6 +483,72 @@
     }
   });
 
+  /* ---- predict-then-run challenge (Faraday/Lenz, answered by the theory) -- */
+  const IND_CHALLENGES = [
+    {
+      text: 'The magnet rests at the coil centre. Press <b>Push through →</b>. At which moment is the induced EMF exactly zero?',
+      options: ['as the magnet crosses the coil centre', 'at the two ends of the travel', 'never — it is zero only before you press'],
+      answer: 0,
+      explain: 'At the centre the flux is at its <b>maximum</b>, and a maximum has zero slope: dΦ/dt = 0. That is why the chart shows two opposite peaks with a zero crossing between them.',
+      apply: () => document.querySelector('[data-ind-mode="push"]')?.click()
+    },
+    {
+      text: 'Double the <b>auto-move speed</b> and push again. The peak |EMF| will…',
+      options: ['double', 'halve', 'stay the same'],
+      answer: 0,
+      explain: 'EMF = −N·dΦ/dz·v: the spatial derivative is unchanged, v doubles, so the whole trace scales by 2 — taller peaks, same area under them (same total flux change).',
+      apply: () => {
+        const sl = el('ind-speed');
+        if (sl) { sl.value = String(Math.min(3, state.speed * 2)); sl.dispatchEvent(new Event('input')); }
+        document.querySelector('[data-ind-mode="push"]')?.click();
+      }
+    },
+    {
+      text: 'Double the <b>circuit resistance R</b> and push again. The peak |EMF| will…',
+      options: ['stay the same', 'double', 'halve'],
+      answer: 0,
+      explain: 'Faraday’s law contains no R: the EMF depends only on N and dΦ/dt. Doubling R halves the <b>current</b> (I = EMF/R) and quarters the heating — watch the mA readout, not the mV one.',
+      apply: () => {
+        const sl = el('ind-R');
+        if (sl) { sl.value = String(Math.min(200, state.R * 2)); sl.dispatchEvent(new Event('input')); }
+        document.querySelector('[data-ind-mode="push"]')?.click();
+      }
+    }
+  ];
+  let indChalIdx = 0, indChalDone = false;
+  function showIndChallenge(i) {
+    indChalIdx = ((i % IND_CHALLENGES.length) + IND_CHALLENGES.length) % IND_CHALLENGES.length;
+    indChalDone = false;
+    const c = IND_CHALLENGES[indChalIdx];
+    const txt = el('ind-chal-text'), opts = el('ind-chal-opts'),
+          fb = el('ind-chal-fb'), tryB = el('ind-chal-try');
+    if (!txt || !opts) return;
+    txt.innerHTML = c.text;
+    if (fb) { fb.className = 'feedback is-hidden'; fb.innerHTML = ''; }
+    if (tryB) tryB.hidden = true;
+    opts.innerHTML = c.options.map((o, k) =>
+      `<button class="btn btn-sm" type="button" data-k="${k}" aria-pressed="false">${o}</button>`).join('');
+    opts.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      if (indChalDone) return;
+      indChalDone = true;
+      const k = Number(b.dataset.k), okk = k === c.answer;
+      opts.querySelectorAll('button').forEach(x => {
+        x.disabled = true;
+        if (Number(x.dataset.k) === c.answer) x.classList.add('btn-primary');
+        if (x === b && !okk) x.classList.add('btn-danger');
+      });
+      if (fb) { fb.className = 'feedback ' + (okk ? 'good' : 'bad'); fb.innerHTML = `<span><b>${okk ? 'Good prediction.' : 'Not quite.'}</b> ${c.explain}</span>`; }
+      if (tryB) tryB.hidden = false;
+    }));
+  }
+  if (el('ind-chal-text')) {
+    showIndChallenge(0);
+    const nb = el('ind-chal-new');
+    if (nb) nb.addEventListener('click', () => showIndChallenge(indChalIdx + 1));
+    const tb = el('ind-chal-try');
+    if (tb) tb.addEventListener('click', () => IND_CHALLENGES[indChalIdx].apply());
+  }
+
   setMode('manual');
   stage.draw();
 })();

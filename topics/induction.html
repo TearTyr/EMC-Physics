@@ -11,12 +11,9 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/tailwind-fallback.css">
-  <!-- Optional: if you licence FOT-Yuruka Std via Adobe Fonts, paste your kit:
-       <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css"> -->
-  <!-- Type: cute anime / maru-gothic pair — Mochiy Pop One (heads) + M PLUS Rounded 1c (body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap">
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
+       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <link rel="stylesheet" href="../css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 </head>
@@ -404,6 +401,25 @@
             analytically. Typical values here are tens to hundreds of millivolts — the same order
             as a real classroom demonstration.
           </p>
+
+          <!-- predict-then-run: the simulator itself grades the prediction -->
+          <div class="panel-body challenge" style="border-top:1.5px solid var(--line)">
+            <div class="flex flex-wrap items-start gap-4 justify-between">
+              <div style="flex:1 1 320px">
+                <span class="tag tag-cyan">Predict, then run</span>
+                <p class="q-prompt mt-2" id="ind-chal-text">—</p>
+                <p class="tiny faint" style="margin-top:.4rem">Answer from the rules first — then press “Try it” and watch the readouts confirm it.</p>
+              </div>
+              <div style="flex:1 1 260px">
+                <div class="btn-group" id="ind-chal-opts" role="group" aria-label="Your prediction"></div>
+                <div class="btn-group mt-2">
+                  <button class="btn btn-sm" id="ind-chal-try" type="button" hidden>Run it on the coil</button>
+                  <button class="btn btn-sm btn-ghost" id="ind-chal-new" type="button">New prediction</button>
+                </div>
+                <div class="feedback is-hidden mt-2" id="ind-chal-fb" role="status"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -523,7 +539,7 @@
 
       <nav class="pager" aria-label="Topic navigation">
         <a href="magnetism.html"><span class="dir">← Previous</span><span class="ttl">3 · Magnetism</span></a>
-        <a class="next" href="../quiz.html"><span class="dir">Next →</span><span class="ttl">20-question quiz</span></a>
+        <a class="next" href="../quiz.html"><span class="dir">Next →</span><span class="ttl">25-question quiz</span></a>
       </nav>
     </section>
   </main>

@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Self-hosted open fonts (SIL OFL) — guarantees the cute maru-gothic look on
+   ANY host (Vercel included) with no CDN and no licence questions:
+     * Mochiy Pop One   400  -> headings / brand   (sticker-pop)
+     * M PLUS Rounded 1c 400/700/800 -> body / UI  (rounded text face)
+   FOT-Yuruka Std (commercial, YOUR licence) is loaded at runtime by
+   js/common.js from vendor/fonts/fot-yuruka-std.ttf when present, and sits
+   FIRST in both stacks — so the moment you drop the .ttf in and push, every
+   page switches to it with no other change.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  src: url('../vendor/fonts/m-plus-rounded-1c-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  src: url('../vendor/fonts/m-plus-rounded-1c-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  src: url('../vendor/fonts/m-plus-rounded-1c-800.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mochiy Pop One';
+  src: url('../vendor/fonts/mochiy-pop-one-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

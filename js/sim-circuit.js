@@ -434,6 +434,102 @@
     canvas.style.cursor = over ? 'pointer' : 'default';
   });
 
+  /* ---- predict-then-run challenge --------------------------------------
+     Each challenge is answered by the SIMULATOR itself: we snapshot the
+     state, apply a hypothetical change, re-run analyze(), and compare total
+     currents. So the "correct" answer can never drift from the physics.   */
+  const chal = { text: el('circ-chal-text'), opts: el('circ-chal-opts'),
+                 fb: el('circ-chal-fb'), tryBtn: el('circ-chal-try'),
+                 current: null };
+
+  function snapshot() {
+    return { topology: state.topology, resistors: state.resistors.slice(),
+             bulbR: state.bulbR, includeBulb: state.includeBulb, V: state.V };
+  }
+  function hypothesize(mut) {
+    const keep = snapshot();
+    mut(state);
+    const result = analyze();
+    Object.assign(state, keep);
+    state.resistors = keep.resistors;
+    return result;
+  }
+  const DIRS = ['increase', 'decrease', 'stay the same'];
+  function dirOf(a, b) {
+    if (Math.abs(b - a) < 1e-9) return 2;
+    return b > a ? 0 : 1;
+  }
+  function buildChallenges() {
+    const A = analyze();
+    const list = [];
+    const other = { series: 'parallel', parallel: 'series', combo: 'series' }[state.topology];
+    if (!(state.topology === 'combo') && state.resistors.length >= 2) {
+      const H = hypothesize(st => { st.topology = other; });
+      list.push({
+        text: `Predict: rewire the bank from <b>${state.topology}</b> to <b>${other}</b> (same resistors, bulb still in circuit). The total current from the battery will…`,
+        answer: dirOf(A.Itotal, H.Itotal),
+        explain: `R<sub>eq</sub> goes ${state.topology === 'series' ? 'down (parallel branches add paths)' : 'up (one long path again)'}: ${fixed(A.Rbank, 2)} Ω → ${fixed(H.Rbank, 2)} Ω, so I goes ${DIRS[dirOf(A.Itotal, H.Itotal)]}.`,
+        apply: () => { const b = document.querySelector(`#circ-topology [data-value="${other}"]`); if (b) b.click(); }
+      });
+    }
+    if (Math.max(...state.resistors, state.bulbR) <= 50) {
+      const H = hypothesize(st => { st.resistors = st.resistors.map(r => r * 2); st.bulbR *= 2; });
+      list.push({
+        text: 'Predict: <b>double every resistance</b> in the circuit (bank and bulb). The total current will…',
+        answer: dirOf(A.Itotal, H.Itotal),
+        explain: `Ohm's law with V fixed: I = V/R, and every R doubled, so I ${DIRS[dirOf(A.Itotal, H.Itotal)]} — exactly ${fixed(A.Itotal / H.Itotal, 2)}× here.`,
+        apply: () => { state.resistors = state.resistors.map(r => r * 2); state.bulbR *= 2; renderRows(); refresh(); }
+      });
+    }
+    if (state.includeBulb) {
+      const H = hypothesize(st => { st.includeBulb = false; });
+      list.push({
+        text: 'Predict: <b>bypass the bulb</b> (uncheck “include the bulb”). The total current will…',
+        answer: dirOf(A.Itotal, H.Itotal),
+        explain: `Removing a series resistance lowers R<sub>total</sub> from ${fixed(A.Rtotal, 2)} Ω to ${fixed(H.Rtotal, 2)} Ω, so I must ${DIRS[dirOf(A.Itotal, H.Itotal)]}.`,
+        apply: () => { const c = el('circ-includeBulb'); if (c) { c.checked = false; c.dispatchEvent(new Event('change')); } }
+      });
+    }
+    return list;
+  }
+  let chalList = [], chalIdx = 0, chalDone = false;
+  function showChallenge(i) {
+    chalList = buildChallenges();
+    chalIdx = ((i % chalList.length) + chalList.length) % chalList.length;
+    chalDone = false;
+    const c = chalList[chalIdx];
+    chal.current = c;
+    if (chal.text) chal.text.innerHTML = c.text;
+    if (chal.fb) { chal.fb.className = 'feedback is-hidden'; chal.fb.innerHTML = ''; }
+    if (chal.tryBtn) chal.tryBtn.hidden = true;
+    if (chal.opts) {
+      chal.opts.innerHTML = DIRS.map((d, k) =>
+        `<button class="btn btn-sm" type="button" data-k="${k}" aria-pressed="false">${d}</button>`).join('');
+      chal.opts.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+        if (chalDone) return;
+        chalDone = true;
+        const k = Number(b.dataset.k);
+        const ok = k === c.answer;
+        chal.opts.querySelectorAll('button').forEach(x => {
+          x.disabled = true;
+          if (Number(x.dataset.k) === c.answer) x.classList.add('btn-primary');
+          if (x === b && !ok) x.classList.add('btn-danger');
+        });
+        if (chal.fb) {
+          chal.fb.className = 'feedback ' + (ok ? 'good' : 'bad');
+          chal.fb.innerHTML = `<span><b>${ok ? 'Good prediction.' : 'Not quite.'}</b> ${c.explain}</span>`;
+        }
+        if (chal.tryBtn) chal.tryBtn.hidden = false;
+      }));
+    }
+  }
+  if (chal.text) {
+    showChallenge(0);
+    const newBtn = el('circ-chal-new');
+    if (newBtn) newBtn.addEventListener('click', () => showChallenge(chalIdx + 1));
+    if (chal.tryBtn) chal.tryBtn.addEventListener('click', () => { if (chal.current) chal.current.apply(); });
+  }
+
   /* ---- boot ------------------------------------------------------------ */
   renderRows();
   if (addBtn) addBtn.disabled = state.resistors.length >= LIMITS[state.topology][1];

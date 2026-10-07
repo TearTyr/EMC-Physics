@@ -41,7 +41,7 @@ UI behaviour, including:
 | Magnet lab | probe \|B\| reported with Earth-field comparison; filings toggle; angle readout |
 | Lorentz | F = qvB = 16.0 fN; r = mv/qB = 4.18 mm; T = 131 ns; KE in eV and J; force down for (v→, B⊙, +q); reverses with B and with charge sign; RHR challenge grades correctly |
 | Induction | stationary magnet → EMF = 0 and "no induced current"; Φ matches μ₀ma²/[2(a²+z²)^{3/2}] to 1 %; push → EMF changes sign; I = EMF/R at every sample; EMF ∝ N (800 vs 1600 turns); R changes I but not EMF |
-| Quiz | 20 questions × 4 options; blank-submit guard; all-correct = 100 %; all-wrong = 0 %; 10/20 = 50 %; explanations shown; options locked after grading; best score + attempts + history persisted; filters, shuffle, retake, instant mode |
+| Quiz | 25 questions × 4 options; blank-submit guard; all-correct = 100 %; all-wrong = 0 %; 10/20 = 50 %; explanations shown; options locked after grading; best score + attempts + history persisted; filters, shuffle, retake, instant mode |
 | Chart.js | with a stubbed `Chart`: exactly three instances (doughnut, bar, line) on the right canvases, CSS bars hidden; without it: charts hidden and CSS-bar fallback shown |
 | p5.js | with no p5 global the generator host shows the offline notice and the page still boots |
 | Cross-page | viewport meta, `lang`, skip link, labelled canvases, CDN + fallback stylesheet, exactly one `<h1>` |
@@ -122,7 +122,7 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Progress ring, quiz scoring and localStorage work exactly as on localhost
 
 ### 2.7 Quiz & progress
-- [ ] 20 questions render; each shows its topic tag
+- [ ] 25 questions render; each shows its topic tag
 - [ ] Answering updates the "n of 20 answered" bar
 - [ ] Submitting with blanks warns once and highlights the first blank; submitting again grades
 - [ ] All correct → 100 %, all wrong → 0 %, half → 50 %; the per-topic breakdown matches

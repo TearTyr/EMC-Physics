@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Twenty multiple-choice questions on electromagnetics with automatic scoring, worked explanations and a per-topic breakdown.">
+  <meta name="description" content="Twenty-five multiple-choice questions on electromagnetics with automatic scoring, worked explanations and a per-topic breakdown.">
   <meta name="theme-color" content="#060b16">
   <title>Quiz · EMC Lab</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%2317181c'/%3E%3Cellipse cx='24' cy='27' rx='15' ry='14' fill='%23f6f1e5'/%3E%3Cpath d='M15 16 C13 8 19 6 21 12' fill='%23f6f1e5'/%3E%3Cpath d='M33 16 C35 8 29 6 27 12' fill='%23f6f1e5'/%3E%3Ccircle cx='19' cy='26' r='1.8' fill='%232b2d33'/%3E%3Ccircle cx='29' cy='26' r='1.8' fill='%232b2d33'/%3E%3Cpath d='M22 31 q2 2 4 0' stroke='%232b2d33' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -11,12 +11,9 @@
   <script>if (window.tailwind) { tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#22d3ee', deep: '#0e1a2e', line: '#1e2f4d' } } } } }; }</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/tailwind-fallback.css">
-  <!-- Optional: if you licence FOT-Yuruka Std via Adobe Fonts, paste your kit:
-       <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css"> -->
-  <!-- Type: cute anime / maru-gothic pair — Mochiy Pop One (heads) + M PLUS Rounded 1c (body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap">
+  <!-- Type: self-hosted maru-gothic faces (css/fonts.css). FOT-Yuruka Std
+       auto-activates from vendor/fonts/fot-yuruka-std.ttf when present. -->
+  <link rel="stylesheet" href="css/fonts.css">
   <!-- KaTeX: the LaTeX formatter for every equation on the page -->
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
 </head>
@@ -107,12 +104,18 @@
           <div class="flex flex-wrap items-center gap-3 mt-4">
             <button class="btn btn-primary" type="button" id="quiz-submit">Submit quiz</button>
             <button class="btn" type="button" id="quiz-shuffle">Shuffle order</button>
+            <span class="tag" id="quiz-timer" hidden aria-label="Elapsed time">0:00</span>
+            <span class="tag tag-amber" id="quiz-streak" hidden aria-label="Current correct streak">streak ×0</span>
             <div style="flex:1 1 180px;min-width:160px">
               <div class="progress-track"><div class="progress-fill" id="quiz-progress-fill"></div></div>
               <p class="tiny faint" style="margin:.35rem 0 0"><span id="quiz-progress-text">0 of 20 answered</span> · <span id="quiz-live" hidden></span></p>
             </div>
           </div>
 
+          <p class="tiny faint mt-2">
+            Keyboard: <span class="mono">1–4</span> or <span class="mono">A–D</span> answer the question on screen,
+            <span class="mono">Enter</span> submits, <span class="mono">N</span> jumps to the next blank.
+          </p>
           <p class="tiny faint mt-3">
             <strong>Exam mode</strong> marks nothing until you submit — good for a real test.
             <strong>Instant feedback</strong> marks each answer immediately and shows the

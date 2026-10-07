@@ -2,7 +2,7 @@
 
 A responsive, interactive educational website for **Calculus-based Physics II**, built for the
 **EMC (Electromagnetics) group**. It teaches electricity and magnetism through written
-tutorials, **eight live simulations**, and a **20-question auto-graded quiz** with Chart.js
+tutorials, **eight live simulations**, and a **25-question auto-graded quiz** with Chart.js
 score analytics. Fully static: no backend, no build step, no required dependencies.
 
 > Every number on every screen is computed from the real equations (Coulomb's law, Ohm's law,
@@ -66,7 +66,7 @@ emc-physics-tutorial/
 │   ├── sim-lorentz.js             Sim 6 — Lorentz force + right-hand-rule challenge
 │   ├── sim-induction.js           Sim 7 — magnet through a coil (exact dipole flux + charts)
 │   ├── sim-generator.js           Sim 8 — AC generator, rendered with p5.js (bonus lab)
-│   ├── quiz-data.js               20 questions with worked explanations
+│   ├── quiz-data.js               25 questions with worked explanations
 │   └── quiz.js                    Quiz engine: marking modes, scoring, Chart.js analytics
 ├── server/
 │   ├── lib.js                     Shared API logic: stores, merge rule, sanitising, cache policy
@@ -103,7 +103,7 @@ Total: ~8,000 lines across 6 pages, 2 stylesheets and 11 scripts. No framework, 
 | Sim 3 — induction: magnet through a coil | `js/sim-induction.js`: exact on-axis dipole flux, Faraday EMF, centre-zero galvanometer, ⊙/ current symbols, scrolling Φ and EMF strip charts, drag/push/oscillate modes |
 | Extra simulations (4 more) | Coulomb bench, field explorer, bar-magnet lab, Lorentz-force lab |
 | Tutorials with explanations, diagrams, formulas, real-world examples | Each topic page: objectives → theory → SVG figures → worked examples → applications → misconceptions → self-check reveals |
-| Quiz with ≥ 10 MCQs, automatic scoring + feedback | 20 questions, exam *or* instant marking, per-question explanations, per-topic breakdown, grade bands, review-incorrect filter, shuffle, retake |
+| Quiz with ≥ 10 MCQs, automatic scoring + feedback | 25 questions, exam *or* instant marking, per-question explanations, per-topic breakdown, grade bands, review-incorrect filter, shuffle, retake |
 | Chart.js score visualisation | Doughnut (correct/incorrect), horizontal bars (score per topic), line (attempt history) on the score card; CSS-bar fallback when the CDN is unreachable |
 | p5.js simulation | Bonus AC-generator lab on Topic 4 (`js/sim-generator.js`, p5 instance mode); notice fallback offline |
 | Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; degrades gracefully to memory when storage is blocked. Deliberately backend-free |

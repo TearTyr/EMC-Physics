@@ -532,7 +532,7 @@ window.EMC = (function () {
           const done = Progress.isTopicDone(id);
           btn.classList.toggle('btn-primary', !done);
           btn.innerHTML = done
-            ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Topic completed'
+            ? '<svg class="mascot-cheer" viewBox="0 0 60 56" aria-hidden="true"><path d="M19 13 C17 4 23 2 24.5 8" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><path d="M41 13 C43 4 37 2 35.5 8" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><ellipse cx="30" cy="32" rx="21" ry="20" fill="#f6f1e5" stroke="#3a3d45" stroke-width="2"/><path d="M20 30 q3 -4 6 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M34 30 q3 -4 6 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M27 37 q3 3 6 0" stroke="#2b2d33" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="15" cy="35" r="3" fill="#f8aebe" opacity=".85"/><circle cx="45" cy="35" r="3" fill="#f8aebe" opacity=".85"/></svg> Topic completed!'
             : 'Mark topic as complete';
           btn.setAttribute('aria-pressed', String(done));
         };
@@ -594,6 +594,34 @@ window.EMC = (function () {
     return n;
   }
 
+  /**
+   * Activate the user's licensed FOT-Yuruka Std if the font file is present.
+   * Uses the FontFace API rather than a static @font-face rule so that a
+   * missing file degrades with ZERO console noise (a plain @font-face would
+   * log a 404 on every page load on hosts without the binary).
+   */
+  function loadLicensedFont() {
+    if (typeof window.FontFace !== 'function' || !window.fetch) return;
+    const bases = ['', '../'];                      // root pages vs topics/
+    const cuts = [['fot-yuruka-std.ttf', 400], ['fot-yuruka-std-bold.ttf', 700]];
+    for (const [file, weight] of cuts) {
+      (async () => {
+        for (const base of bases) {
+          try {
+            const r = await fetch(base + 'vendor/fonts/' + file, { method: 'HEAD' });
+            if (!r.ok) continue;
+            const face = new window.FontFace('FOT-Yuruka Std',
+              `url(${base}vendor/fonts/${file}) format('truetype')`,
+              { weight: String(weight), style: 'normal', display: 'swap' });
+            await face.load();
+            document.fonts.add(face);
+            return;
+          } catch (err) { /* try next base, else stay silent */ }
+        }
+      })();
+    }
+  }
+
   /** Boot everything that is page-independent. */
   function boot() {
     UI.initNav();
@@ -602,6 +630,7 @@ window.EMC = (function () {
     UI.initTopicButtons();
     UI.initStorageNotice();
     UI.initYear();
+    loadLicensedFont();
     katexify(document);
     // KaTeX loads with `defer`, i.e. after this boot runs: typeset again once
     // the whole page (including deferred scripts) has finished loading.
@@ -620,7 +649,7 @@ window.EMC = (function () {
     CONST, TOPICS, PROGRESS_KEY,
     clamp, lerp, dist, roundTo, mapRange, damp,
     eng, unit, fixed,
-    Stage, roundRect, arrow, label, chargeGlyph, scrollToEl, katexify,
+    Stage, roundRect, arrow, label, chargeGlyph, scrollToEl, katexify, loadLicensedFont,
     store, Progress,
     bindRange, bindSegment, bindToggles,
     UI, toast: UI.toast
