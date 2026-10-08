@@ -109,7 +109,7 @@ a generator, in one interaction.
 | Why does submitting grade the whole bank even when filtered? | Filters are a revision aid; letting them shrink the denominator would make "100 %" meaningless. The UI states this next to the toolbar. |
 
 ### Testing strategy
-Static validator (links, ids, data-hooks, CSS coverage) plus a jsdom harness with **217
+Static validator (links, ids, data-hooks, CSS coverage) plus a jsdom harness with **219
 assertions** that assert *physics* — e.g. F(+2 µC,−2 µC,0.30 m) = 399 mN, R(10‖22‖47) = 6.00 Ω,
 Φ matches the closed form to 1 %, EMF ∝ N, I = EMF/R at every sample — and *behaviour*: quiz
 scoring at 100/50/0 %, blank-submit guard, storage persistence. Plus a real headless-Chrome pass

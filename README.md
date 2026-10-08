@@ -143,7 +143,7 @@ the maths rather than being scripted.
 bun install          # installs the single dev dependency (tailwindcss) -> bun.lock
 bun run build:css    # css/input.css -> css/site.css (minified, ~36 kB)
 bun run check        # static validator (links, ids, utility coverage)
-bun run test         # 217-assertion jsdom + browser harness
+bun run test         # 219-assertion jsdom + browser harness
 bun run perf         # gzip transfer / font payload / blocking-script budgets
 bun run font:scan    # re-scan vendor/fonts/ for OPTIONAL licensed cuts -> manifest.json
 ```
@@ -205,7 +205,7 @@ There is no second stylesheet to fight with: the file is organised as
 | Layer | Contents | Loses to |
 |---|---|---|
 | `@layer base` | colour/shape tokens, the three font stacks, element resets (`h1…h4 {margin:0}`, list padding, `sup/sub` positioning) | components **and** utilities |
-| `@layer components` | the sticker design system: `.card`, `.panel`, `.ctl`, `.q-card`, `.opt`, nav, mascot, the 640/900/1200 media queries | utilities |
+| `@layer components` | the sticker design system: `.card`, `.panel`, `.ctl`, `.q-card`, `.opt`, nav, mascot, the `.hr` divider hairline (must keep its own dark rule — an unstyled `<hr>` inherits preflight's light border and reads as a white line), the 640/900/1200 media queries | utilities |
 | `@layer utilities` | Tailwind's own output — every utility used in markup (`mt-2`, `gap-4`, `md:grid-cols-2`, …) | nothing |
 
 Because CSS cascade layers order **base < components < utilities**, a utility class in the
@@ -313,7 +313,7 @@ family, no licence risk. ~45 KB of fonts total.
 ```bash
 bun install          # dev deps only: jsdom (tests) + tailwindcss (CSS build)
 bun run check        # static validation: links, ids, data-hooks, CSS coverage
-bun run test         # 217 runtime assertions across all six pages (skips politely
+bun run test         # 219 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
 bun run build:css    # recompile css/input.css -> css/site.css after markup changes
 bun run perf         # gzip transfer / font payload / blocking-script budgets

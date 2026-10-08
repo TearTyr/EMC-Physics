@@ -1,31 +1,38 @@
-# EMC Lab sync pack v9 - one content column on every page (topic pages no longer thin)
+# EMC Lab sync pack v10 - the white line is dead (unstyled `<hr>` was falling back to Tailwind preflight's light border)
 
 What changed in this pack:
 
-  * **Topic pages now read as wide as the home page.** Until v8 the article text
-    sat in a 700 px ribbon (`--measure`) while the home page used the full frame
-    and a 980 px hero canvas - side by side the topic pages looked thin. There
-    is now ONE content column for the whole site: `--column: 1060 px` (1020 px
-    of content between the 20 px gutters). Topic prose, callouts, equations,
-    sim panels, the quiz head AND the home hero canvas + stat strip all end at
-    exactly the same left/right edges (verified in headless Chrome at 1440 px
-    and 2048 px: every box measured l=211/r=1229 at 1440, l=515/r=1533 at 2048).
-  * **Home hero canvas + stat strip grew 980 -> 1020 px** so they line up with
-    the topic column edge-for-edge (`max-width: calc(var(--column) - 2.5rem)`).
-    The 1280 px frame (`--maxw`) is unchanged and still carries the nav, footer
-    and the multi-card grids on the home page.
-  * **Intro paragraphs fill the column.** The 58ch cap on `.lede` now applies
-    only to the centred home hero; topic/quiz heads let the intro run the full
-    column so the masthead does not look ragged next to wide cards.
-  * **Article rhythm untouched:** line-height 1.85, ~4.2 rem of air above every
-    numbered heading, ~2.2 rem around equations/callouts/figures/disclosures,
-    "+" disclosures for supplementary blocks. Only the column width changed.
-  * **Smoke suite grew from 214 to 217 assertions**: the compiled CSS must ship
-    `--column: 1060px` driving `.wrap-narrow` + `.wrap-sim`, the hero canvas and
-    stat strip must both carry the aligning calc(), and the old `--measure`
-    variable must be gone from both source and compiled CSS.
-  * Mobile (375 px) unchanged in behaviour: everything stacks in the same
-    20 px-gutter column, hamburger nav intact, zero console errors.
+  * **The bug.** A full-bleed ~1 px white/light line across the dark pages -
+    on the home page between the "How to use this site" cards and "The four
+    topics", and again above the footer colophon; the same stroke existed on
+    the quiz and topic pages. The markup carries nine `<hr class="hr">`
+    section/colophon dividers (3 home, 1 quiz, 1 per topic page footer +
+    1 home footer), but **no `.hr` rule ever existed in `css/input.css`**.
+    With no author rule, Tailwind's preflight styles every `<hr>`: the
+    universal reset gives `border-color: #e5e7eb` (light grey) and the `hr`
+    reset gives `border-top-width: 1px` - so each divider painted a 1 px
+    LIGHT grey line straight onto the dark theme. That is the white line.
+  * **The audit.** Every other stroke in the codebase was checked: header,
+    cards, panels, tables, challenge strips, feedback dashes and disclosure
+    summaries all set explicit dark tokens (`var(--line)` / `var(--line-soft)`),
+    and the only light borders left are inside the `@media print` block where
+    they belong. The unstyled `<hr>` was the single preflight leak.
+  * **The fix (one rule, `@layer components` in `css/input.css`):**
+        .hr { border: 0; border-top: 1px solid var(--line-soft); margin: 0; }
+    Dividers now render as the site's own dark hairline (#26282f) - the same
+    family as table row borders - instead of preflight light grey. Layout is
+    untouched: preflight already zeroed `<hr>` margins and sections keep their
+    3.4 rem rhythm, so nothing shifts by a pixel.
+  * **Regression guards: smoke suite 217 -> 219 assertions.** (a) the compiled
+    `css/site.css` must contain a `.hr` rule whose border-top uses the dark
+    `var(--line-soft)` token; (b) every `<hr>` on all six pages must carry
+    `class="hr"`, so a raw preflight-styled `<hr>` can never sneak back in.
+  * **Verified with real tooling:** `check-links` 0 errors / 0 warnings;
+    `smoke-test` 219/219; `perf-audit` all budgets met; headless Chrome at
+    1440 px over all six pages reports computed `border-top-color:
+    rgb(38, 40, 47)` @ 1 px for every one of the nine dividers with zero
+    console errors; screenshots `shots/v10-divider-home.png` and
+    `shots/v10-divider-footer.png` show the old white stroke gone.
 
 ## 1. Extract
 Copy this zip's contents over D:\VS\EMC-Physics (overwrite when asked).
@@ -34,21 +41,22 @@ Paths inside the zip mirror the repo root.
 Git Bash one-liner, if the zip is sitting in your Downloads folder:
 
     cd /d/VS/EMC-Physics
-    tar -xf ~/Downloads/emc-sync-v9-full-repo.zip --strip-components=1   # zip has one top-level folder; Explorer works too
+    tar -xf ~/Downloads/emc-sync-v10-full-repo.zip --strip-components=1   # zip has one top-level folder; Explorer works too
 
 ## 2. Verify locally before shipping
     bun install
     bun run build     # Tailwind -> css/site.css, then tools/build-public.mjs -> public/
     bun run check     # link/asset/id audit - expect 0 errors, 0 warnings
-    bun run test      # headless smoke test - expect 217/217
+    bun run test      # headless smoke test - expect 219/219
     bun run perf      # per-page transfer budgets - expect all green
 
-Eye check: open index.html and any topic side by side at >=1100 px width - the
-hero canvas and the topic text/cards must start and end on the same verticals.
+Eye check: open index.html - between "How to use this site" and "The four
+topics", and above the footer copyright line, there must be NO light/white
+line; at most a barely-visible dark hairline that matches the table borders.
 
 ## 3. Commit + push
     git add -A
-    git commit -m "layout: one 1060px content column site-wide (topic pages match home width)"
+    git commit -m "fix: style .hr dividers with the dark hairline token (unstyled hr showed preflight's light border as a white line)"
     git push
 
 If `git push` dies with GitHub's `remote: Internal Server Error` again (that was
@@ -88,14 +96,14 @@ Expect: /api/health NOT 200, and g8321-400.woff2, g8321-700.woff2,
 css/site.css and / all 200. Then re-run the suites against the repo:
 
     bun run check
-    bun run test      # expect 217/217
+    bun run test      # expect 219/219
 
 Two spot checks worth doing by eye on the live site:
 
-  * home and any topic at desktop width: the hero canvas and the topic column
-    share the same left/right edges (no thin ribbon anywhere).
-  * quiz page on a phone-width window: the four header stats sit 2x2, and after
-    submitting, the "Score by topic" bars show unclipped short labels.
+  * home page mid-scroll: no white/light horizontal line between sections or
+    above the footer copyright - the dividers are dark hairlines now.
+  * any topic page bottom: the colophon divider above "(c) 2026 EMC Lab" is
+    dark, not light.
 
 Reminder: untracking the .ttf files does NOT remove them from git history.
 If the repo is public, the paid Yuruka binary is still downloadable from old
@@ -103,6 +111,7 @@ commits until you rewrite history (`tools/cleanup-repo.ps1` prints the exact
 `git filter-repo` recipe when it finds them).
 
 ## Pack history
+  * v10 - white-line fix: .hr dividers get the dark hairline rule, 219 assertions
   * v9 - one site-wide content column (topic width = home width), 217 assertions
   * v8 - 70% scoring rule, 4.6 energy answer, dead anchor, stat-strip fit, honest browser claims
   * v7 - blog-style reading rhythm, clean student copy, dropdown nav
