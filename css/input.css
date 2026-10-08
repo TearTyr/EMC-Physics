@@ -87,6 +87,10 @@
   .section       { padding-block: 3.4rem; }
   .section-tight { padding-block: 1.15rem; }
   .section-tight.wrap-sim { padding-block: 1.5rem; }
+  /* section / colophon divider hairline. this rule MUST exist: with no .hr
+     rule of our own, Tailwind preflight paints <hr> with its default light
+     border (#e5e7eb), which reads as a stray white line on the dark theme. */
+  .hr { border: 0; border-top: 1px solid var(--line-soft); margin: 0; }
   /* topic masthead: air above the title, like an article header */
   .topic-head  { padding-block: 2.8rem 1.6rem; }
   .topic-head .lede { margin-top: .5rem; }

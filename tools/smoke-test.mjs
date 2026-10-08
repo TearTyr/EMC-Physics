@@ -603,6 +603,12 @@ console.log('\u2500'.repeat(66));
     ok(`${p}: every script tag is defer (no render-blocking)`,
       [...html.matchAll(/<script[^>]*src=/g)].every(m => m[0].includes('defer')));
   }
+  const dividerCss = readFileSync(join(ROOT, 'css/site.css'), 'utf8');
+  ok('compiled css styles the .hr divider with the dark hairline token',
+    /\.hr\{[^}]*border-top:1px solid var\(--line-soft\)/.test(dividerCss));
+  ok('every <hr> in the pages carries the styled .hr class (no raw preflight hr)',
+    pages.every(p => [...readFileSync(join(ROOT, p), 'utf8').matchAll(/<hr\b[^>]*>/g)]
+      .every(m => /class="hr"/.test(m[0]))));
   const fontsCss = readFileSync(join(ROOT, 'css/fonts.css'), 'utf8');
   ok('site fonts are committed OFL woff2 (no CDN, no licence risk)',
     /G8321/.test(fontsCss) && /font-weight: 100/.test(fontsCss) &&
