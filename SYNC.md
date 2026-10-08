@@ -1,19 +1,31 @@
-# EMC Lab sync pack v7 - clean site copy + article-style reading layout
+# EMC Lab sync pack v9 - one content column on every page (topic pages no longer thin)
 
 What changed in this pack:
 
-  * Student-facing copy no longer talks about the course, the module or how the
-    site was built: the "Works everywhere / tested in ..." card, the
-    "Dependencies 0 - no build step" stat, the footer "Project files" and
-    "Browser support" blocks and every "module" sentence are gone. The pages
-    now read as a plain physics tutorial; dev docs stay in the repo only.
-  * Topic pages got an article reading rhythm modelled on a clean blog layout:
-    one centred 700 px column, ~4.2 rem of air above every numbered heading,
-    line-height 1.85, and ~2.2 rem around equations/callouts/figures so only
-    one idea sits on screen at a time. Sim panels centre at 1060 px.
-  * tools/build-public.mjs no longer copies README/TESTING/PRESENTATION-NOTES
-    into public/ (nothing links to them any more); deploy is 48 files.
-  * Everything else (font system, vercel.json pin, cleanup script) unchanged.
+  * **Topic pages now read as wide as the home page.** Until v8 the article text
+    sat in a 700 px ribbon (`--measure`) while the home page used the full frame
+    and a 980 px hero canvas - side by side the topic pages looked thin. There
+    is now ONE content column for the whole site: `--column: 1060 px` (1020 px
+    of content between the 20 px gutters). Topic prose, callouts, equations,
+    sim panels, the quiz head AND the home hero canvas + stat strip all end at
+    exactly the same left/right edges (verified in headless Chrome at 1440 px
+    and 2048 px: every box measured l=211/r=1229 at 1440, l=515/r=1533 at 2048).
+  * **Home hero canvas + stat strip grew 980 -> 1020 px** so they line up with
+    the topic column edge-for-edge (`max-width: calc(var(--column) - 2.5rem)`).
+    The 1280 px frame (`--maxw`) is unchanged and still carries the nav, footer
+    and the multi-card grids on the home page.
+  * **Intro paragraphs fill the column.** The 58ch cap on `.lede` now applies
+    only to the centred home hero; topic/quiz heads let the intro run the full
+    column so the masthead does not look ragged next to wide cards.
+  * **Article rhythm untouched:** line-height 1.85, ~4.2 rem of air above every
+    numbered heading, ~2.2 rem around equations/callouts/figures/disclosures,
+    "+" disclosures for supplementary blocks. Only the column width changed.
+  * **Smoke suite grew from 214 to 217 assertions**: the compiled CSS must ship
+    `--column: 1060px` driving `.wrap-narrow` + `.wrap-sim`, the hero canvas and
+    stat strip must both carry the aligning calc(), and the old `--measure`
+    variable must be gone from both source and compiled CSS.
+  * Mobile (375 px) unchanged in behaviour: everything stacks in the same
+    20 px-gutter column, hamburger nav intact, zero console errors.
 
 ## 1. Extract
 Copy this zip's contents over D:\VS\EMC-Physics (overwrite when asked).
@@ -22,148 +34,78 @@ Paths inside the zip mirror the repo root.
 Git Bash one-liner, if the zip is sitting in your Downloads folder:
 
     cd /d/VS/EMC-Physics
-    tar -xf ~/Downloads/emc-sync-v7-full-repo.zip --strip-components=1   # zip has one top-level folder; Explorer works too
+    tar -xf ~/Downloads/emc-sync-v9-full-repo.zip --strip-components=1   # zip has one top-level folder; Explorer works too
 
-Then check the script is really there before you run anything:
+## 2. Verify locally before shipping
+    bun install
+    bun run build     # Tailwind -> css/site.css, then tools/build-public.mjs -> public/
+    bun run check     # link/asset/id audit - expect 0 errors, 0 warnings
+    bun run test      # headless smoke test - expect 217/217
+    bun run perf      # per-page transfer budgets - expect all green
 
-    ls -l tools/cleanup-repo.ps1
+Eye check: open index.html and any topic side by side at >=1100 px width - the
+hero canvas and the topic text/cards must start and end on the same verticals.
 
-If that prints "No such file or directory", the zip was never extracted into the
-repo - fix that first, because nothing below can run without the file.
-
-## 2. Clean the leftovers - ONE COMMAND
-The cleanup is scripted. Pick the block for the shell you are ACTUALLY in, and
-run it from the repo root.
-
-### 2a. Git Bash / MSYS  <-- forward slashes only
-A backslash is an escape character in bash. So `tools\cleanup-repo.ps1` reaches
-PowerShell as the single mangled word `toolscleanup-repo.ps1` and you get:
-
-    The argument 'toolscleanup-repo.ps1' to the -File parameter does not exist.
-
-Same reason `cd D:\VS\EMC-Physics` fails as `cd: D:VSEMC-Physics: No such file
-or directory`. Use forward slashes (and `/d/...` for absolute paths):
-
-    cd /d/VS/EMC-Physics
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -DryRun
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1
-
-`pwsh` can replace `powershell.exe` if you have PowerShell 7 installed.
-An absolute repo path here must be POSIX style: -RepoPath /d/VS/EMC-Physics.
-
-### 2b. PowerShell / Windows Terminal / cmd
-    cd D:\VS\EMC-Physics
-    powershell -NoProfile -ExecutionPolicy Bypass -File tools\cleanup-repo.ps1 -DryRun
-    powershell -NoProfile -ExecutionPolicy Bypass -File tools\cleanup-repo.ps1
-
-    # inside PowerShell you can also just dot-source it:
-    .\tools\cleanup-repo.ps1 -DryRun
-
-### 2c. What the run does
-The -DryRun command only prints the plan (it changes nothing). The second asks
-for confirmation, then:
-
-  * deletes   server\ , api\ , tools\subset_font.py , bun.lockb ,
-              package-lock.json , vendor\fonts\mochiy-pop-one-400.woff2 ,
-              vendor\fonts\m-plus-rounded-1c-400.woff2 , plus OS/editor junk
-              (Thumbs.db, desktop.ini, .DS_Store, *.bak, *.orig, ...)
-              -> into the Recycle Bin, so it is all recoverable
-              -> add -Permanent to delete for real
-  * untracks  package-lock.json and any tracked .ttf/.otf under vendor/fonts
-              (the files STAY on your disk - your paid Yuruka backup is never
-              deleted, it just can no longer be pushed to the public repo)
-  * repairs   .gitignore if the vendor/fonts/*.ttf|*.otf rules went missing
-  * refuses   to delete anything css/fonts.css references or anything protected
-              (css/site.css, bun.lock, the committed OFL woff2 faces, configs)
-  * reports   bun.lock at lockfileVersion 2, a missing css/site.css, public/
-              files TRACKED in git (public/ is the generated deploy artifact and
-              must stay gitignored), vercel.json NOT pinning
-              "outputDirectory": "public" (the pin that overrides the dashboard
-              and kills the "No Output Directory named public" error), tracked
-              node_modules, files >1 MB, and licensed fonts still sitting in
-              git HISTORY (untracking does not rewrite history - the script says
-              how to purge it)
-
-Useful switches:
-    -DryRun            plan only, change nothing
-    -Force             skip the y/N prompt
-    -PurgeNodeModules  also delete node_modules (then bun install proves the lock)
-    -SkipJunk          leave Thumbs.db/*.bak/etc alone
-    -Verify            run bun install / bun run check / bun run test afterwards
-    -Commit -Push      git add -A + commit + push (sets upstream if missing)
-    -CheckLive         probe the deployment (/api/health must NOT be 200;
-                       g8321-400.woff2, g8321-700.woff2, css/site.css must be)
-    -RepoPath <dir>    clean a repo other than the one the script lives in
-
-Typical full run:
-
-    # Git Bash
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -Verify -Commit -Push
-
-    # PowerShell
-    .\tools\cleanup-repo.ps1 -Verify -Commit -Push
-
-Exit codes: 0 clean - 1 you aborted at the prompt - 2 not the EMC Lab repo /
-bad path - 3 a step failed.
-
-Manual equivalent, if you would rather type it (same result, no safety checks).
-In Git Bash use `rm -rf server api` / `rm tools/subset_font.py` instead of del/rmdir:
-
-    del tools\subset_font.py
-    del vendor\fonts\mochiy-pop-one-400.woff2
-    del vendor\fonts\m-plus-rounded-1c-400.woff2
-    rmdir /s /q server        rem old Express+MySQL backend; never ran on Vercel
-    rmdir /s /q api           rem old serverless endpoints; /api/health currently
-                              rem answers 200 on the live site, breaking the
-                              rem "api returns 404" checklist item in TESTING.md
-    git rm --cached package-lock.json   rem Bun-only project; already .gitignored
-    del package-lock.json               rem but still TRACKED, so untrack it first
-    git rm --cached vendor\fonts\*.ttf  rem keep licensed binaries out of the public repo
-
-Your local licensed .ttf backups (incl. the paid Yuruka) stay where they are:
-.gitignore blocks vendor/fonts/*.ttf|*.otf, so they can never leak into the
-public repo. The site no longer needs any of them.
-
-## 3. Commit + push (skipped if you used -Commit -Push)
+## 3. Commit + push
     git add -A
-    git commit -m "site: clean student-facing copy + article-style reading rhythm"
+    git commit -m "layout: one 1060px content column site-wide (topic pages match home width)"
     git push
 
-## 4. The Vercel build fix ("No Output Directory named public found")
-This is now fixed IN THE REPO - no more dashboard wrestling:
+If `git push` dies with GitHub's `remote: Internal Server Error` again (that was
+a GitHub-side 500, not your repo):
 
-  * vercel.json pins "outputDirectory": "public". Per Vercel's own docs, the
-    vercel.json value OVERRIDES the dashboard's Output Directory setting, so
-    whatever stale value is saved there can no longer fail the build.
-  * buildCommand is now "bun run build" = build:css (Tailwind) + build:public
-    (tools/build-public.mjs copies the pages, css/, js/ and vendor/ into a
-    fresh public/ and verifies every local link resolves; repo docs such as
-    README/TESTING stay out of the deploy).
+  1. First check nothing lives only on the server:
+         git fetch origin
+         git log --oneline HEAD..origin/main
+     If that prints commits, DO NOT force - merge or back them up first.
+  2. If it is empty, a normal retry usually lands. Three retries, then force the
+     same payload (safe only because step 1 was empty):
+         git push
+         git push
+         git config http.version HTTP/1.1 && git push
+         git push --force-with-lease
+     (`--force-with-lease`, never bare `--force`: it refuses if the remote moved.)
+  3. Still 500ing? Check githubstatus.com, wait ~10 min, retry; quote the Request
+     ID from the error to GitHub support if it persists.
+
+## 4. The Vercel build fix ("No Output Directory named public found")
+Still fixed IN THE REPO - no dashboard wrestling:
+
+  * vercel.json pins "outputDirectory": "public"; per Vercel's docs the file
+    OVERRIDES the dashboard setting, so a stale dashboard value cannot fail builds.
+  * buildCommand is "bun run build" = build:css (Tailwind) + build:public
+    (tools/build-public.mjs assembles public/ and verifies every local link).
   * public/ is gitignored - a build artifact, never committed.
 
-So: extract this pack, commit, push (section 3). Vercel rebuilds on push:
-bun install -> bun run build -> serves public/. If no deployment starts
-automatically: Deployments -> latest -> "..." -> Redeploy with "Use existing
+Vercel rebuilds on push: bun install -> bun run build -> serves public/. If no
+deployment starts: Deployments -> latest -> "..." -> Redeploy with "Use existing
 Build Cache" UNTICKED.
-Optional tidy-up (no longer required): Settings -> Build & Development
-Settings -> Output Directory can be cleared or left as "public" - the repo
-now wins either way.
-
-Locally you can reproduce the exact deploy build with:
-
-    bun install
-    bun run build     # writes css/site.css, then assembles public/
 
 ## 5. After the deploy
     # Git Bash
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/cleanup-repo.ps1 -CheckLive
 Expect: /api/health NOT 200, and g8321-400.woff2, g8321-700.woff2,
-css/site.css and / all 200. Then re-run the site suites:
+css/site.css and / all 200. Then re-run the suites against the repo:
 
-    bun run check    # link/asset audit - expect 0 errors, 0 warnings
-    bun run test     # headless smoke test - expect 208/208
+    bun run check
+    bun run test      # expect 217/217
+
+Two spot checks worth doing by eye on the live site:
+
+  * home and any topic at desktop width: the hero canvas and the topic column
+    share the same left/right edges (no thin ribbon anywhere).
+  * quiz page on a phone-width window: the four header stats sit 2x2, and after
+    submitting, the "Score by topic" bars show unclipped short labels.
 
 Reminder: untracking the .ttf files does NOT remove them from git history.
-Your repo is public, so the paid Yuruka binary is still downloadable from old
-commits until you rewrite history (the script prints the exact
+If the repo is public, the paid Yuruka binary is still downloadable from old
+commits until you rewrite history (`tools/cleanup-repo.ps1` prints the exact
 `git filter-repo` recipe when it finds them).
+
+## Pack history
+  * v9 - one site-wide content column (topic width = home width), 217 assertions
+  * v8 - 70% scoring rule, 4.6 energy answer, dead anchor, stat-strip fit, honest browser claims
+  * v7 - blog-style reading rhythm, clean student copy, dropdown nav
+  * v6 - G8321 single-family type system + licensed-face loader
+  * v5 - Tailwind @layer pipeline, vercel.json output pin, bun.lock v1
+  * v4 - repo cleanup tooling (cleanup-repo.ps1, build-public.mjs)

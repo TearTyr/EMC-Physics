@@ -318,6 +318,9 @@ window.EMC = (function () {
       p.quizLast = pct;
       p.quizBest = Math.max(p.quizBest, pct);
       p.quizHistory = (p.quizHistory || []).concat([{ pct, at: new Date().toISOString() }]).slice(-20);
+      // as promised on the home dashboard: a passing score counts as having
+      // studied all four topics
+      if (pct >= 70) TOPICS.forEach(t => { p.topics[t] = true; });
       this.write(p);
       return p;
     },

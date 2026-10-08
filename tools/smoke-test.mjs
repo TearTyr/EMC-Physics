@@ -168,7 +168,10 @@ console.log('\u2500'.repeat(66));
   // progress persistence: mark a topic, reload the same storage, re-render
   win.EMC.Progress.markTopic('charges', true);
   win.EMC.Progress.recordQuiz(85);
-  eq('percent weights topics (80%) + quiz (20%)', win.EMC.Progress.percent(), Math.round(0.25 * 80 + 0.85 * 20));
+  eq('a passing score (70%+) counts all four topics as studied',
+     JSON.stringify(win.EMC.Progress.read().topics),
+     JSON.stringify({ charges: true, current: true, magnetism: true, induction: true }));
+  eq('percent weights topics (80%) + quiz (20%)', win.EMC.Progress.percent(), Math.round(1 * 80 + 0.85 * 20));
   win.window?.close?.(); win.close();
 }
 
@@ -364,6 +367,10 @@ console.log('\u2500'.repeat(66));
   ok('p5.js lab lazy-loads (injects on approach, notice if blocked)',
     /could not be loaded/.test(doc.getElementById('p5-gen-host').textContent) ||
     doc.getElementById('p5-gen-host').dataset.p5 === 'loading');
+  ok('the 4.6 self-check anchor target exists', !!doc.getElementById('check'));
+  ok('no dead hash-only links remain on the page', doc.querySelectorAll('a[href="#"]').length === 0);
+  ok('the 4.6 energy answer no longer claims energy is unchanged',
+     !/energy per pass stays the same/i.test(doc.body.textContent));
 
   // stationary magnet -> no EMF at all
   eq('a stationary magnet induces nothing', parseSI(txt(win, 'ind-emf')), 0);
@@ -442,6 +449,11 @@ console.log('\u2500'.repeat(66));
   ok('no runtime errors', problems.length === 0, problems.join(' | '));
   const bank = win.EMC_QUIZ;
   eq('question bank size', bank.length, 25);
+  ok('four-stat strip uses the 4-up layout class',
+     doc.querySelector('.stat-strip').classList.contains('stat-strip-4'));
+  ok('quiz copy is free of the word "module"',
+     !/module/i.test(readFileSync(join(ROOT, 'js/quiz.js'), 'utf8') +
+                     readFileSync(join(ROOT, 'js/quiz-data.js'), 'utf8')));
   eq('every question rendered', doc.querySelectorAll('.q-card').length, 25);
   eq('four options each', doc.querySelectorAll('.q-card').length * 4, doc.querySelectorAll('.opt').length);
   ok('every question has a valid answer index',
@@ -624,6 +636,14 @@ console.log('\u2500'.repeat(66));
     /ui:    \['G8321'/.test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')));
   ok('cascade is layer-based: base < components < utilities',
     /@layer base/.test(cssSrc) && /@layer components/.test(cssSrc) && /@tailwind utilities/.test(cssSrc));
+  const siteCss = readFileSync(join(ROOT, 'css/site.css'), 'utf8');
+  ok('one site-wide content column (--column: 1060px) ships compiled',
+    /--column:1060px/.test(siteCss) && /max-width:var\(--column\)/.test(siteCss) &&
+    /\.wrap-narrow\b/.test(siteCss) && /\.wrap-sim\b/.test(siteCss));
+  ok('home hero canvas + stat strip align to the same column edges',
+    (siteCss.match(/max-width:calc\(var\(--column\) - 2\.5rem\)/g) || []).length >= 2);
+  ok('the old thin 700px measure variable is fully gone',
+    !/--measure/.test(siteCss) && !/--measure/.test(cssSrc));
   ok('type system is one family site-wide (G8321 in three weights)',
     /fontFamily:\s*{[\s\S]*title: \['fot-yuruka-std', 'G8321'[\s\S]*sans:  \['G8321'[\s\S]*ui:    \['G8321'/
       .test(readFileSync(join(ROOT, 'tailwind.config.js'), 'utf8')) &&

@@ -238,7 +238,7 @@
 
   /* ---- scoring --------------------------------------------------------- */
   const BANDS = [
-    { min: 90, text: 'Outstanding', cls: 'accent-emerald', note: 'You have this module mastered \u2014 try explaining Lenz\u2019s law to someone else.' },
+    { min: 90, text: 'Outstanding', cls: 'accent-emerald', note: 'You have this material mastered \u2014 try explaining Lenz\u2019s law to someone else.' },
     { min: 75, text: 'Strong', cls: 'accent-cyan', note: 'Solid understanding. Review the questions you missed and re-run the relevant simulation.' },
     { min: 60, text: 'Getting there', cls: 'accent-amber', note: 'You know the core ideas. Work through the wrong answers below, then retake the quiz.' },
     { min: 40, text: 'Keep practising', cls: 'accent-amber', note: 'Re-read the tutorial sections flagged by your wrong answers and use the simulations to build intuition.' },
@@ -356,7 +356,7 @@
       <div class="flex flex-wrap gap-2 mt-4">
         <button class="btn btn-primary" id="quiz-retake" type="button">Retake the quiz</button>
         <button class="btn" id="quiz-wrong" type="button">Review incorrect only</button>
-        <a class="btn btn-ghost" href="index.html">Back to the module home</a>
+        <a class="btn btn-ghost" href="index.html">Back to the home page</a>
         <span class="tiny faint self-center">Best score: ${prog.quizBest}% \u00B7 attempts: ${prog.quizAttempts}</span>
       </div>`;
 
@@ -431,12 +431,14 @@
     }));
 
     // 2. horizontal bars: percentage per topic
+    // short axis labels: the full names clip on narrow canvases
+    const SHORT_TOPIC = { charges: 'Charges', current: 'Current', magnetism: 'Magnetism', induction: 'Induction' };
     const topics = ['charges', 'current', 'magnetism', 'induction'];
     const labels = [], vals = [];
     topics.forEach(t => {
       const qs = scored.filter(q => q.topic === t);
       if (!qs.length) return;
-      labels.push(qs[0].label);
+      labels.push(SHORT_TOPIC[t] || qs[0].label);
       vals.push(Math.round((qs.filter(q => S.marked.get(q.id) === true).length / qs.length) * 100));
     });
     activeCharts.push(new C(el('chart-topics'), {

@@ -138,11 +138,11 @@ window.EMC_QUIZ = [
   },
   {
     id: 18, topic: 'induction', label: 'Electromagnetic induction',
-    q: 'A bar magnet is pushed through a coil connected to a resistor. Which change would NOT alter the induced EMF?',
+    q: 'A bar magnet is pushed through a coil connected to a resistor. Which change would NOT alter the magnitude of the EMF induced in the coil?',
     options: ['Moving the magnet faster', 'Using a coil with more turns',
               'Using a stronger magnet', 'Increasing the resistance of the circuit'],
     answer: 3,
-    explain: 'EMF = \u2212N d\u03A6/dt depends on turns, magnet strength and speed only. Changing <b>R</b> leaves the EMF alone but changes the induced <b>current</b> (I = EMF/R) and the power dissipated.'
+    explain: 'EMF = \u2212N d\u03A6/dt depends on turns, magnet strength and speed only. Changing <b>R</b> leaves the EMF alone but changes the induced <b>current</b> (I = EMF/R) and the power dissipated. Resistance shapes the current and the heating \u2014 never the EMF itself.'
   },
   {
     id: 19, topic: 'induction', label: 'Electromagnetic induction',
@@ -214,6 +214,6 @@ window.EMC_QUIZ = [
               'Kinetic energy of water \u2192 static charge on the turbine \u2192 electrical energy',
               'Gravitational potential \u2192 light \u2192 electrical energy by the photoelectric effect'],
     answer: 0,
-    explain: 'Falling water converts <b>gravitational potential</b> into <b>kinetic</b> energy; the stream turns a turbine (<b>mechanical</b>); the turbine spins a coil in a field, and <b>Faraday\u2019s law</b> does the last step. Every topic in this module appears in that chain except optics \u2014 which is why induction is the finale.'
+    explain: 'Falling water converts <b>gravitational potential</b> into <b>kinetic</b> energy; the stream turns a turbine (<b>mechanical</b>); the turbine spins a coil in a field, and <b>Faraday\u2019s law</b> does the last step. Charges, current, magnetism and induction all appear in that chain \u2014 which is why induction is the finale.'
   }
 ];

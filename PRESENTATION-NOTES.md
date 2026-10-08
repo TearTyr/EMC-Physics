@@ -72,8 +72,9 @@ a generator, in one interaction.
   progress) is plain markup; behaviour is shared through `js/common.js`.
 * **The pages read as a plain tutorial, not a project report.** No course or module name, no
   "works everywhere / tested in" blurb, no build-step stats, no dev-doc links — the reading
-  experience is a single centred article column (700 px prose, 1060 px sim panels) with
-  blog-style air above every heading so one idea fills a screen at a time.
+  experience is a single centred article column: every page (home, topics, quiz) shares one
+  1060 px content column, with blog-style air above every heading so one idea fills a
+  screen at a time.
 * **Static site, no framework, no backend.** Serve the folder (or open `index.html`). Tailwind
   is compiled at build time (`bun run build:css`) into `css/site.css`, so what ships is plain
   static HTML, CSS and JavaScript — identical bytes on `file://`, localhost or Vercel.
@@ -108,7 +109,7 @@ a generator, in one interaction.
 | Why does submitting grade the whole bank even when filtered? | Filters are a revision aid; letting them shrink the denominator would make "100 %" meaningless. The UI states this next to the toolbar. |
 
 ### Testing strategy
-Static validator (links, ids, data-hooks, CSS coverage) plus a jsdom harness with **208
+Static validator (links, ids, data-hooks, CSS coverage) plus a jsdom harness with **217
 assertions** that assert *physics* — e.g. F(+2 µC,−2 µC,0.30 m) = 399 mN, R(10‖22‖47) = 6.00 Ω,
 Φ matches the closed form to 1 %, EMF ∝ N, I = EMF/R at every sample — and *behaviour*: quiz
 scoring at 100/50/0 %, blank-submit guard, storage persistence. Plus a real headless-Chrome pass

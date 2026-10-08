@@ -34,7 +34,9 @@ python3 -m http.server 8000        # or: npx serve .
 ### Option C — any static host
 Upload the folder to GitHub Pages, Netlify, Vercel or a university web space as-is.
 
-**Requirements:** a modern browser — Chrome 100+, Firefox 100+, Edge 100+ (also Safari 15.4+).
+**Requirements:** a modern browser. Chrome 100+ is the only browser this project
+actually tests; Edge 100+, Firefox 100+ and Safari 15.4+ are *targets* — the code
+avoids exotic APIs and is expected to work there, but is untested (see §10).
 No internet connection is required at run time: Tailwind is compiled ahead of time into
 `css/site.css`, and every font (including your licensed faces) is served from `vendor/` (see §7).
 
@@ -111,8 +113,8 @@ and 12 scripts. No framework, no bundler, no backend.
 | Chart.js score visualisation | Doughnut (correct/incorrect), horizontal bars (score per topic), line (attempt history) on the score card; CSS-bar fallback when the CDN is unreachable |
 | p5.js simulation | Bonus AC-generator lab on Topic 4 (`js/sim-generator.js`, p5 instance mode); notice fallback offline |
 | Lazy bonus lab | the p5.js generator downloads only when scrolled near; blocked CDN shows a notice |
-| Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; degrades gracefully to memory when storage is blocked. Deliberately backend-free |
-| Cross-browser (Chrome / Firefox / Edge) | No exotic APIs; feature-guarded `ResizeObserver`, `IntersectionObserver`, Web Animations; vendor-prefixed range-input styling for both engines |
+| Progress tracking with localStorage | `EMC.Progress` in `js/common.js`: topics read + best score + attempt history → ring on the home page; a quiz score of 70%+ also counts as all four topics studied, exactly as the dashboard promises; degrades gracefully to memory when storage is blocked. Deliberately backend-free |
+| Cross-browser design (Chrome tested; Edge / Firefox / Safari targeted, untested) | No exotic APIs; feature-guarded `ResizeObserver`, `IntersectionObserver`, Web Animations; vendor-prefixed range-input styling for both engines |
 
 ---
 
@@ -141,7 +143,7 @@ the maths rather than being scripted.
 bun install          # installs the single dev dependency (tailwindcss) -> bun.lock
 bun run build:css    # css/input.css -> css/site.css (minified, ~36 kB)
 bun run check        # static validator (links, ids, utility coverage)
-bun run test         # 208-assertion jsdom + browser harness
+bun run test         # 217-assertion jsdom + browser harness
 bun run perf         # gzip transfer / font payload / blocking-script budgets
 bun run font:scan    # re-scan vendor/fonts/ for OPTIONAL licensed cuts -> manifest.json
 ```
@@ -249,13 +251,15 @@ family, no licence risk. ~45 KB of fonts total.
   rather than font metrics, so no activated face can ever scatter exponents. Motion is limited to the mascot's bob
   and soft hover lifts; there is no blur, glass, gradient, glow or scroll animation anywhere.
   Simulations and SVG figures sit on flat near-black plates, like lab instruments.
-  Readability rules: prose lives in a ~700 px measure (~79 characters per line) at line-height
-  1.85, in an article rhythm copied from a clean long-form blog layout — ~4.2 rem of air above
-  every numbered heading, ~2.2 rem around equations, callouts, figures, definition lists and
-  disclosures, sim panels centred on their own 1060 px line — so only one idea sits on screen
-  at a time and no page ever reads as a wall of text. Every supplementary block (real-world
-  connections, common traps) is collapsed behind a "+" disclosure so the main flow stays short;
-  worked examples and rules stay open.
+  Readability rules: prose runs at line-height 1.85 in an article rhythm copied from a clean
+  long-form blog layout — ~4.2 rem of air above every numbered heading, ~2.2 rem around
+  equations, callouts, figures, definition lists and disclosures — so only one idea sits on
+  screen at a time and no page ever reads as a wall of text. Every page shares ONE content
+  column (`--column: 1060 px`, i.e. 1020 px of content between the 20 px gutters): topic
+  prose, callouts, sim panels, the quiz head and the home hero canvas + stat strip all end
+  at the same left/right edges, so no page ever looks thinner than another. Every
+  supplementary block (real-world connections, common traps) is collapsed behind a "+"
+  disclosure so the main flow stays short; worked examples and rules stay open.
 * **The site talks about physics only.** No page mentions the course, the module or how the
   site was built, tested or deployed — no "Works everywhere" blurb, no dependency/build-step
   stats, no dev-doc links in footers. That material lives in this README, TESTING.md and
@@ -309,7 +313,7 @@ family, no licence risk. ~45 KB of fonts total.
 ```bash
 bun install          # dev deps only: jsdom (tests) + tailwindcss (CSS build)
 bun run check        # static validation: links, ids, data-hooks, CSS coverage
-bun run test         # 208 runtime assertions across all six pages (skips politely
+bun run test         # 217 runtime assertions across all six pages (skips politely
                      # if jsdom is absent)
 bun run build:css    # recompile css/input.css -> css/site.css after markup changes
 bun run perf         # gzip transfer / font payload / blocking-script budgets
@@ -380,14 +384,17 @@ Exit codes: `0` clean · `1` you aborted · `2` not the EMC Lab repo · `3` a st
 
 ## 10. Browser support
 
-Tested in headless Chrome 148 (see `TESTING.md`); the code targets and is expected to work in:
+Chrome is the only browser this project tests (headless Chrome 148; see
+`TESTING.md`). Everything below is a *target*: the code avoids exotic APIs and is
+expected to work on these versions, but nothing has been verified there — do not
+read this table as a claim of tested support.
 
-| Browser | Minimum version | Notes |
+| Browser | Minimum version (target) | Notes |
 |---|---|---|
-| Chrome | 100 | primary test target |
-| Edge | 100 | same engine as Chrome |
-| Firefox | 100 | `::-moz-range-*` slider styling provided |
-| Safari | 15.4 | `color-mix()` has a `@supports` fallback |
+| Chrome | 100 | the only tested browser |
+| Edge | 100 | same engine as Chrome; untested here |
+| Firefox | 100 | `::-moz-range-*` slider styling provided; untested here |
+| Safari | 15.4 | `color-mix()` has a `@supports` fallback; untested here |
 
 ---
 

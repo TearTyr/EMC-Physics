@@ -11,7 +11,7 @@ headless Chrome 148 and jsdom on this build; the summary at the bottom records t
 ```bash
 bun install        # dev deps: jsdom (tests) + tailwindcss (CSS build). Website itself: none.
 bun run check      # static validator
-bun run test       # 208 runtime assertions
+bun run test       # 217 runtime assertions
 npm run build:css  # recompile Tailwind utilities -> css/site.css after markup changes
 npm run switch:cdn / npm run switch:built   # toggle the Play CDN tag (idempotent)
 npm run font:scan  # re-scan vendor/fonts/ for OPTIONAL licensed cuts -> manifest.json
@@ -104,14 +104,17 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Under 900 px the nav collapses to a hamburger; it opens, closes on selection, and closes on `Esc`
 - [ ] Header **Topics** dropdown: opens on click, closes on outside click / Escape / choosing a
       topic; highlights the current topic; on mobile it expands as an inline sub-list
-- [ ] Topic prose measures ~700 px (about 75-80 characters per line) at every viewport
+- [ ] One content column site-wide: topic prose, callouts, sim panels, the quiz head and the
+      home hero canvas + stat strip all measure 1020 px of content (the 1060 px `--column`
+      minus the 20 px gutters) on viewports ≥ 1100 px, with identical left/right edges —
+      check home vs topic side by side at 1440 px and 2048 px in headless Chrome
 - [ ] Topic pages keep the article rhythm: ~4.2 rem of air above every numbered heading
       (`.prose .h-sec` margin-top ≈ 71 px at 1440 px), line-height 1.85, ~2.2 rem around
-      equations/callouts/figures/disclosures, sim panels centred at ≤ 1060 px — one idea
-      per screen, never a wall of text
+      equations/callouts/figures/disclosures — one idea per screen, never a wall of text
 - [ ] Student-facing copy stays clean: no "module", no course name, no "Works everywhere",
       no "no build step" and no dev-doc links (README/TESTING/PRESENTATION-NOTES) anywhere
-      in the six pages — grep the pages, not the repo, to check
+      in the six pages or in the quiz strings (`js/quiz.js`, `js/quiz-data.js` — the smoke
+      test guards the JS) — grep the pages, not the repo, to check
 - [ ] "Real world" and misconceptions blocks start collapsed behind `+` disclosures and open
       without shifting the layout jumpily
 - [ ] Reading-progress bar under the header fills as you scroll
@@ -220,11 +223,13 @@ Open `index.html` (or `http://localhost:8000`) and work top to bottom.
 - [ ] Reloading the page preserves progress (localStorage); in private/incognito mode a notice explains
       that progress will not persist, and nothing errors
 
-### 2.8 Cross-browser
-Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
-- [ ] sliders render with styled tracks and thumbs in all three (WebKit + Moz rules present)
+### 2.8 Cross-browser (optional — untested by the harness)
+The automated harness runs Chrome only. If Firefox or Edge are handy, repeating
+§2.1–2.6 there is a bonus, never a requirement; no browser but Chrome has ever
+been verified and no doc should claim otherwise:
+- [ ] sliders render with styled tracks and thumbs (WebKit + Moz rules present)
 - [ ] canvases are crisp on a HiDPI/retina display
-- [ ] no console errors or warnings in any browser (DevTools → Console)
+- [ ] no console errors or warnings (DevTools → Console)
 - [ ] `prefers-reduced-motion` enabled: reveal animations and decorative motion stop, sims still work
 
 ### 2.9 Accessibility spot checks
@@ -260,7 +265,7 @@ Repeat §2.1–2.6 spot checks in **Chrome**, **Firefox** and **Edge**:
 | Check | Result |
 |---|---|
 | `node tools/check-links.mjs` | **0 errors, 0 warnings** (9 advisory `[data-*]` notes, all guarded in code) |
-| `node tools/smoke-test.mjs` | **208 / 208 assertions passed** |
+| `node tools/smoke-test.mjs` | **217 / 217 assertions passed** |
 | Built-CSS mode, all external requests blocked | layout identical (2-col grid, type scale), **0 console errors** |
 | Headless Chrome with live CDNs | Chart.js charts + p5.js generator render; **0 console errors** |
 | Headless Chrome 148, all 6 pages, desktop + mobile | **0 console errors, 0 failed requests** |
